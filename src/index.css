@@ -118,3 +118,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/*Custom fonts*/
+@font-face {
+  font-family: "beba";
+  font-style: normal;
+  font-weight: 200 700;
+  src: url("../public/fonts/BebasNeue-Regular.ttf") format("truetype");
+}
+@theme {
+  --font-beba: "beba", sans-serif;
+}

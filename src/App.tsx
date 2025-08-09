@@ -4,9 +4,9 @@ import { Sidebar } from "./componenets/Sidebar";
 
 function App() {
   return (
-    <main className="w-100vw">
+    <main className="w-100vw  h-screen">
       <Header />
-      <div className="flex w-full mt-[60px]">
+      <div className="flex w-full">
         <Sidebar />
         <MainContent />
       </div>

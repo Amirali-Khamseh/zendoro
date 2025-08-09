@@ -7,28 +7,28 @@ type Props = {
 const typeMapping = [
   {
     type: "play",
-    icon: <Play color="black" fill="black" />,
+    icon: <Play color="black" fill="black" key="play" />,
   },
   {
     type: "pause",
-    icon: <Pause color="black" fill="black" />,
+    icon: <Pause color="black" fill="black" key="pause" />,
   },
   {
     type: "reset",
-    icon: <TimerReset color="black" />,
+    icon: <TimerReset color="black" key="reset" />,
   },
   {
     type: "skip",
-    icon: <SkipForward color="black" fill="black" />,
+    icon: <SkipForward color="black" fill="black" key="skip" />,
   },
   {
     type: "focus",
-    icon: <Fullscreen color="black" fill="black" />,
+    icon: <Fullscreen color="black" fill="black" key="focus" />,
   },
 ];
 export function TimerButtons({ type }: Props) {
   return (
-    <Button className="w-[40px] h-[40px] rounded-full bg-white">
+    <Button className="w-[40px] h-[40px] rounded-full bg-white cursor-pointer hover:bg-slate-600">
       {typeMapping.map((item) => {
         if (item.type === type) {
           return item.icon;
