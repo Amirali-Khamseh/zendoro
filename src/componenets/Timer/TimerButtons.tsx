@@ -3,6 +3,7 @@ import { Fullscreen, Pause, Play, SkipForward, TimerReset } from "lucide-react";
 
 type Props = {
   type: "play" | "pause" | "reset" | "skip" | "focus";
+  onClick: () => void;
 };
 const typeMapping = [
   {
@@ -26,9 +27,12 @@ const typeMapping = [
     icon: <Fullscreen color="black" fill="black" key="focus" />,
   },
 ];
-export function TimerButtons({ type }: Props) {
+export function TimerButtons({ type, onClick }: Props) {
   return (
-    <Button className="w-[40px] h-[40px] rounded-full bg-white cursor-pointer hover:bg-slate-600">
+    <Button
+      className="w-[40px] h-[40px] rounded-full bg-white cursor-pointer hover:bg-slate-600"
+      onClick={onClick}
+    >
       {typeMapping.map((item) => {
         if (item.type === type) {
           return item.icon;
