@@ -3,7 +3,7 @@ import { Fullscreen, Pause, Play, SkipForward, TimerReset } from "lucide-react";
 
 type Props = {
   type: "play" | "pause" | "reset" | "skip" | "focus";
-  onClick: () => void;
+  onClick?: () => void;
 };
 const typeMapping = [
   {

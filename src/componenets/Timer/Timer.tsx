@@ -1,17 +1,34 @@
 import { useEffect, useState } from "react";
 import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
+import { FocusButton } from "../FocusButton";
 type Props = {
   duration: number;
 };
 export function Timer({ duration }: Props) {
   const [time, setTime] = useState(duration);
   const [isRunning, setIsRunning] = useState(true);
+  /*test a new solution */
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const getTime = (time: number) => {
+    setMinutes(Math.floor((time / 1000 / 60) % 60));
+    setSeconds(Math.floor((time / 1000) % 60));
+  };
+
   useEffect(() => {
+    //TODO : the condition isn't strong enough and its lagging for a duration of 1 second
+    //TODO : fomatiing the min and sec to show two digits when showing 0
+    if (time < 0) return;
     setTimeout(() => {
-      isRunning ? setTime(time - 1000) : setTime(time);
+      if (isRunning && time !== 0) {
+        setTime((time) => time - 1000);
+      } else {
+        setTime(time);
+      }
     }, 1000);
-  }, [time]);
+  }, [time, isRunning]);
+
   return (
     <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
       {isRunning ? "isRunning" : "isNotRunning"}
@@ -28,18 +45,9 @@ export function Timer({ duration }: Props) {
             onClick={() => setIsRunning((prev) => !prev)}
           />
         )}
-        <TimerButtons
-          type="reset"
-          onClick={() => setIsRunning((prev) => !prev)}
-        />
-        <TimerButtons
-          type="skip"
-          onClick={() => setIsRunning((prev) => !prev)}
-        />
-        <TimerButtons
-          type="focus"
-          onClick={() => setIsRunning((prev) => !prev)}
-        />
+        <TimerButtons type="reset" onClick={() => setTime(0)} />
+        <TimerButtons type="skip" onClick={() => alert("change mode")} />
+        <FocusButton />
       </div>
     </div>
   );
