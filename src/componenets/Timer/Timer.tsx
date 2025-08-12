@@ -8,13 +8,6 @@ type Props = {
 export function Timer({ duration }: Props) {
   const [time, setTime] = useState(duration);
   const [isRunning, setIsRunning] = useState(true);
-  /*test a new solution */
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
-  const getTime = (time: number) => {
-    setMinutes(Math.floor((time / 1000 / 60) % 60));
-    setSeconds(Math.floor((time / 1000) % 60));
-  };
 
   useEffect(() => {
     //TODO : the condition isn't strong enough and its lagging for a duration of 1 second
@@ -24,7 +17,7 @@ export function Timer({ duration }: Props) {
       if (isRunning && time !== 0) {
         setTime((time) => time - 1000);
       } else {
-        setTime(time);
+        setTime((time) => time + 0);
       }
     }, 1000);
   }, [time, isRunning]);
