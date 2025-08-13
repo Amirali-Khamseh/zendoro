@@ -3,10 +3,12 @@ import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
 import { FocusButton } from "../FocusButton";
 type Props = {
-  duration: number;
+  focusTime: number;
+  shortBreak: number;
+  longBreak: number;
 };
-export function Timer({ duration }: Props) {
-  const [time, setTime] = useState(duration);
+export function Timer({ focusTime }: Props) {
+  const [time, setTime] = useState(focusTime);
   const [isRunning, setIsRunning] = useState(true);
 
   useEffect(() => {
@@ -21,7 +23,9 @@ export function Timer({ duration }: Props) {
       }
     }, 1000);
   }, [time, isRunning]);
-
+  {
+    console.log(time);
+  }
   return (
     <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
       {isRunning ? "isRunning" : "isNotRunning"}
