@@ -7,10 +7,10 @@ type Props = {
   shortBreak: number;
   longBreak: number;
 };
-export function Timer({ focusTime }: Props) {
+export function Timer({ focusTime, shortBreak, longBreak }: Props) {
   const [time, setTime] = useState(focusTime);
   const [isRunning, setIsRunning] = useState(true);
-
+  console.log(`shortbreak: ${shortBreak} , longBreak:${longBreak}`);
   useEffect(() => {
     //TODO : the condition isn't strong enough and its lagging for a duration of 1 second
     //TODO : fomatiing the min and sec to show two digits when showing 0
@@ -23,9 +23,7 @@ export function Timer({ focusTime }: Props) {
       }
     }, 1000);
   }, [time, isRunning]);
-  {
-    console.log(time);
-  }
+
   return (
     <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
       {isRunning ? "isRunning" : "isNotRunning"}

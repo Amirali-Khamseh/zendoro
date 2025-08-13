@@ -27,6 +27,7 @@ export function Sidebar() {
                   key={mode.title}
                   title={mode.title}
                   details={mode.details}
+                  time={mode.time}
                 />
               ))}
             </RadioGroup>

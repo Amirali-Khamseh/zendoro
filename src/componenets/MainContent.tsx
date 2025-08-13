@@ -1,7 +1,7 @@
 import { Timer } from "./Timer/Timer";
 import { useContext } from "react";
-import { modeContext } from "@/config/modeContext";
 import { miliSecToMin } from "@/lib/miliSecToMin";
+import { modeContext } from "@/App";
 
 export function MainContent() {
   const { name, focusTime, shortBreak, longBreak } = useContext(modeContext);

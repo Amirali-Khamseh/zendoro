@@ -1,8 +1,17 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { Header } from "./componenets/Header";
 import { MainContent } from "./componenets/MainContent";
 import { Sidebar } from "./componenets/Sidebar";
-import { type ModeContextType, modeContext } from "./config/modeContext";
+export type ModeContextType = {
+  name: "Standard" | "Extended" | "Long run";
+  focusTime: number;
+  shortBreak: number;
+  longBreak: number;
+};
+type ModeContextTypeExtended = ModeContextType & {
+  setMode: React.Dispatch<React.SetStateAction<ModeContextType>>;
+};
+export const modeContext = createContext({} as ModeContextTypeExtended);
 
 function App() {
   const [mode, setMode] = useState<ModeContextType>({
@@ -11,8 +20,11 @@ function App() {
     shortBreak: 5 * 60 * 1000,
     longBreak: 15 * 60 * 1000,
   });
+  {
+    /*I was trying to pass setmode() 👇🏼*/
+  }
   return (
-    <modeContext.Provider value={mode}>
+    <modeContext.Provider value={{ ...mode, setMode }}>
       <main className="w-100vw  h-screen">
         <Header />
         <div className="flex w-full">
