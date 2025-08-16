@@ -7,8 +7,8 @@ type Props = {
 };
 export function Timer({ time }: Props) {
   const [timer, setTimer] = useState<number>(time);
-  const [isRunning, setIsRunning] = useState(true);
-  useEffect(() => setTimer(time), [time]);
+  const [isRunning, setIsRunning] = useState(false);
+  // useEffect(() => setTimer(time), [time]);
   useEffect(() => {
     //TODO : the condition isn't strong enough and its lagging for a duration of 1 second
     //TODO : fomatiing the min and sec to show two digits when showing 0

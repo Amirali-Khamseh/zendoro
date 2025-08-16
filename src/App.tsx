@@ -20,9 +20,7 @@ function App() {
     shortBreak: 5 * 60 * 1000,
     longBreak: 15 * 60 * 1000,
   });
-  {
-    /*I was trying to pass setmode() 👇🏼*/
-  }
+
   return (
     <modeContext.Provider value={{ ...mode, setMode }}>
       <main className="w-100vw  h-screen">
