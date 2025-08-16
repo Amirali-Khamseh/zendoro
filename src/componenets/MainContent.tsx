@@ -10,7 +10,7 @@ export function MainContent() {
       <h2 className="font-beba font-medium text-2xl">{name}</h2>
       <p>short-break : {miliSecToMin(shortBreak)}</p>
       <p>long-break: {miliSecToMin(longBreak)}</p>
-      <Timer time={focusTime} />
+      <Timer initialTime={focusTime} />
     </section>
   );
 }

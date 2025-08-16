@@ -1,7 +1,8 @@
-//TODO : deal with the negative values when the input is to low -> replicate press the reset button
+export const formatTime = (ms: number) => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
 
-export function formatTime(time: number) {
-  const seconds = Math.floor((time / 1000) % 60);
-  const minutes = Math.floor((time / 1000 / 60) % 60);
-  return `${minutes} : ${seconds}`;
-}
+  return `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
+};

@@ -1,44 +1,69 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
 import { FocusButton } from "../FocusButton";
 type Props = {
-  time: number;
+  initialTime: number;
+  onFinish?: () => void;
 };
-export function Timer({ time }: Props) {
-  const [timer, setTimer] = useState<number>(time);
+export function Timer({ initialTime, onFinish }: Props) {
+  const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(false);
-  // useEffect(() => setTimer(time), [time]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  /* Handlers */
+  const start = () => {
+    if (!isRunning) {
+      setIsRunning(true);
+    }
+  };
+  const pause = () => {
+    setIsRunning(false);
+  };
+  const reset = () => {
+    setIsRunning(false);
+    setTimeLeft(initialTime);
+  };
+  /* Timer effect */
   useEffect(() => {
-    //TODO : the condition isn't strong enough and its lagging for a duration of 1 second
-    //TODO : fomatiing the min and sec to show two digits when showing 0
-    if (timer < 0) return;
-    setTimeout(() => {
-      if (isRunning && timer !== 0) {
-        setTimer((timer) => timer - 1000);
-      } else {
-        setTimer((timer) => timer + 0);
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 100) {
+            clearInterval(intervalRef.current!);
+            setIsRunning(false);
+            onFinish?.();
+            return 0;
+          }
+          return prev - 100;
+        });
+      }, 100);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
       }
-    }, 1000);
-  }, [timer, isRunning]);
+    };
+  }, [isRunning, onFinish]);
+  /*Sync the intialTime with Context value */
+  useEffect(() => {
+    setTimeLeft(initialTime);
+    setIsRunning(false);
+  }, [initialTime]);
 
   return (
     <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
-      {isRunning ? "isRunning" : "isNotRunning"}
-      <h1 className="text-[6rem]  font-beba font-bold">{formatTime(timer)}</h1>
+      <h1 className="text-[6rem]  font-beba font-bold">
+        {formatTime(timeLeft)}
+      </h1>
       <div className="  flex gap-2">
         {isRunning ? (
-          <TimerButtons
-            type="pause"
-            onClick={() => setIsRunning((prev) => !prev)}
-          />
+          <TimerButtons type="pause" onClick={pause} />
         ) : (
-          <TimerButtons
-            type="play"
-            onClick={() => setIsRunning((prev) => !prev)}
-          />
+          <TimerButtons type="play" onClick={start} />
         )}
-        <TimerButtons type="reset" onClick={() => setTimer(0)} />
+        <TimerButtons type="reset" onClick={reset} />
         <TimerButtons type="skip" onClick={() => alert("change mode")} />
         <FocusButton />
       </div>
