@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { Header } from "./componenets/Header";
+// import { Header } from "./componenets/Header";
 import { MainContent } from "./componenets/MainContent";
 import { Sidebar } from "./componenets/Sidebar";
 export type ModeContextType = {
@@ -24,7 +24,7 @@ function App() {
   return (
     <modeContext.Provider value={{ ...mode, setMode }}>
       <main className="w-100vw  h-screen">
-        <Header />
+        {/* <Header /> */}
         <div className="flex w-full">
           <Sidebar />
           <MainContent />

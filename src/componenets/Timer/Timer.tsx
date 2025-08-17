@@ -1,15 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
 import { FocusButton } from "../FocusButton";
+import { modeContext } from "@/App";
 type Props = {
   initialTime: number;
-  onFinish?: () => void;
 };
-export function Timer({ initialTime, onFinish }: Props) {
+
+export function Timer({ initialTime }: Props) {
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(false);
+  const [focusSessionCount, setFocusSessionCount] = useState(0);
+  {
+    /*The reason the type is not enum is cause i needed to make a key value pair of both and was much more work to do in order to limit tehse types */
+  }
+  const [currentSessionType, setCurrentSessionType] = useState<
+    "focus" | "longBreak" | "shortBreak"
+  >("focus");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { shortBreak, longBreak, focusTime } = useContext(modeContext);
 
   /* Handlers */
   const start = () => {
@@ -24,6 +33,25 @@ export function Timer({ initialTime, onFinish }: Props) {
     setIsRunning(false);
     setTimeLeft(initialTime);
   };
+  const handleSkip = () => {
+    if (isInFocusSession) {
+      const newCount = focusSessionCount + 1;
+      setFocusSessionCount(newCount);
+
+      if (newCount % 4 === 0) {
+        setTimeLeft(longBreak);
+        setCurrentSessionType("longBreak");
+      } else {
+        setTimeLeft(shortBreak);
+        setCurrentSessionType("shortBreak");
+      }
+    } else {
+      setTimeLeft(focusTime);
+      setCurrentSessionType("focus");
+    }
+
+    setIsRunning(false);
+  };
   /* Timer effect */
   useEffect(() => {
     if (isRunning) {
@@ -32,7 +60,23 @@ export function Timer({ initialTime, onFinish }: Props) {
           if (prev <= 100) {
             clearInterval(intervalRef.current!);
             setIsRunning(false);
-            onFinish?.();
+            // when timer finishes
+            if (currentSessionType === "focus") {
+              const newCount = focusSessionCount + 1;
+              setFocusSessionCount(newCount);
+
+              if (newCount % 4 === 0) {
+                setTimeLeft(longBreak);
+                setCurrentSessionType("longBreak");
+              } else {
+                setTimeLeft(shortBreak);
+                setCurrentSessionType("shortBreak");
+              }
+            } else {
+              // Just finished a break, start next focus session
+              setTimeLeft(focusTime);
+              setCurrentSessionType("focus");
+            }
             return 0;
           }
           return prev - 100;
@@ -45,12 +89,30 @@ export function Timer({ initialTime, onFinish }: Props) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, onFinish]);
-  /*Sync the intialTime with Context value */
+  }, [
+    isRunning,
+    focusSessionCount,
+    focusTime,
+    shortBreak,
+    longBreak,
+    currentSessionType,
+  ]);
+  /* Sync the initialTime with Context value and update session type */
   useEffect(() => {
     setTimeLeft(initialTime);
     setIsRunning(false);
-  }, [initialTime]);
+
+    // Update the current session type based on the new initialTime
+    if (initialTime === focusTime) {
+      setCurrentSessionType("focus");
+    } else if (initialTime === shortBreak) {
+      setCurrentSessionType("shortBreak");
+    } else if (initialTime === longBreak) {
+      setCurrentSessionType("longBreak");
+    }
+  }, [initialTime, focusTime, shortBreak, longBreak]);
+  /* Keeping track of  Pomodor sessions*/
+  const isInFocusSession = currentSessionType === "focus";
 
   return (
     <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
@@ -64,8 +126,17 @@ export function Timer({ initialTime, onFinish }: Props) {
           <TimerButtons type="play" onClick={start} />
         )}
         <TimerButtons type="reset" onClick={reset} />
-        <TimerButtons type="skip" onClick={() => alert("change mode")} />
+        <TimerButtons type="skip" onClick={handleSkip} />
         <FocusButton />
+      </div>
+
+      <div className="text-sm mb-2 text-white">
+        Focus Sessions: {focusSessionCount} | Next:{" "}
+        {focusSessionCount % 4 === 0 && focusSessionCount > 0
+          ? "Long Break"
+          : focusSessionCount % 4 === 3
+            ? "Long Break after this"
+            : "Short Break"}
       </div>
     </div>
   );

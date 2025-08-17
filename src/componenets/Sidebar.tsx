@@ -9,7 +9,8 @@ import { ModesValue } from "@/constants/data";
 import { Modes } from "./Modes";
 export function Sidebar() {
   return (
-    <section className="w-[20%] h-[calc(100vh-60px)] rounded-r-lg border-r-1 border-black p-4">
+    <section className="w-[20%] h-screen rounded-r-lg border-r-1 border-gray-300 p-4">
+      {/* <section className="w-[20%] h-[calc(100vh-60px)] rounded-r-lg border-r-1 border-gray-300 p-4"> */}
       <Accordion
         type="single"
         collapsible
