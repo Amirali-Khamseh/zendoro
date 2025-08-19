@@ -1,3 +1,3 @@
-export function miliSecToMin(miliseonds: number) {
-  return miliseonds / 1000 / 60;
+export function milliSecToMin(milliseonds: number) {
+  return milliseonds / 1000 / 60;
 }

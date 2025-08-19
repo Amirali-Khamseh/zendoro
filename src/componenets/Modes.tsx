@@ -6,13 +6,15 @@ type Props = {
   details: string;
   time: ModeContextType;
 };
-export function Modes({ title, details, time }: Props) {
+export function Mode({ title, details, time }: Props) {
   const { setMode } = useContext(modeContext);
-
+  function setContextMode() {
+    setMode(time);
+  }
   return (
     <div className="flex items-center space-x-2">
       <RadioGroupItem value="option-one" id="option-one" />
-      <div onClick={() => setMode(time)} className="cursor-pointer">
+      <div onClick={setContextMode} className="cursor-pointer">
         {title}
         <h4 className="text-gray-400 text-xs">{details}</h4>
       </div>

@@ -2,7 +2,10 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
 import { FocusButton } from "../FocusButton";
-import { modeContext } from "@/App";
+
+import { isNextSessionLongBreak } from "./isNextSessionLongBreak";
+import { isOneBeforeLongBreak } from "./isOneBeforeLongBreak";
+import { modeContext } from "@/context/modeContext";
 type Props = {
   initialTime: number;
 };
@@ -19,7 +22,8 @@ export function Timer({ initialTime }: Props) {
   >("focus");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { shortBreak, longBreak, focusTime } = useContext(modeContext);
-
+  /* Keeping track of  Pomodor sessions*/
+  const isInFocusSession = currentSessionType === "focus";
   /* Handlers */
   const start = () => {
     if (!isRunning) {
@@ -111,8 +115,6 @@ export function Timer({ initialTime }: Props) {
       setCurrentSessionType("longBreak");
     }
   }, [initialTime, focusTime, shortBreak, longBreak]);
-  /* Keeping track of  Pomodor sessions*/
-  const isInFocusSession = currentSessionType === "focus";
 
   return (
     <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
@@ -132,9 +134,9 @@ export function Timer({ initialTime }: Props) {
 
       <div className="text-sm mb-2 text-white">
         Focus Sessions: {focusSessionCount} | Next:{" "}
-        {focusSessionCount % 4 === 0 && focusSessionCount > 0
+        {isNextSessionLongBreak(focusSessionCount) && focusSessionCount > 0
           ? "Long Break"
-          : focusSessionCount % 4 === 3
+          : isOneBeforeLongBreak(focusSessionCount)
             ? "Long Break after this"
             : "Short Break"}
       </div>

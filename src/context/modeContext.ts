@@ -1,9 +1,13 @@
-/* If the Context gets imported from this file it Does not Work Properly */
-
 import { createContext } from "react";
 
+export const modeName = {
+  standard: "Standard",
+  extended: "Extended",
+  longRun: "Long run",
+} as const;
 export type ModeContextType = {
-  name: "Standard" | "Extended" | "Long run";
+  //@ts-ignore
+  name: modeName;
   focusTime: number;
   shortBreak: number;
   longBreak: number;

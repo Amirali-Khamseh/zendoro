@@ -1,24 +1,16 @@
-import { createContext, useState } from "react";
+import { useState } from "react";
 // import { Header } from "./componenets/Header";
 import { MainContent } from "./componenets/MainContent";
 import { Sidebar } from "./componenets/Sidebar";
-export type ModeContextType = {
-  name: "Standard" | "Extended" | "Long run";
-  focusTime: number;
-  shortBreak: number;
-  longBreak: number;
-};
-type ModeContextTypeExtended = ModeContextType & {
-  setMode: React.Dispatch<React.SetStateAction<ModeContextType>>;
-};
-export const modeContext = createContext({} as ModeContextTypeExtended);
+import { modesValue } from "./constants/data";
+import { modeContext, type ModeContextType } from "./context/modeContext";
 
 function App() {
   const [mode, setMode] = useState<ModeContextType>({
-    name: "Standard",
-    focusTime: 25 * 60 * 1000,
-    shortBreak: 5 * 60 * 1000,
-    longBreak: 15 * 60 * 1000,
+    name: modesValue[0].time.name,
+    focusTime: modesValue[0].time.focusTime,
+    shortBreak: modesValue[0].time.shortBreak,
+    longBreak: modesValue[0].time.longBreak,
   });
 
   return (
@@ -26,8 +18,12 @@ function App() {
       <main className="w-100vw  h-screen">
         {/* <Header /> */}
         <div className="flex w-full">
-          <Sidebar />
-          <MainContent />
+          <div className="w-[20%]">
+            <Sidebar />
+          </div>
+          <div className="w-[80%]">
+            <MainContent />
+          </div>
         </div>
       </main>
     </modeContext.Provider>

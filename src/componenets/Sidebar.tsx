@@ -5,11 +5,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ModesValue } from "@/constants/data";
-import { Modes } from "./Modes";
+import { modesValue } from "@/constants/data";
+import { Mode } from "./Modes";
 export function Sidebar() {
   return (
-    <section className="w-[20%] h-screen rounded-r-lg border-r-1 border-gray-300 p-4">
+    <section className="w-full h-screen rounded-r-lg border-r-1 border-gray-300 p-4">
       {/* <section className="w-[20%] h-[calc(100vh-60px)] rounded-r-lg border-r-1 border-gray-300 p-4"> */}
       <Accordion
         type="single"
@@ -23,8 +23,8 @@ export function Sidebar() {
             <RadioGroup defaultValue="option-one">
               {/* TODO: Why Radio button doesn't show up when i use it
               indirectly */}
-              {ModesValue.map((mode) => (
-                <Modes
+              {modesValue.map((mode) => (
+                <Mode
                   key={mode.title}
                   title={mode.title}
                   details={mode.details}
