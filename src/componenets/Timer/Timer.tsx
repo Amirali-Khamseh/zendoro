@@ -6,6 +6,7 @@ import { FocusButton } from "../FocusButton";
 import { isNextSessionLongBreak } from "./isNextSessionLongBreak";
 import { isOneBeforeLongBreak } from "./isOneBeforeLongBreak";
 import { modeContext } from "@/context/modeContext";
+
 type Props = {
   initialTime: number;
 };
@@ -116,6 +117,9 @@ export function Timer({ initialTime }: Props) {
     }
   }, [initialTime, focusTime, shortBreak, longBreak]);
 
+  function toggleTimerState() {
+    setIsRunning((prev) => !prev);
+  }
   return (
     <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
       <h1 className="text-[6rem]  font-beba font-bold">
@@ -129,7 +133,11 @@ export function Timer({ initialTime }: Props) {
         )}
         <TimerButtons type="reset" onClick={reset} />
         <TimerButtons type="skip" onClick={handleSkip} />
-        <FocusButton />
+        <FocusButton
+          isRunning={isRunning}
+          timeLeft={timeLeft}
+          toggleTimerState={toggleTimerState}
+        />
       </div>
 
       <div className="text-sm mb-2 text-white">
