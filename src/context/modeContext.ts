@@ -13,6 +13,6 @@ export type ModeContextType = {
   longBreak: number;
 };
 type ModeContextTypeExtended = ModeContextType & {
-  setMode: React.Dispatch<React.SetStateAction<ModeContextType>>;
+  changeMode: (mode: ModeContextType) => void;
 };
 export const modeContext = createContext({} as ModeContextTypeExtended);

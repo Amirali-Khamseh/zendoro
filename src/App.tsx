@@ -12,9 +12,11 @@ function App() {
     shortBreak: modesValue[0].time.shortBreak,
     longBreak: modesValue[0].time.longBreak,
   });
-
+  function changeMode(mode: ModeContextType) {
+    setMode(mode);
+  }
   return (
-    <modeContext.Provider value={{ ...mode, setMode }}>
+    <modeContext.Provider value={{ ...mode, changeMode }}>
       <main className="w-100vw  h-screen">
         {/* <Header /> */}
         <div className="flex w-full">
