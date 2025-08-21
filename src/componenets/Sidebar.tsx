@@ -9,8 +9,7 @@ import { modesValue } from "@/constants/data";
 import { Mode } from "./Modes";
 export function Sidebar() {
   return (
-    <section className="w-full h-screen rounded-r-lg border-r-1 border-gray-300 p-4">
-      {/* <section className="w-[20%] h-[calc(100vh-60px)] rounded-r-lg border-r-1 border-gray-300 p-4"> */}
+    <section className="w-full h-screen  border-gray-300 p-4">
       <Accordion
         type="single"
         collapsible
@@ -21,8 +20,6 @@ export function Sidebar() {
           <AccordionTrigger>Modes</AccordionTrigger>
           <AccordionContent className="flex flex-col gap-4 text-balance">
             <RadioGroup defaultValue="option-one">
-              {/* TODO: Why Radio button doesn't show up when i use it
-              indirectly */}
               {modesValue.map((mode) => (
                 <Mode
                   key={mode.title}

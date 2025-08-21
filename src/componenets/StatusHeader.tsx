@@ -7,10 +7,16 @@ export function StatusHeader() {
   const { focusTime, shortBreak, longBreak } = useContext(modeContext);
 
   return (
-    <div className="flex gap-12">
-      <Badge variant="outline">Focus Time : {milliSecToMin(focusTime)}</Badge>
-      <Badge variant="outline">Short Break : {milliSecToMin(shortBreak)}</Badge>
-      <Badge variant="outline">Long Break : {milliSecToMin(longBreak)}</Badge>
+    <div className="flex gap-12 ">
+      <Badge variant="outline" className="text-white">
+        Focus Time : {milliSecToMin(focusTime)}
+      </Badge>
+      <Badge variant="outline" className="text-white">
+        Short Break : {milliSecToMin(shortBreak)}
+      </Badge>
+      <Badge variant="outline" className="text-white">
+        Long Break : {milliSecToMin(longBreak)}
+      </Badge>
     </div>
   );
 }
