@@ -64,9 +64,12 @@ export function StatusTopLine() {
 
   return (
     <Popover>
-      <PopoverTrigger className="font-beba font-medium text-2xl text-white cursor-pointer">
-        {name}
+      <PopoverTrigger className="w-[400px] flex items-center justify-center gap-4 font-beba font-medium text-2xl text-white cursor-pointer">
+        <span className="flex-1 h-[0.5px] bg-white" />
+        <span>{name}</span>
+        <span className="flex-1 h-[0.5px] bg-white" />
       </PopoverTrigger>
+
       <PopoverContent className="w-80">
         <form className="grid gap-4" onSubmit={handleSumbit}>
           <div className="space-y-2">
