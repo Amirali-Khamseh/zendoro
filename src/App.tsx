@@ -17,13 +17,13 @@ function App() {
   }
   return (
     <modeContext.Provider value={{ ...mode, changeMode }}>
-      <main className="w-100vw  h-screen">
+      <main className="w-100vw  h-screen bg-slate-900">
         {/* <Header /> */}
         <div className="flex w-full">
-          <div className="w-[20%]">
+          <div className="w-[20%] bg-white rounded-r-2xl">
             <Sidebar />
           </div>
-          <div className="w-[80%]">
+          <div className="w-[80%] bg-slate-900">
             <MainContent />
           </div>
         </div>
