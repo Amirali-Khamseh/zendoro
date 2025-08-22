@@ -1,9 +1,3 @@
-/*
-
-
-TODO : FIX THE FORM SUBMISSION
-
-*/
 import {
   Popover,
   PopoverContent,
@@ -12,23 +6,60 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useContext, useState } from "react";
-import { modeContext, type ModeContextType } from "@/context/modeContext";
+import { modeContext } from "@/context/modeContext";
 import { Button } from "@/components/ui/button";
 import { milliSecToMin } from "@/lib/miliSecToMin";
+import { minToMilli } from "@/lib/minToMilli";
+
 export function StatusTopLine() {
   const { name, changeMode, shortBreak, longBreak, focusTime } =
     useContext(modeContext);
-  const [newMode, setNewMode] = useState({
-    name,
-    changeMode,
-    shortBreak,
-    longBreak,
-    focusTime,
-  });
-  function handleSubmit(e: React.FormEvent) {
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  function handleSumbit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    //TODO:  i gotta  do validation, Maybe i can use some toast or Error state
-    changeMode(newMode);
+    const formData = new FormData(e.currentTarget);
+
+    const newMode = {
+      name: (formData.get("name") as string)?.trim(),
+      focusTime: Number(formData.get("focusTime")),
+      shortBreak: Number(formData.get("shortBreak")),
+      longBreak: Number(formData.get("longBreak")),
+    };
+
+    const newErrors: Record<string, string> = {};
+
+    if (!newMode.name) {
+      newErrors.name = "Mode name is required.";
+    } else if (newMode.name.length > 30) {
+      newErrors.name = "Mode name cannot exceed 30 characters.";
+    }
+
+    if (!newMode.focusTime || newMode.focusTime <= 0) {
+      newErrors.focusTime = "Focus time must be greater than 0.";
+    }
+
+    if (!newMode.shortBreak || newMode.shortBreak <= 0) {
+      newErrors.shortBreak = "Short break must be greater than 0.";
+    }
+
+    if (!newMode.longBreak || newMode.longBreak <= 0) {
+      newErrors.longBreak = "Long break must be greater than 0.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    changeMode({
+      name: newMode.name,
+      focusTime: minToMilli(newMode.focusTime),
+      shortBreak: minToMilli(newMode.shortBreak),
+      longBreak: minToMilli(newMode.longBreak),
+    });
   }
 
   return (
@@ -37,72 +68,94 @@ export function StatusTopLine() {
         {name}
       </PopoverTrigger>
       <PopoverContent className="w-80">
-        <form className="grid gap-4" onSubmit={handleSubmit}>
+        <form className="grid gap-4" onSubmit={handleSumbit}>
           <div className="space-y-2">
             <h4 className="leading-none font-medium"> Mode Configuration</h4>
             <p className="text-muted-foreground text-sm">
               Customize your Mode based on your Mood :)
             </p>
           </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Mode name</Label>
-              <Input
-                id="maxHeight"
-                defaultValue="none"
-                className="col-span-2 h-8"
-                value={newMode.name}
-                onChange={(e) =>
-                  setNewMode({ ...newMode, name: e.target.value })
-                }
-              />
+          <div className="grid gap-4">
+            {/* Mode Name */}
+            <div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="maxHeight">Mode name</Label>
+                <Input
+                  id="maxHeight"
+                  name="name"
+                  defaultValue={name}
+                  maxLength={30}
+                  className={`col-span-2 h-8 ${
+                    errors.name ? "border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
+              </div>
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="width">Focus Time</Label>
-              <Input
-                id="width"
-                defaultValue="100%"
-                className="col-span-2 h-8"
-                value={milliSecToMin(newMode.focusTime)}
-                onChange={(e) =>
-                  setNewMode({
-                    ...newMode,
-                    focusTime: milliSecToMin(Number(e.target.value)),
-                  })
-                }
-              />
+
+            {/* Focus Time */}
+            <div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="width">Focus Time</Label>
+                <Input
+                  id="width"
+                  name="focusTime"
+                  defaultValue={milliSecToMin(focusTime)}
+                  type="number"
+                  min={1}
+                  className={`col-span-2 h-8 ${
+                    errors.focusTime ? "border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
+              </div>
+              {errors.focusTime && (
+                <p className="text-red-500 text-sm mt-1">{errors.focusTime}</p>
+              )}
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxWidth">Short Break</Label>
-              <Input
-                id="maxWidth"
-                defaultValue="300px"
-                className="col-span-2 h-8"
-                value={milliSecToMin(newMode.shortBreak)}
-                onChange={(e) =>
-                  setNewMode({
-                    ...newMode,
-                    shortBreak: milliSecToMin(Number(e.target.value)),
-                  })
-                }
-              />
+
+            {/* Short Break */}
+            <div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="maxWidth">Short Break</Label>
+                <Input
+                  id="maxWidth"
+                  name="shortBreak"
+                  defaultValue={milliSecToMin(shortBreak)}
+                  type="number"
+                  min={1}
+                  className={`col-span-2 h-8 ${
+                    errors.shortBreak ? "border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
+              </div>
+              {errors.shortBreak && (
+                <p className="text-red-500 text-sm mt-1">{errors.shortBreak}</p>
+              )}
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="height">Long Break</Label>
-              <Input
-                id="height"
-                defaultValue="25px"
-                className="col-span-2 h-8"
-                value={milliSecToMin(newMode.longBreak)}
-                onChange={(e) =>
-                  setNewMode({
-                    ...newMode,
-                    longBreak: milliSecToMin(Number(e.target.value)),
-                  })
-                }
-              />
+
+            {/* Long Break */}
+            <div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="height">Long Break</Label>
+                <Input
+                  id="height"
+                  name="longBreak"
+                  defaultValue={milliSecToMin(longBreak)}
+                  type="number"
+                  min={1}
+                  className={`col-span-2 h-8 ${
+                    errors.longBreak ? "border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
+              </div>
+              {errors.longBreak && (
+                <p className="text-red-500 text-sm mt-1">{errors.longBreak}</p>
+              )}
             </div>
           </div>
+
           <Button
             type="submit"
             variant="outline"
