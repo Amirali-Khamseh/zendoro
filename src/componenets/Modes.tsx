@@ -1,13 +1,13 @@
-import { modeContext, type ModeContextType } from "@/context/modeContext";
+import { useStore, type ModeContextType } from "@/context/modeContext";
 import { RadioGroupItem } from "@radix-ui/react-radio-group";
-import { useContext } from "react";
+
 type Props = {
   title: string;
   details: string;
   time: ModeContextType;
 };
 export function Mode({ title, details, time }: Props) {
-  const { changeMode } = useContext(modeContext);
+  const { changeMode } = useStore();
   function setContextMode() {
     changeMode(time);
   }

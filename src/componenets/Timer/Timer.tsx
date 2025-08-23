@@ -1,17 +1,18 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
 import { FocusButton } from "../FocusButton";
 
 import { isNextSessionLongBreak } from "./isNextSessionLongBreak";
 import { isOneBeforeLongBreak } from "./isOneBeforeLongBreak";
-import { modeContext } from "@/context/modeContext";
+import { useStore } from "@/context/modeContext";
 
 type Props = {
   initialTime: number;
 };
 
 export function Timer({ initialTime }: Props) {
+  const { focusTime, longBreak, shortBreak } = useStore();
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(false);
   const [focusSessionCount, setFocusSessionCount] = useState(0);
@@ -22,7 +23,6 @@ export function Timer({ initialTime }: Props) {
     "focus" | "longBreak" | "shortBreak"
   >("focus");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const { shortBreak, longBreak, focusTime } = useContext(modeContext);
   /* Keeping track of  Pomodor sessions*/
   const isInFocusSession = currentSessionType === "focus";
   /* Handlers */

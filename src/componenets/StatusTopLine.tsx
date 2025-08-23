@@ -5,15 +5,14 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useContext, useState } from "react";
-import { modeContext } from "@/context/modeContext";
+import { useState } from "react";
+import { useStore } from "@/context/modeContext";
 import { Button } from "@/components/ui/button";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 import { minToMilli } from "@/lib/minToMilli";
 
 export function StatusTopLine() {
-  const { name, changeMode, shortBreak, longBreak, focusTime } =
-    useContext(modeContext);
+  const { name, changeMode, shortBreak, longBreak, focusTime } = useStore();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
