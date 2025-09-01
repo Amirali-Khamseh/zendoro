@@ -1,4 +1,4 @@
-import { useStore } from "@/context/modeContext";
+import { useStore } from "@/zustand/store";
 import { Badge } from "@/components/ui/badge";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 

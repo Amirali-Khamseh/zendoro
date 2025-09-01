@@ -5,7 +5,7 @@ import { FocusButton } from "../FocusButton";
 
 import { isNextSessionLongBreak } from "./isNextSessionLongBreak";
 import { isOneBeforeLongBreak } from "./isOneBeforeLongBreak";
-import { useStore } from "@/context/modeContext";
+import { useStore } from "@/zustand/store";
 
 type Props = {
   initialTime: number;

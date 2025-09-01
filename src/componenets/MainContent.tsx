@@ -1,6 +1,6 @@
 import { Timer } from "./Timer/Timer";
 
-import { useStore } from "@/context/modeContext";
+import { useStore } from "@/zustand/store";
 import { StatusHeader } from "./StatusHeader";
 import { StatusTopLine } from "./StatusTopLine";
 

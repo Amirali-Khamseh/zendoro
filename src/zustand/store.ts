@@ -6,15 +6,15 @@ export const modeName = {
   extended: "Extended",
   longRun: "Long run",
 } as const;
-export type ModeContextType = {
+export type ZendoroModeType = {
   //@ts-ignore
   name: modeName;
   focusTime: number;
   shortBreak: number;
   longBreak: number;
 };
-type ModeContextTypeExtended = ModeContextType & {
-  changeMode: (mode: ModeContextType) => void;
+type ModeContextTypeExtended = ZendoroModeType & {
+  changeMode: (mode: ZendoroModeType) => void;
 };
 
 export const useStore = create<ModeContextTypeExtended>((set) => ({
@@ -22,7 +22,7 @@ export const useStore = create<ModeContextTypeExtended>((set) => ({
   focusTime: modesValue[0].time.focusTime,
   shortBreak: modesValue[0].time.shortBreak,
   longBreak: modesValue[0].time.longBreak,
-  changeMode: (mode: ModeContextType) =>
+  changeMode: (mode: ZendoroModeType) =>
     set(() => ({
       ...mode,
     })),
