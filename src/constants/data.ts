@@ -1,9 +1,9 @@
-import type { ModeContextType } from "@/context/modeContext";
+import type { ZendoroModeType } from "@/zustand/store";
 import { minToMilli } from "@/lib/minToMilli";
 type ModeType = {
   title: string;
   details: string;
-  time: ModeContextType;
+  time: ZendoroModeType;
 };
 export const modesValue: ModeType[] = [
   {

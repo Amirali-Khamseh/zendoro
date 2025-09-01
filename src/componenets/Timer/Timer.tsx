@@ -1,16 +1,18 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
 import { FocusButton } from "../FocusButton";
 
 import { isNextSessionLongBreak } from "./isNextSessionLongBreak";
 import { isOneBeforeLongBreak } from "./isOneBeforeLongBreak";
-import { modeContext } from "@/context/modeContext";
+import { useStore } from "@/zustand/store";
+
 type Props = {
   initialTime: number;
 };
 
 export function Timer({ initialTime }: Props) {
+  const { focusTime, longBreak, shortBreak } = useStore();
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(false);
   const [focusSessionCount, setFocusSessionCount] = useState(0);
@@ -21,7 +23,6 @@ export function Timer({ initialTime }: Props) {
     "focus" | "longBreak" | "shortBreak"
   >("focus");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const { shortBreak, longBreak, focusTime } = useContext(modeContext);
   /* Keeping track of  Pomodor sessions*/
   const isInFocusSession = currentSessionType === "focus";
   /* Handlers */
@@ -116,8 +117,11 @@ export function Timer({ initialTime }: Props) {
     }
   }, [initialTime, focusTime, shortBreak, longBreak]);
 
+  function toggleTimerState() {
+    setIsRunning((prev) => !prev);
+  }
   return (
-    <div className="w-[400px] h-[250px] rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-400 to-blue-200  ">
+    <div className="w-[400px]  rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-500 to-blue-200  ">
       <h1 className="text-[6rem]  font-beba font-bold">
         {formatTime(timeLeft)}
       </h1>
@@ -129,16 +133,39 @@ export function Timer({ initialTime }: Props) {
         )}
         <TimerButtons type="reset" onClick={reset} />
         <TimerButtons type="skip" onClick={handleSkip} />
-        <FocusButton />
+        <FocusButton
+          isRunning={isRunning}
+          timeLeft={timeLeft}
+          toggleTimerState={toggleTimerState}
+        />
       </div>
 
-      <div className="text-sm mb-2 text-white">
-        Focus Sessions: {focusSessionCount} | Next:{" "}
-        {isNextSessionLongBreak(focusSessionCount) && focusSessionCount > 0
-          ? "Long Break"
-          : isOneBeforeLongBreak(focusSessionCount)
-            ? "Long Break after this"
-            : "Short Break"}
+      {/* Next State  & Session Count*/}
+      <div className="flex gap-4 mt-4 w-full">
+        <div className="flex flex-col justify-between items-center bg-white/15 rounded-2xl p-2 flex-1">
+          <div className="text-white text-xs font-semibold uppercase tracking-wide mb-1">
+            NEXT UP
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs">
+              {isNextSessionLongBreak(focusSessionCount) &&
+              focusSessionCount > 0
+                ? "Long Break"
+                : isOneBeforeLongBreak(focusSessionCount)
+                  ? "Long Break after this"
+                  : "Short Break"}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex flex-col justify-between items-center bg-white/15 rounded-2xl p-2 flex-1">
+          <div className="text-white text-xs font-semibold uppercase tracking-wide mb-1">
+            Session Count
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs">#{focusSessionCount}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
