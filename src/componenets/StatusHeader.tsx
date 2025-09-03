@@ -1,9 +1,9 @@
-import { useStore } from "@/zustand/store";
+import { useModeStore } from "@/zustand/modeStore";
 import { Badge } from "@/components/ui/badge";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 
 export function StatusHeader() {
-  const { focusTime, shortBreak, longBreak } = useStore();
+  const { focusTime, shortBreak, longBreak } = useModeStore();
 
   return (
     <div className="flex gap-12 ">

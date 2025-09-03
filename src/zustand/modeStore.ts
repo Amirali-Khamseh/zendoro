@@ -13,11 +13,12 @@ export type ZendoroModeType = {
   shortBreak: number;
   longBreak: number;
 };
-type ModeContextTypeExtended = ZendoroModeType & {
+
+type ZendoroModeTypeHelpers = ZendoroModeType & {
   changeMode: (mode: ZendoroModeType) => void;
 };
 
-export const useStore = create<ModeContextTypeExtended>((set) => ({
+export const useModeStore = create<ZendoroModeTypeHelpers>((set) => ({
   name: modesValue[0].time.name,
   focusTime: modesValue[0].time.focusTime,
   shortBreak: modesValue[0].time.shortBreak,

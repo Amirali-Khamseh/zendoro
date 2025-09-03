@@ -31,6 +31,9 @@ export function Sidebar() {
             </RadioGroup>
           </AccordionContent>
         </AccordionItem>
+        <AccordionItem value="item-2">Habbit Tracker </AccordionItem>
+        <AccordionItem value="item-2">Reminder </AccordionItem>
+        <AccordionItem value="item-2">Weekly Planner </AccordionItem>
       </Accordion>
     </section>
   );

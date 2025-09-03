@@ -5,14 +5,14 @@ import { FocusButton } from "../FocusButton";
 
 import { isNextSessionLongBreak } from "./isNextSessionLongBreak";
 import { isOneBeforeLongBreak } from "./isOneBeforeLongBreak";
-import { useStore } from "@/zustand/store";
+import { useModeStore } from "@/zustand/modeStore";
 
 type Props = {
   initialTime: number;
 };
 
 export function Timer({ initialTime }: Props) {
-  const { focusTime, longBreak, shortBreak } = useStore();
+  const { focusTime, longBreak, shortBreak } = useModeStore();
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(false);
   const [focusSessionCount, setFocusSessionCount] = useState(0);

@@ -1,4 +1,4 @@
-import type { ZendoroModeType } from "@/zustand/store";
+import type { ZendoroModeType } from "@/zustand/modeStore";
 import { minToMilli } from "@/lib/minToMilli";
 type ModeType = {
   title: string;

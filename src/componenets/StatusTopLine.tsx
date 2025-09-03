@@ -6,13 +6,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useStore } from "@/zustand/store";
+import { useModeStore } from "@/zustand/modeStore";
 import { Button } from "@/components/ui/button";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 import { minToMilli } from "@/lib/minToMilli";
 
 export function StatusTopLine() {
-  const { name, changeMode, shortBreak, longBreak, focusTime } = useStore();
+  const { name, changeMode, shortBreak, longBreak, focusTime } = useModeStore();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
