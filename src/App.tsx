@@ -5,7 +5,7 @@ import { Sidebar } from "./componenets/Sidebar";
 function App() {
   return (
     <main
-      className="w-100vw  h-screen bg-gradient-to-t from-slate-900 via-blue-950 to-indigo-900
+      className="w-100vw  min-h-screen bg-gradient-to-t from-slate-900 via-blue-950 to-indigo-900
 "
     >
       {/* <Header /> */}

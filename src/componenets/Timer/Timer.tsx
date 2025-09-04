@@ -122,7 +122,7 @@ export function Timer({ initialTime }: Props) {
   }
   return (
     <div className="w-[400px]  rounded-xl flex  flex-col items-center p-6 bg-gradient-to-r from-blue-500 to-blue-200  ">
-      <h1 className="text-[6rem]  font-beba font-bold">
+      <h1 className="text-[6rem]  font-beba font-bold text-white">
         {formatTime(timeLeft)}
       </h1>
       <div className="  flex gap-2">

@@ -13,7 +13,6 @@ import { minToMilli } from "@/lib/minToMilli";
 
 export function StatusTopLine() {
   const { name, changeMode, shortBreak, longBreak, focusTime } = useModeStore();
-
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function handleSumbit(e: React.FormEvent<HTMLFormElement>) {

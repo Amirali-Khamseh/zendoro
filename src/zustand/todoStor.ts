@@ -2,6 +2,8 @@ import { create } from "zustand";
 
 export type Todo = {
   title: string;
+  description: string;
+  status: "TODO" | "In Progress" | "Done" | "Kill";
   dueDate: Date | null;
 };
 
