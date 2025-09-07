@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export type Todo = {
+  id: string;
   title: string;
   description: string;
   status: "TODO" | "In Progress" | "Done" | "Kill";
@@ -10,10 +11,11 @@ export type Todo = {
 type TodoStore = {
   todos: Todo[];
   addTodo: (todo: Todo) => void;
-  updateTodo: (index: number, updated: Todo) => void;
-  deleteTodo: (index: number) => void;
+  updateTodo: (id: string, updated: Todo) => void;
+  deleteTodo: (id: string) => void;
   clearTodos: () => void;
 };
+
 export const useTodoStore = create<TodoStore>((set) => ({
   todos: [],
 
@@ -22,14 +24,14 @@ export const useTodoStore = create<TodoStore>((set) => ({
       todos: [...state.todos, todo],
     })),
 
-  updateTodo: (index, updated) =>
+  updateTodo: (id, updated) =>
     set((state) => ({
-      todos: state.todos.map((t, i) => (i === index ? updated : t)),
+      todos: state.todos.map((todo) => (todo.id === id ? updated : todo)),
     })),
 
-  deleteTodo: (index) =>
+  deleteTodo: (id) =>
     set((state) => ({
-      todos: state.todos.filter((_, i) => i !== index),
+      todos: state.todos.filter((todo) => todo.id !== id),
     })),
 
   clearTodos: () => set({ todos: [] }),

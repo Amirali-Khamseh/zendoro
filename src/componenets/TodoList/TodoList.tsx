@@ -1,8 +1,16 @@
-import { Todo } from "./Todo";
-import { useTodoStore } from "@/zustand/todoStor";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Todo from "./Todo";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { ChevronDownIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -10,254 +18,135 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Calendar, Plus } from "lucide-react";
-import { format } from "date-fns";
-import { useState } from "react";
+import { useTodoStore } from "@/zustand/todoStore";
+import { v4 as uuidv4 } from "uuid";
 
 export default function TodoList() {
-  const todos = useTodoStore((state) => state.todos);
-  const addTodo = useTodoStore((state) => state.addTodo);
-  const deleteTodo = useTodoStore((state) => state.deleteTodo);
-  const updateTodo = useTodoStore((state) => state.updateTodo);
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [status, setStatus] = useState<string>("");
+  const { addTodo, todos } = useTodoStore();
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState<Date>();
-  const [status, setStatus] = useState("TODO");
-
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-  const [editDueDate, setEditDueDate] = useState<Date>();
-  const [editStatus, setEditStatus] = useState("TODO");
-
-  function handleAddTodo(e: React.FormEvent) {
+  function formHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!title.trim()) return;
+    const formData = new FormData(e.currentTarget);
+    if (!status) {
+      alert("Please select a status");
+      return;
+    }
+
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+
+    if (!title.trim()) {
+      alert("Please enter a title");
+      return;
+    }
+
     addTodo({
-      title,
-      description,
-      dueDate: dueDate || null,
+      id: uuidv4(),
+      title: title.trim(),
+      description: description?.trim() || "",
+      dueDate: date || null,
       status: status as "TODO" | "In Progress" | "Done" | "Kill",
     });
-    setTitle("");
-    setDescription("");
-    setDueDate(undefined);
-    setStatus("TODO");
-  }
 
-  function handleEditTodo(index: number) {
-    const todo = todos[index];
-    setEditingIndex(index);
-    setEditTitle(todo.title);
-    setEditDescription(todo.description || "");
-    setEditDueDate(todo.dueDate || undefined);
-    setEditStatus(todo.status);
-  }
-
-  function handleUpdateTodo(e: React.FormEvent) {
-    e.preventDefault();
-    if (editingIndex === null || !editTitle.trim()) return;
-
-    updateTodo(editingIndex, {
-      title: editTitle,
-      description: editDescription,
-      dueDate: editDueDate || null,
-      status: editStatus as "TODO" | "In Progress" | "Done" | "Kill",
-    });
-
-    setEditingIndex(null);
-    setEditTitle("");
-    setEditDescription("");
-    setEditDueDate(undefined);
-    setEditStatus("TODO");
-  }
-
-  function handleCancelEdit() {
-    setEditingIndex(null);
-    setEditTitle("");
-    setEditDescription("");
-    setEditDueDate(undefined);
-    setEditStatus("TODO");
+    e.currentTarget.reset();
+    setDate(undefined);
+    setStatus("");
+    setOpen(false);
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6">
-      {editingIndex !== null && (
-        <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/50">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-semibold">Edit Todo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleUpdateTodo} className="space-y-4">
-              <div className="space-y-3">
-                <Input
-                  type="text"
-                  placeholder="What needs to be done?"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  className="text-base"
-                  required
-                />
-                <Input
-                  type="text"
-                  placeholder="Add a description (optional)"
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  className="text-sm"
-                />
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal text-sm bg-transparent"
-                        >
-                          <Calendar className="mr-2 h-4 w-4" />
-                          {editDueDate
-                            ? format(editDueDate, "PPP")
-                            : "Pick a date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent
-                          mode="single"
-                          selected={editDueDate}
-                          onSelect={setEditDueDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <Select value={editStatus} onValueChange={setEditStatus}>
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="TODO">Todo</SelectItem>
-                      <SelectItem value="In Progress">In Progress</SelectItem>
-                      <SelectItem value="Done">Done</SelectItem>
-                      <SelectItem value="Kill">Kill</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button type="submit" className="flex-1">
-                  Update Todo
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCancelEdit}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      {editingIndex === null && (
-        <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-semibold">
-              Add New Todo
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleAddTodo} className="space-y-4">
-              <div className="space-y-3">
-                <Input
-                  type="text"
-                  placeholder="What needs to be done?"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="text-base"
-                  required
-                />
-                <Input
-                  type="text"
-                  placeholder="Add a description (optional)"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="text-sm"
-                />
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal text-sm bg-transparent"
-                        >
-                          <Calendar className="mr-2 h-4 w-4" />
-                          {dueDate ? format(dueDate, "PPP") : "Pick a date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent
-                          mode="single"
-                          selected={dueDate}
-                          onSelect={setDueDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <Select value={status} onValueChange={setStatus}>
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="TODO">Todo</SelectItem>
-                      <SelectItem value="In Progress">In Progress</SelectItem>
-                      <SelectItem value="Done">Done</SelectItem>
-                      <SelectItem value="Kill">Kill</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <Button type="submit" className="w-full">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Todo
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      {todos.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <div className="text-muted-foreground">
-              <div className="text-lg font-medium mb-2">No todos yet</div>
-              <div className="text-sm">
-                Create your first todo to get started!
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {todos.map((todo, idx) => (
-            <Todo
-              key={idx}
-              {...todo}
-              onDelete={() => deleteTodo(idx)}
-              onEdit={() => handleEditTodo(idx)}
+    <div>
+      <form onSubmit={formHandler}>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              type="text"
+              placeholder="Title"
+              name="title"
+              id="title"
+              required
             />
-          ))}
+          </div>
+
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              name="description"
+              placeholder="What should be done"
+              maxLength={150}
+              id="description"
+            />
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="date" className="px-1">
+              Select the due date
+            </Label>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  id="date"
+                  type="button"
+                  className="w-48 justify-between font-normal"
+                >
+                  {date ? date.toLocaleDateString() : "Select date"}
+                  <ChevronDownIcon />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-auto overflow-hidden p-0"
+                align="start"
+              >
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  captionLayout="dropdown"
+                  onSelect={(date) => {
+                    setDate(date);
+                    setOpen(false);
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          <div>
+            <Label htmlFor="status">Status</Label>
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger className="w-[180px]" id="status">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="TODO">TODO</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Done">Done</SelectItem>
+                <SelectItem value="Kill">Kill</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button type="submit" className="w-full">
+            Add Todo
+          </Button>
         </div>
-      )}
+      </form>
+
+      {todos.length >= 1 &&
+        todos.map((todo) => (
+          <Todo
+            key={todo.id}
+            id={todo.id}
+            description={todo.description}
+            title={todo.title}
+            dueDate={todo.dueDate}
+            status={todo.status}
+          />
+        ))}
     </div>
   );
 }
