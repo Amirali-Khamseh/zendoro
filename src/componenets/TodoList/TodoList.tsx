@@ -30,11 +30,6 @@ export default function TodoList() {
   function formHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    if (!status) {
-      alert("Please select a status");
-      return;
-    }
-
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
 
@@ -58,33 +53,44 @@ export default function TodoList() {
   }
 
   return (
-    <div>
-      <form onSubmit={formHandler}>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              type="text"
-              placeholder="Title"
-              name="title"
-              id="title"
-              required
-            />
-          </div>
+    <div className="max-w-lg mx-auto mt-4 space-y-4">
+      {/* Form Card */}
+      <form
+        onSubmit={formHandler}
+        className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm"
+      >
+        <div>
+          <Label htmlFor="title" className="text-sm text-gray-600">
+            Title
+          </Label>
+          <Input
+            type="text"
+            placeholder="Enter task title"
+            name="title"
+            id="title"
+            required
+            className="mt-1 w-full"
+          />
+        </div>
 
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              name="description"
-              placeholder="What should be done"
-              maxLength={150}
-              id="description"
-            />
-          </div>
+        <div>
+          <Label htmlFor="description" className="text-sm text-gray-600">
+            Description
+          </Label>
+          <Textarea
+            name="description"
+            placeholder="What should be done?"
+            maxLength={150}
+            id="description"
+            className="mt-1 w-full resize-none"
+          />
+        </div>
 
-          <div className="flex flex-col gap-3">
-            <Label htmlFor="date" className="px-1">
-              Select the due date
+        {/* Date & Status in one row */}
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <Label htmlFor="date" className="text-sm text-gray-600">
+              Due Date
             </Label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
@@ -92,10 +98,10 @@ export default function TodoList() {
                   variant="outline"
                   id="date"
                   type="button"
-                  className="w-48 justify-between font-normal"
+                  className="mt-1 w-full justify-between font-normal"
                 >
                   {date ? date.toLocaleDateString() : "Select date"}
-                  <ChevronDownIcon />
+                  <ChevronDownIcon className="h-4 w-4 opacity-70" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent
@@ -115,11 +121,13 @@ export default function TodoList() {
             </Popover>
           </div>
 
-          <div>
-            <Label htmlFor="status">Status</Label>
-            <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="w-[180px]" id="status">
-                <SelectValue placeholder="Status" />
+          <div className="flex-1">
+            <Label htmlFor="status" className="text-sm text-gray-600">
+              Status
+            </Label>
+            <Select value={status} onValueChange={setStatus} required>
+              <SelectTrigger className="mt-1 w-full" id="status">
+                <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="TODO">TODO</SelectItem>
@@ -129,24 +137,31 @@ export default function TodoList() {
               </SelectContent>
             </Select>
           </div>
-
-          <Button type="submit" className="w-full">
-            Add Todo
-          </Button>
         </div>
+
+        <Button
+          type="submit"
+          className="w-full bg-gradient-to-r from-blue-500 to-blue-200"
+        >
+          Add Todo
+        </Button>
       </form>
 
-      {todos.length >= 1 &&
-        todos.map((todo) => (
-          <Todo
-            key={todo.id}
-            id={todo.id}
-            description={todo.description}
-            title={todo.title}
-            dueDate={todo.dueDate}
-            status={todo.status}
-          />
-        ))}
+      {/* Todo List */}
+      {todos.length > 0 && (
+        <div className="space-y-3">
+          {todos.map((todo) => (
+            <Todo
+              key={todo.id}
+              id={todo.id}
+              description={todo.description}
+              title={todo.title}
+              dueDate={todo.dueDate}
+              status={todo.status}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
