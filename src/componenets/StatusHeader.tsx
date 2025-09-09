@@ -7,13 +7,13 @@ export function StatusHeader() {
 
   return (
     <div className="flex gap-12 ">
-      <Badge variant="outline" className="text-white">
+      <Badge variant="outline" className="">
         Focus Time : {milliSecToMin(focusTime)}
       </Badge>
-      <Badge variant="outline" className="text-white">
+      <Badge variant="outline" className="">
         Short Break : {milliSecToMin(shortBreak)}
       </Badge>
-      <Badge variant="outline" className="text-white">
+      <Badge variant="outline" className="">
         Long Break : {milliSecToMin(longBreak)}
       </Badge>
     </div>
