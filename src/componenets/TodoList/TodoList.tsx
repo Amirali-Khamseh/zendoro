@@ -1,11 +1,10 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Todo from "./Todo";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { useTodoStore } from "@/zustand/todoStore";
 import { v4 as uuidv4 } from "uuid";
+import TodoComponent from "./Todo";
 
 export default function TodoList() {
   const [open, setOpen] = useState(false);
@@ -53,113 +53,139 @@ export default function TodoList() {
   }
 
   return (
-    <div className="max-w-lg mx-auto mt-4 space-y-4">
-      {/* Form Card */}
+    <div className="max-w-2xl mx-auto mt-6 space-y-4">
       <form
         onSubmit={formHandler}
-        className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm"
+        className="relative overflow-hidden rounded-xl  bg-stone-200/80 p-5 shadow-lg border border-slate-200/60 backdrop-blur-sm"
       >
-        <div>
-          <Label htmlFor="title" className="text-sm text-gray-600">
-            Title
-          </Label>
-          <Input
-            type="text"
-            placeholder="Enter task title"
-            name="title"
-            id="title"
-            required
-            className="mt-1 w-full"
-          />
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
 
-        <div>
-          <Label htmlFor="description" className="text-sm text-gray-600">
-            Description
-          </Label>
-          <Textarea
-            name="description"
-            placeholder="What should be done?"
-            maxLength={150}
-            id="description"
-            className="mt-1 w-full resize-none"
-          />
-        </div>
-
-        {/* Date & Status in one row */}
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <Label htmlFor="date" className="text-sm text-gray-600">
-              Due Date
+        <div className="relative space-y-4">
+          <div className="space-y-1">
+            <Label
+              htmlFor="title"
+              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+            >
+              Title
             </Label>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date"
-                  type="button"
-                  className="mt-1 w-full justify-between font-normal"
-                >
-                  {date ? date.toLocaleDateString() : "Select date"}
-                  <ChevronDownIcon className="h-4 w-4 opacity-70" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden p-0"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  captionLayout="dropdown"
-                  onSelect={(date) => {
-                    setDate(date);
-                    setOpen(false);
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="flex-1">
-            <Label htmlFor="status" className="text-sm text-gray-600">
-              Status
-            </Label>
-            <Select value={status} onValueChange={setStatus} required>
-              <SelectTrigger className="mt-1 w-full" id="status">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="TODO">TODO</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Done">Done</SelectItem>
-                <SelectItem value="Kill">Kill</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <Button
-          type="submit"
-          className="w-full bg-gradient-to-r from-blue-500 to-blue-200"
-        >
-          Add Todo
-        </Button>
-      </form>
-
-      {/* Todo List */}
-      {todos.length > 0 && (
-        <div className="space-y-3">
-          {todos.map((todo) => (
-            <Todo
-              key={todo.id}
-              id={todo.id}
-              description={todo.description}
-              title={todo.title}
-              dueDate={todo.dueDate}
-              status={todo.status}
+            <Input
+              type="text"
+              placeholder="Enter task title"
+              name="title"
+              id="title"
+              required
+              className="h-9 bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm"
             />
-          ))}
+          </div>
+
+          <div className="space-y-1">
+            <Label
+              htmlFor="description"
+              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+            >
+              Description
+            </Label>
+            <Textarea
+              name="description"
+              placeholder="What should be done?"
+              maxLength={150}
+              id="description"
+              className="h-9 bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none"
+            />
+          </div>
+
+          <div className="flex gap-3 items-center justify-center">
+            <div className="flex-1 space-y-1">
+              <Label
+                htmlFor="date"
+                className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+              >
+                Due Date
+              </Label>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    id="date"
+                    type="button"
+                    className="h-9 w-full justify-between font-normal bg-white/80 border-slate-200 hover:bg-white text-sm"
+                  >
+                    {date ? date.toLocaleDateString() : "Select date"}
+                    <ChevronDownIcon className="h-3 w-3 opacity-70" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto overflow-hidden p-0"
+                  align="start"
+                >
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    captionLayout="dropdown"
+                    onSelect={(date) => {
+                      setDate(date);
+                      setOpen(false);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="flex-1 space-y-1">
+              <Label
+                htmlFor="status"
+                className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+              >
+                Status
+              </Label>
+              <Select value={status} onValueChange={setStatus} required>
+                <SelectTrigger
+                  className="h-9 w-full bg-white/80 border-slate-200 hover:bg-white text-sm"
+                  id="status"
+                >
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="TODO">TODO</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="Done">Done</SelectItem>
+                  <SelectItem value="Kill">Kill</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button
+              type="submit"
+              className=" mt-4 h-9 px-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-200 text-sm font-medium"
+            >
+              <PlusIcon className="h-3 w-3 mr-1" />
+              Add
+            </Button>
+          </div>
+        </div>
+      </form>
+      {todos.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 px-1">
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider px-2">
+              Tasks ({todos.length})
+            </span>
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
+          </div>
+
+          <div className="space-y-2">
+            {todos.map((todo) => (
+              <TodoComponent
+                key={todo.id}
+                id={todo.id}
+                description={todo.description}
+                title={todo.title}
+                dueDate={todo.dueDate}
+                status={todo.status}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
