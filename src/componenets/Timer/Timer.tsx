@@ -102,21 +102,24 @@ export function Timer({ initialTime }: Props) {
     longBreak,
     currentSessionType,
   ]);
-  /* Sync the initialTime with Context value and update session type */
+  /* Sync the initialTime with store value and update session type */
   useEffect(() => {
-    setTimeLeft(initialTime);
-    setIsRunning(false);
-
-    // Update the current session type based on the new initialTime
-    if (initialTime === focusTime) {
-      setCurrentSessionType("focus");
-    } else if (initialTime === shortBreak) {
-      setCurrentSessionType("shortBreak");
-    } else if (initialTime === longBreak) {
-      setCurrentSessionType("longBreak");
+    if (currentSessionType === "focus") {
+      setTimeLeft(focusTime);
     }
-  }, [initialTime, focusTime, shortBreak, longBreak]);
+  }, [focusTime]);
 
+  useEffect(() => {
+    if (currentSessionType === "shortBreak") {
+      setTimeLeft(shortBreak);
+    }
+  }, [shortBreak]);
+
+  useEffect(() => {
+    if (currentSessionType === "longBreak") {
+      setTimeLeft(longBreak);
+    }
+  }, [longBreak]);
   function toggleTimerState() {
     setIsRunning((prev) => !prev);
   }
