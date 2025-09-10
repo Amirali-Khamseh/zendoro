@@ -15,7 +15,7 @@ export function StatusHeader() {
   return (
     <div className="flex gap-4">
       {/* Focus Time */}
-      <Badge variant="outline" className="flex items-center gap-2">
+      <Badge variant="outline" className="flex items-center gap-2 text-white">
         <Button
           className="rounded-full w-8 h-8 p-0"
           onClick={() =>
@@ -46,7 +46,7 @@ export function StatusHeader() {
       </Badge>
 
       {/* Short Break */}
-      <Badge variant="outline" className="flex items-center gap-2">
+      <Badge variant="outline" className="flex items-center gap-2  text-white">
         <Button
           className="rounded-full w-8 h-8 p-0"
           onClick={() =>
@@ -77,7 +77,7 @@ export function StatusHeader() {
       </Badge>
 
       {/* Long Break */}
-      <Badge variant="outline" className="flex items-center gap-2">
+      <Badge variant="outline" className="flex items-center gap-2  text-white">
         <Button
           className="rounded-full w-8 h-8 p-0"
           onClick={() =>

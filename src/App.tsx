@@ -6,11 +6,7 @@ function App() {
   return (
     <main className="w-screen min-h-screen relative overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="relative h-full w-full bg-red [&>div]:absolute [&>div]:h-full [&>div]:w-full [&>div]:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [&>div]:[background-size:16px_16px] [&>div]:[mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]">
-          <div></div>
-        </div>
-      </div>
+      <div className="absolute inset-0 -z-10 bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]"></div>
 
       {/* Layout */}
       <div className="flex w-full h-full">

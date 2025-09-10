@@ -63,9 +63,9 @@ export function StatusTopLine() {
   return (
     <Popover>
       <PopoverTrigger className="w-[400px] flex items-center justify-center gap-4 font-beba font-medium text-2xl  cursor-pointer">
-        <span className="flex-1 h-[0.5px] bg-black" />
-        <span>{name}</span>
-        <span className="flex-1 h-[0.5px] bg-black" />
+        <span className="flex-1 h-[0.5px] bg-white" />
+        <span className="text-white">{name}</span>
+        <span className="flex-1 h-[0.5px] bg-white" />
       </PopoverTrigger>
 
       <PopoverContent className="w-80">
