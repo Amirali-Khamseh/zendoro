@@ -7,16 +7,16 @@ type Props = {
 };
 
 const icons = {
-  play: <Play color="black" fill="black" key="play" />,
-  pause: <Pause color="black" fill="black" key="pause" />,
-  reset: <TimerReset color="black" key="reset" />,
-  skip: <SkipForward color="black" fill="black" key="skip" />,
-  focus: <Fullscreen color="black" fill="black" key="focus" />,
+  play: <Play color="white" fill="white" key="play" />,
+  pause: <Pause color="white" fill="white" key="pause" />,
+  reset: <TimerReset color="white" key="reset" />,
+  skip: <SkipForward color="white" fill="white" key="skip" />,
+  focus: <Fullscreen color="white" fill="white" key="focus" />,
 };
 export function TimerButtons({ type, onClick }: Props) {
   return (
     <Button
-      className="w-[40px] h-[40px] rounded-full bg-white cursor-pointer hover:bg-slate-600"
+      className="w-[40px] h-[40px] rounded-full bg-transparent cursor-pointer hover:bg-slate-600 border-2"
       onClick={onClick}
     >
       {icons[type]}

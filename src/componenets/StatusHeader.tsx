@@ -15,9 +15,9 @@ export function StatusHeader() {
   return (
     <div className="flex gap-4">
       {/* Focus Time */}
-      <Badge variant="outline" className="flex items-center gap-2 text-white">
+      <Badge variant="outline" className="flex items-center gap-2 text-white ">
         <Button
-          className="rounded-full w-8 h-8 p-0"
+          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
           onClick={() =>
             changeMode({
               name,
@@ -31,7 +31,7 @@ export function StatusHeader() {
         </Button>
         Focus Time : {milliSecToMin(focusTime)}
         <Button
-          className="rounded-full w-8 h-8 p-0"
+          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
           onClick={() =>
             changeMode({
               name,
@@ -48,7 +48,7 @@ export function StatusHeader() {
       {/* Short Break */}
       <Badge variant="outline" className="flex items-center gap-2  text-white">
         <Button
-          className="rounded-full w-8 h-8 p-0"
+          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
           onClick={() =>
             changeMode({
               name,
@@ -62,7 +62,7 @@ export function StatusHeader() {
         </Button>
         Short Break : {milliSecToMin(shortBreak)}
         <Button
-          className="rounded-full w-8 h-8 p-0"
+          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
           onClick={() =>
             changeMode({
               name,
@@ -79,7 +79,7 @@ export function StatusHeader() {
       {/* Long Break */}
       <Badge variant="outline" className="flex items-center gap-2  text-white">
         <Button
-          className="rounded-full w-8 h-8 p-0"
+          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
           onClick={() =>
             changeMode({
               name,
@@ -93,7 +93,7 @@ export function StatusHeader() {
         </Button>
         Long Break : {milliSecToMin(longBreak)}
         <Button
-          className="rounded-full w-8 h-8 p-0"
+          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
           onClick={() =>
             changeMode({
               name,
