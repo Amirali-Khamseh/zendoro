@@ -10,7 +10,9 @@ export default function SessionCount({
           Session Count
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-white text-sm font-bold">#{sessionCount}</span>
+          <span className="text-white  font-bold font-beba">
+            #{sessionCount}
+          </span>
         </div>
       </div>
     </div>

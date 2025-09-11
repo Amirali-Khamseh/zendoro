@@ -4,108 +4,111 @@ import { milliSecToMin } from "@/lib/miliSecToMin";
 import { Button } from "@/components/ui/button";
 import { minToMilli } from "@/lib/minToMilli";
 
+function TimeBadge({
+  label,
+  value,
+  onDecrease,
+  onIncrease,
+}: {
+  label: string;
+  value: number;
+  onDecrease: () => void;
+  onIncrease: () => void;
+}) {
+  return (
+    <Badge
+      variant="outline"
+      className="flex flex-col items-center gap-1 text-white text-sm px-3 py-2"
+    >
+      <h3 className="text-xs">{label}</h3>
+      <div className="flex items-center gap-1">
+        <Button
+          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg"
+          onClick={onDecrease}
+        >
+          -
+        </Button>
+        <span className="text-sm">{milliSecToMin(value)}</span>
+        <Button
+          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg"
+          onClick={onIncrease}
+        >
+          +
+        </Button>
+      </div>
+    </Badge>
+  );
+}
+
 export function StatusHeader() {
   const { name, focusTime, shortBreak, longBreak, changeMode } = useModeStore();
 
-  const safeChange = (value: number) => {
-    const minValue = minToMilli(1); // 1 minute in ms
-    return value < minValue ? minValue : value;
-  };
+  const safeChange = (value: number) => Math.max(value, minToMilli(1));
 
   return (
-    <div className="flex gap-4">
-      {/* Focus Time */}
-      <Badge variant="outline" className="flex items-center gap-2 text-white ">
-        <Button
-          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
-          onClick={() =>
-            changeMode({
-              name,
-              focusTime: focusTime + minToMilli(1),
-              shortBreak,
-              longBreak,
-            })
-          }
-        >
-          +
-        </Button>
-        Focus Time : {milliSecToMin(focusTime)}
-        <Button
-          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
-          onClick={() =>
-            changeMode({
-              name,
-              focusTime: safeChange(focusTime - minToMilli(1)),
-              shortBreak,
-              longBreak,
-            })
-          }
-        >
-          -
-        </Button>
-      </Badge>
+    <div className="flex gap-15">
+      <TimeBadge
+        label="Focus Time"
+        value={focusTime}
+        onDecrease={() =>
+          changeMode({
+            name,
+            focusTime: safeChange(focusTime - minToMilli(1)),
+            shortBreak,
+            longBreak,
+          })
+        }
+        onIncrease={() =>
+          changeMode({
+            name,
+            focusTime: focusTime + minToMilli(1),
+            shortBreak,
+            longBreak,
+          })
+        }
+      />
 
-      {/* Short Break */}
-      <Badge variant="outline" className="flex items-center gap-2  text-white">
-        <Button
-          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
-          onClick={() =>
-            changeMode({
-              name,
-              focusTime,
-              shortBreak: shortBreak + minToMilli(1),
-              longBreak,
-            })
-          }
-        >
-          +
-        </Button>
-        Short Break : {milliSecToMin(shortBreak)}
-        <Button
-          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
-          onClick={() =>
-            changeMode({
-              name,
-              focusTime,
-              shortBreak: safeChange(shortBreak - minToMilli(1)),
-              longBreak,
-            })
-          }
-        >
-          -
-        </Button>
-      </Badge>
+      <TimeBadge
+        label="Short Break"
+        value={shortBreak}
+        onDecrease={() =>
+          changeMode({
+            name,
+            focusTime,
+            shortBreak: safeChange(shortBreak - minToMilli(1)),
+            longBreak,
+          })
+        }
+        onIncrease={() =>
+          changeMode({
+            name,
+            focusTime,
+            shortBreak: shortBreak + minToMilli(1),
+            longBreak,
+          })
+        }
+      />
 
-      {/* Long Break */}
-      <Badge variant="outline" className="flex items-center gap-2  text-white">
-        <Button
-          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
-          onClick={() =>
-            changeMode({
-              name,
-              focusTime,
-              shortBreak,
-              longBreak: longBreak + minToMilli(1),
-            })
-          }
-        >
-          +
-        </Button>
-        Long Break : {milliSecToMin(longBreak)}
-        <Button
-          className="rounded-full w-8 h-8 p-0 bg-transparent text-2xl"
-          onClick={() =>
-            changeMode({
-              name,
-              focusTime,
-              shortBreak,
-              longBreak: safeChange(longBreak - minToMilli(1)),
-            })
-          }
-        >
-          -
-        </Button>
-      </Badge>
+      <TimeBadge
+        label="Long Break"
+        value={longBreak}
+        onDecrease={() =>
+          changeMode({
+            name,
+            focusTime,
+            shortBreak,
+            longBreak: safeChange(longBreak - minToMilli(1)),
+          })
+        }
+        onIncrease={() =>
+          changeMode({
+            name,
+            focusTime,
+            shortBreak,
+            longBreak: longBreak + minToMilli(1),
+          })
+        }
+      />
     </div>
   );
 }
