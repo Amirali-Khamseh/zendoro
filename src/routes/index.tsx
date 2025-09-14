@@ -1,12 +1,14 @@
-import { Timer } from "./Timer/Timer";
-
+import { StatusHeader } from "@/componenets/StatusHeader";
+import { StatusTopLine } from "@/componenets/StatusTopLine";
+import { Timer } from "@/componenets/Timer/Timer";
 import { useModeStore } from "@/zustand/modeStore";
-import { StatusHeader } from "./StatusHeader";
-import { StatusTopLine } from "./StatusTopLine";
-//TODO move the TODO ina separate page
-// import TodoList from "./TodoList/TodoList";
+import { createFileRoute } from "@tanstack/react-router";
 
-export function MainContent() {
+export const Route = createFileRoute("/")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
   const { focusTime } = useModeStore();
   return (
     <section className="w-full flex p-4">
@@ -15,9 +17,6 @@ export function MainContent() {
         <StatusHeader />
         <Timer initialTime={focusTime} />
       </div>
-      {/* <div className="w-1/2">
-        <TodoList />
-      </div> */}
     </section>
   );
 }
