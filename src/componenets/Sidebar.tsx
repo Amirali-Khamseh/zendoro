@@ -32,7 +32,7 @@ export function Sidebar() {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
-          <Link to="/">Habbit Tracker</Link>
+          <Link to="/habit-tracker">Habit Tracker</Link>
         </AccordionItem>
         <AccordionItem value="item-3">
           <Link to="/todo">TODOs</Link>
