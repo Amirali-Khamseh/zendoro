@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodoRouteImport } from './routes/todo'
+import { Route as HabitTrackerRouteImport } from './routes/habit-tracker'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TodoRoute = TodoRouteImport.update({
   id: '/todo',
   path: '/todo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HabitTrackerRoute = HabitTrackerRouteImport.update({
+  id: '/habit-tracker',
+  path: '/habit-tracker',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +31,31 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/habit-tracker': typeof HabitTrackerRoute
   '/todo': typeof TodoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/habit-tracker': typeof HabitTrackerRoute
   '/todo': typeof TodoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/habit-tracker': typeof HabitTrackerRoute
   '/todo': typeof TodoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/todo'
+  fullPaths: '/' | '/habit-tracker' | '/todo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/todo'
-  id: '__root__' | '/' | '/todo'
+  to: '/' | '/habit-tracker' | '/todo'
+  id: '__root__' | '/' | '/habit-tracker' | '/todo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HabitTrackerRoute: typeof HabitTrackerRoute
   TodoRoute: typeof TodoRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/todo'
       fullPath: '/todo'
       preLoaderRoute: typeof TodoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/habit-tracker': {
+      id: '/habit-tracker'
+      path: '/habit-tracker'
+      fullPath: '/habit-tracker'
+      preLoaderRoute: typeof HabitTrackerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HabitTrackerRoute: HabitTrackerRoute,
   TodoRoute: TodoRoute,
 }
 export const routeTree = rootRouteImport
