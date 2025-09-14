@@ -1,13 +1,22 @@
+import { StatusHeader } from "@/componenets/StatusHeader";
+import { StatusTopLine } from "@/componenets/StatusTopLine";
+import { Timer } from "@/componenets/Timer/Timer";
+import { useModeStore } from "@/zustand/modeStore";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: RouteComponent,
 });
 
-function Index() {
+function RouteComponent() {
+  const { focusTime } = useModeStore();
   return (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
-    </div>
+    <section className="w-full flex p-4">
+      <div className="w-full flex flex-col gap-4 items-center ">
+        <StatusTopLine />
+        <StatusHeader />
+        <Timer initialTime={focusTime} />
+      </div>
+    </section>
   );
 }
