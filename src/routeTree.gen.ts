@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodoRouteImport } from './routes/todo'
+import { Route as ReminderRouteImport } from './routes/reminder'
 import { Route as HabitTrackerRouteImport } from './routes/habit-tracker'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TodoRoute = TodoRouteImport.update({
   id: '/todo',
   path: '/todo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReminderRoute = ReminderRouteImport.update({
+  id: '/reminder',
+  path: '/reminder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HabitTrackerRoute = HabitTrackerRouteImport.update({
@@ -32,30 +38,34 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/habit-tracker': typeof HabitTrackerRoute
+  '/reminder': typeof ReminderRoute
   '/todo': typeof TodoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/habit-tracker': typeof HabitTrackerRoute
+  '/reminder': typeof ReminderRoute
   '/todo': typeof TodoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/habit-tracker': typeof HabitTrackerRoute
+  '/reminder': typeof ReminderRoute
   '/todo': typeof TodoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/habit-tracker' | '/todo'
+  fullPaths: '/' | '/habit-tracker' | '/reminder' | '/todo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/habit-tracker' | '/todo'
-  id: '__root__' | '/' | '/habit-tracker' | '/todo'
+  to: '/' | '/habit-tracker' | '/reminder' | '/todo'
+  id: '__root__' | '/' | '/habit-tracker' | '/reminder' | '/todo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HabitTrackerRoute: typeof HabitTrackerRoute
+  ReminderRoute: typeof ReminderRoute
   TodoRoute: typeof TodoRoute
 }
 
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/todo'
       fullPath: '/todo'
       preLoaderRoute: typeof TodoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reminder': {
+      id: '/reminder'
+      path: '/reminder'
+      fullPath: '/reminder'
+      preLoaderRoute: typeof ReminderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/habit-tracker': {
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HabitTrackerRoute: HabitTrackerRoute,
+  ReminderRoute: ReminderRoute,
   TodoRoute: TodoRoute,
 }
 export const routeTree = rootRouteImport
