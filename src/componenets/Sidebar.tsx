@@ -38,10 +38,7 @@ export function Sidebar() {
           <Link to="/todo">TODOs</Link>
         </AccordionItem>
         <AccordionItem value="item-4">
-          <Link to="/">Reminder</Link>
-        </AccordionItem>
-        <AccordionItem value="item-5">
-          <Link to="/">Weekly Planner</Link>
+          <Link to="/reminder">Reminder</Link>
         </AccordionItem>
       </Accordion>
     </section>

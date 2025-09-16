@@ -1,0 +1,163 @@
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Edit, Trash2, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { Reminder } from "@/zustand/reminderStore";
+
+interface ReminderListProps {
+  reminders: Reminder[];
+  onToggleComplete: (id: string) => void;
+  onEdit: (reminder: Reminder) => void;
+  onDelete: (id: string) => void;
+}
+
+export function ReminderList({
+  reminders,
+  onToggleComplete,
+  onEdit,
+  onDelete,
+}: ReminderListProps) {
+  const getPriorityColor = (priority: Reminder["priority"]) => {
+    switch (priority) {
+      case "high":
+        return "bg-foreground/20 text-foreground border-foreground/30 font-semibold";
+      case "medium":
+        return "bg-foreground/10 text-foreground border-foreground/20";
+      case "low":
+        return "bg-muted text-muted-foreground border-muted-foreground/30";
+      default:
+        return "bg-muted text-muted-foreground border-muted-foreground/30";
+    }
+  };
+
+  const sortedReminders = [...reminders].sort((a, b) => {
+    // Sort by completion status first (incomplete first)
+    if (a.completed !== b.completed) {
+      return a.completed ? 1 : -1;
+    }
+
+    // Then by priority (high to low)
+    const priorityOrder = { high: 3, medium: 2, low: 1 };
+    if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+      return priorityOrder[b.priority] - priorityOrder[a.priority];
+    }
+
+    // Finally by time
+    return a.time.localeCompare(b.time);
+  });
+
+  if (reminders.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+          <Clock className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <p className="text-muted-foreground">No reminders for this date</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Click "Add Reminder" to create one
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {sortedReminders.map((reminder) => (
+        <div
+          key={reminder.id}
+          className={cn(
+            "bg-card border rounded-lg p-4 transition-all duration-200",
+            reminder.completed && "opacity-60",
+          )}
+        >
+          <div className="flex items-start gap-3">
+            {/* Checkbox */}
+            <Checkbox
+              checked={reminder.completed}
+              onCheckedChange={() => onToggleComplete(reminder.id)}
+              className="mt-1"
+            />
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <h3
+                  className={cn(
+                    "font-medium text-card-foreground leading-tight",
+                    reminder.completed && "line-through",
+                  )}
+                >
+                  {reminder.title}
+                </h3>
+
+                {/* Priority Badge */}
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "text-xs capitalize shrink-0",
+                    getPriorityColor(reminder.priority),
+                  )}
+                >
+                  {reminder.priority}
+                </Badge>
+              </div>
+
+              {/* Description */}
+              {reminder.description && (
+                <p
+                  className={cn(
+                    "text-sm text-muted-foreground mb-2 leading-relaxed",
+                    reminder.completed && "line-through",
+                  )}
+                >
+                  {reminder.description}
+                </p>
+              )}
+
+              {/* Time and Actions */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock className="w-3 h-3" />
+                  <span>{reminder.time}</span>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEdit(reminder)}
+                    className="h-7 w-7 p-0 hover:bg-accent/20"
+                  >
+                    <Edit className="w-3 h-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDelete(reminder.id)}
+                    className="h-7 w-7 p-0 hover:bg-destructive/20 hover:text-destructive"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {/* Summary */}
+      <div className="pt-4 border-t border-border">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>
+            {reminders.filter((r) => !r.completed).length} of {reminders.length}{" "}
+            remaining
+          </span>
+          {reminders.filter((r) => r.completed).length > 0 && (
+            <span>{reminders.filter((r) => r.completed).length} completed</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
