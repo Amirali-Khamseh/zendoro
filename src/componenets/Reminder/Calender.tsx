@@ -72,7 +72,7 @@ export function Calendar({
       days.push(
         <div
           key={`empty-${i}`}
-          className="h-24 p-2 border border-border/50"
+          className="h-16 p-1 border border-border/50"
         ></div>,
       );
     }
@@ -93,7 +93,7 @@ export function Calendar({
         <div
           key={day}
           className={cn(
-            "h-24 p-2 border border-border/50 cursor-pointer transition-colors hover:bg-muted/50",
+            "h-16 p-1 border border-border/50 cursor-pointer transition-colors hover:bg-muted/50",
             isSelected && "bg-accent/20 border-accent",
             isToday && "bg-primary/10 border-primary/30",
           )}
@@ -102,7 +102,7 @@ export function Calendar({
           <div className="flex flex-col h-full">
             <span
               className={cn(
-                "text-sm font-medium mb-1",
+                "text-xs font-medium mb-0.5",
                 isSelected && "text-accent-foreground",
                 isToday && "text-primary font-bold",
               )}
@@ -110,8 +110,8 @@ export function Calendar({
               {day}
             </span>
             {hasReminders && (
-              <div className="flex-1 space-y-1">
-                {dayReminders.slice(0, 2).map((reminder, index) => (
+              <div className="flex-1 space-y-0.5">
+                {dayReminders.slice(0, 1).map((reminder) => (
                   <div
                     key={reminder.id}
                     className={cn(
@@ -128,9 +128,9 @@ export function Calendar({
                     {reminder.title}
                   </div>
                 ))}
-                {dayReminders.length > 2 && (
+                {dayReminders.length > 1 && (
                   <div className="text-xs text-muted-foreground">
-                    +{dayReminders.length - 2} more
+                    +{dayReminders.length - 1} more
                   </div>
                 )}
               </div>
@@ -146,17 +146,17 @@ export function Calendar({
   return (
     <div className="w-full">
       {/* Calendar Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <Button
           variant="outline"
           size="sm"
           onClick={() => navigateMonth("prev")}
-          className="h-8 w-8 p-0"
+          className="h-7 w-7 p-0"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3 w-3" />
         </Button>
 
-        <h3 className="text-lg font-semibold text-foreground">
+        <h3 className="text-base font-semibold text-foreground">
           {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
         </h3>
 
@@ -164,18 +164,18 @@ export function Calendar({
           variant="outline"
           size="sm"
           onClick={() => navigateMonth("next")}
-          className="h-8 w-8 p-0"
+          className="h-7 w-7 p-0"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3 w-3" />
         </Button>
       </div>
 
       {/* Day Names Header */}
-      <div className="grid grid-cols-7 gap-0 mb-2">
+      <div className="grid grid-cols-7 gap-0 mb-1">
         {dayNames.map((day) => (
           <div
             key={day}
-            className="h-8 flex items-center justify-center text-sm font-medium text-muted-foreground border-b border-border"
+            className="h-6 flex items-center justify-center text-xs font-medium text-muted-foreground border-b border-border"
           >
             {day}
           </div>
@@ -187,17 +187,17 @@ export function Calendar({
         {renderCalendarDays()}
       </div>
 
-      <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
+      <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-foreground/20 rounded border border-foreground/30"></div>
+          <div className="w-2 h-2 bg-foreground/20 rounded border border-foreground/30"></div>
           <span>High Priority</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-foreground/10 rounded border border-foreground/20"></div>
+          <div className="w-2 h-2 bg-foreground/10 rounded border border-foreground/20"></div>
           <span>Medium Priority</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-muted rounded border border-muted-foreground/30"></div>
+          <div className="w-2 h-2 bg-muted rounded border border-muted-foreground/30"></div>
           <span>Low Priority</span>
         </div>
       </div>

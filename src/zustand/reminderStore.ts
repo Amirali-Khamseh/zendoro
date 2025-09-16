@@ -128,26 +128,36 @@ export const useReminderStore = create<ReminderStore>()(
     }),
     {
       name: "reminder-storage",
-      // Custom serialization to handle Date objects
-      serialize: (state) =>
-        JSON.stringify({
-          ...state.state,
-          reminders: state.state.reminders.map((r) => ({
-            ...r,
-            date: r.date.toISOString(),
-          })),
-          selectedDate: state.state.selectedDate.toISOString(),
-        }),
-      deserialize: (str) => {
-        const parsed = JSON.parse(str);
-        return {
-          ...parsed,
-          reminders: parsed.reminders.map((r: any) => ({
-            ...r,
-            date: new Date(r.date),
-          })),
-          selectedDate: new Date(parsed.selectedDate),
-        };
+      storage: {
+        getItem: (name: string) => {
+          const str = localStorage.getItem(name);
+          if (!str) return null;
+          const parsed = JSON.parse(str);
+          return {
+            state: {
+              ...parsed,
+              reminders: parsed.reminders.map(
+                (r: Reminder & { date: string }) => ({
+                  ...r,
+                  date: new Date(r.date),
+                }),
+              ),
+              selectedDate: new Date(parsed.selectedDate),
+            },
+          };
+        },
+        setItem: (name: string, value: { state: ReminderStore }) => {
+          const serialized = {
+            ...value.state,
+            reminders: value.state.reminders.map((r) => ({
+              ...r,
+              date: r.date.toISOString(),
+            })),
+            selectedDate: value.state.selectedDate.toISOString(),
+          };
+          localStorage.setItem(name, JSON.stringify(serialized));
+        },
+        removeItem: (name: string) => localStorage.removeItem(name),
       },
     },
   ),

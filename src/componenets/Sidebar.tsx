@@ -40,9 +40,6 @@ export function Sidebar() {
         <AccordionItem value="item-4">
           <Link to="/reminder">Reminder</Link>
         </AccordionItem>
-        <AccordionItem value="item-5">
-          <Link to="/">Weekly Planner</Link>
-        </AccordionItem>
       </Accordion>
     </section>
   );

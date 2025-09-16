@@ -17,8 +17,15 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import type { Reminder } from "@/zustand/reminderStore";
 
 interface ReminderFormProps {
@@ -31,7 +38,7 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    date: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
+    date: new Date(),
     time: "09:00",
     priority: "medium" as Reminder["priority"],
   });
@@ -43,7 +50,7 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
       setFormData({
         title: reminder.title,
         description: reminder.description || "",
-        date: reminder.date.toISOString().split("T")[0],
+        date: reminder.date,
         time: reminder.time,
         priority: reminder.priority,
       });
@@ -79,7 +86,7 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
     const reminderData: Omit<Reminder, "id"> = {
       title: formData.title.trim(),
       description: formData.description.trim() || undefined,
-      date: new Date(formData.date),
+      date: formData.date,
       time: formData.time,
       priority: formData.priority,
       completed: reminder?.completed || false,
@@ -88,9 +95,8 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
     onSave(reminderData);
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | Date) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -108,6 +114,13 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
         return "text-muted-foreground";
     }
   };
+
+  // Generate time options
+  const timeOptions = Array.from({ length: 24 * 4 }, (_, i) => {
+    const hour = Math.floor(i / 4);
+    const minute = (i % 4) * 15;
+    return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+  });
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -158,41 +171,65 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
           {/* Date and Time Row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date" className="text-sm font-medium">
-                Date *
-              </Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => handleInputChange("date", e.target.value)}
-                className={cn(
-                  errors.date &&
-                    "border-destructive focus-visible:ring-destructive",
-                )}
-              />
+              <Label className="text-sm font-medium">Date *</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.date && "text-muted-foreground",
+                      errors.date &&
+                        "border-destructive focus-visible:ring-destructive",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.date ? (
+                      format(formData.date, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={formData.date}
+                    onSelect={(date) => date && handleInputChange("date", date)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
               {errors.date && (
                 <p className="text-sm text-destructive">{errors.date}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="time" className="text-sm font-medium">
-                Time *
-              </Label>
-              <div className="relative">
-                <Input
-                  id="time"
-                  type="time"
-                  value={formData.time}
-                  onChange={(e) => handleInputChange("time", e.target.value)}
+              <Label className="text-sm font-medium">Time *</Label>
+              <Select
+                value={formData.time}
+                onValueChange={(value) => handleInputChange("time", value)}
+              >
+                <SelectTrigger
                   className={cn(
                     errors.time &&
                       "border-destructive focus-visible:ring-destructive",
                   )}
-                />
-                <Clock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-              </div>
+                >
+                  <div className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    <SelectValue placeholder="Select time" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {timeOptions.map((time) => (
+                    <SelectItem key={time} value={time}>
+                      {time}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.time && (
                 <p className="text-sm text-destructive">{errors.time}</p>
               )}

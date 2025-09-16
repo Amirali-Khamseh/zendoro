@@ -78,7 +78,7 @@ function RouteComponent() {
   const overdueReminders = getOverdueReminders();
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <div className="p-4 overflow-x-hidden">
       <header className="mb-8">
         <h1 className="text-4xl font-bold text-foreground mb-2">
           Reminder App
@@ -87,24 +87,24 @@ function RouteComponent() {
           Stay organized and never miss important tasks
         </p>
 
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 overflow-x-hidden">
           <Badge
             variant="outline"
-            className="flex items-center gap-2 px-3 py-1"
+            className="flex items-center gap-2 px-3 py-1  text-white"
           >
             <CalendarIcon className="w-4 h-4" />
             <span>{totalReminders} Total</span>
           </Badge>
           <Badge
             variant="outline"
-            className="flex items-center gap-2 px-3 py-1"
+            className="flex items-center gap-2 px-3 py-1  text-white"
           >
             <CheckCircle2 className="w-4 h-4 text-primary" />
             <span>{completedReminders} Completed</span>
           </Badge>
           <Badge
             variant="outline"
-            className="flex items-center gap-2 px-3 py-1"
+            className="flex items-center gap-2 px-3 py-1  text-white"
           >
             <Clock className="w-4 h-4 text-accent" />
             <span>{todayReminders} Today</span>
@@ -112,7 +112,7 @@ function RouteComponent() {
           {overdueReminders > 0 && (
             <Badge
               variant="destructive"
-              className="flex items-center gap-2 px-3 py-1"
+              className="flex items-center gap-2 px-3 py-1  text-white"
             >
               <Clock className="w-4 h-4" />
               <span>{overdueReminders} Overdue</span>
@@ -121,7 +121,7 @@ function RouteComponent() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-x-hidden">
         {/* Calendar Section */}
         <div className="lg:col-span-2">
           <div className="bg-card rounded-lg border p-6">
