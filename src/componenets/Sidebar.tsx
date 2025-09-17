@@ -1,46 +1,154 @@
-import { RadioGroup } from "@/components/ui/radio-group";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-} from "@/components/ui/accordion";
-import { modesValue } from "@/constants/data";
-import { Mode } from "./Modes";
+import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
+import { useSidebarStore } from "@/zustand/sidebarStore";
+import {
+  Timer,
+  Target,
+  CheckSquare,
+  Bell,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
 export function Sidebar() {
+  const { isCollapsed, toggleSidebar } = useSidebarStore();
+
   return (
-    <section className="w-full h-screen  border-gray-300 p-4">
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full"
-        defaultValue="item-1"
+    <aside
+      className={`${isCollapsed ? "w-16" : "w-64"} h-screen border-r bg-background transition-all duration-300 ease-in-out relative`}
+    >
+      {/* Toggle Button on Border */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleSidebar}
+        className="absolute -right-3 top-6 h-6 w-6 rounded-full border bg-background shadow-md hover:shadow-lg z-10"
       >
-        <AccordionItem value="item-1">
-          <Link to="/">Focus Time</Link>
-          <AccordionContent className="flex flex-col gap-4 text-balance">
-            <RadioGroup defaultValue="option-one">
-              {modesValue.map((mode) => (
-                <Mode
-                  key={mode.title}
-                  title={mode.title}
-                  details={mode.details}
-                  time={mode.time}
-                />
-              ))}
-            </RadioGroup>
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-          <Link to="/habit-tracker">Habit Tracker</Link>
-        </AccordionItem>
-        <AccordionItem value="item-3">
-          <Link to="/todo">TODOs</Link>
-        </AccordionItem>
-        <AccordionItem value="item-4">
-          <Link to="/reminder">Reminder</Link>
-        </AccordionItem>
-      </Accordion>
-    </section>
+        {isCollapsed ? (
+          <ChevronRight className="h-3 w-3" />
+        ) : (
+          <ChevronLeft className="h-3 w-3" />
+        )}
+      </Button>
+
+      <div className="p-4">
+        {/* Header */}
+        {!isCollapsed && (
+          <div className="mb-6">
+            <h1 className="text-lg font-semibold">Zendoro</h1>
+            <p className="text-sm text-muted-foreground">
+              Focus & Productivity
+            </p>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <nav className={`space-y-2 ${isCollapsed ? "mt-16" : ""}`}>
+          {isCollapsed ? (
+            // Collapsed view - only icons
+            <div className="flex flex-col items-center space-y-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                title="Focus Time"
+                asChild
+              >
+                <Link to="/">
+                  <Timer className="h-5 w-5" />
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                title="Habit Tracker"
+                asChild
+              >
+                <Link to="/habit-tracker">
+                  <Target className="h-5 w-5" />
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                title="TODOs"
+                asChild
+              >
+                <Link to="/todo">
+                  <CheckSquare className="h-5 w-5" />
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                title="Reminder"
+                asChild
+              >
+                <Link to="/reminder">
+                  <Bell className="h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            // Expanded view - full content
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/">
+                  <Timer className="h-4 w-4 mr-2" />
+                  Focus Time
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/habit-tracker">
+                  <Target className="h-4 w-4 mr-2" />
+                  Habit Tracker
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/todo">
+                  <CheckSquare className="h-4 w-4 mr-2" />
+                  TODOs
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/reminder">
+                  <Bell className="h-4 w-4 mr-2" />
+                  Reminder
+                </Link>
+              </Button>
+            </>
+          )}
+        </nav>
+      </div>
+    </aside>
   );
 }
