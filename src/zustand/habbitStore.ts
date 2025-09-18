@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type Habit = {
   id: string;
@@ -14,19 +15,28 @@ type HabitStore = {
   clearHabit: () => void;
 };
 
-export const useHabitStore = create<HabitStore>((set) => ({
-  habits: [],
-  addHabit: (habit) =>
-    set((state) => ({
-      habits: [...state.habits, habit],
-    })),
-  updateHabit: (id, updated) =>
-    set((state) => ({
-      habits: state.habits.map((habit) => (habit.id === id ? updated : habit)),
-    })),
-  deleteHabit: (id) =>
-    set((state) => ({
-      habits: state.habits.filter((habit) => habit.id !== id),
-    })),
-  clearHabit: () => set({ habits: [] }),
-}));
+export const useHabitStore = create<HabitStore>()(
+  persist(
+    (set) => ({
+      habits: [],
+      addHabit: (habit) =>
+        set((state) => ({
+          habits: [...state.habits, habit],
+        })),
+      updateHabit: (id, updated) =>
+        set((state) => ({
+          habits: state.habits.map((habit) =>
+            habit.id === id ? updated : habit,
+          ),
+        })),
+      deleteHabit: (id) =>
+        set((state) => ({
+          habits: state.habits.filter((habit) => habit.id !== id),
+        })),
+      clearHabit: () => set({ habits: [] }),
+    }),
+    {
+      name: "habit-storage",
+    },
+  ),
+);
