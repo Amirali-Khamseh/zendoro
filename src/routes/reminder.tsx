@@ -9,6 +9,7 @@ import { QuickAddForm } from "@/componenets/Reminder/QuickAddForm";
 import { ReminderForm } from "@/componenets/Reminder/ReminderForm";
 import { Calendar } from "@/componenets/Reminder/Calender";
 import { ReminderList } from "@/componenets/Reminder/ReminderList";
+import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 
 export const Route = createFileRoute("/reminder")({
   component: RouteComponent,
@@ -129,13 +130,10 @@ function RouteComponent() {
               <h2 className="text-2xl font-semibold text-card-foreground">
                 Calendar
               </h2>
-              <Button
-                onClick={() => setShowForm(true)}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
+              <GradientButton onClick={() => setShowForm(true)} className="h-9">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Reminder
-              </Button>
+              </GradientButton>
             </div>
             <Calendar
               selectedDate={selectedDate}

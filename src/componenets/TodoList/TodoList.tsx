@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, Plus } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -20,6 +20,7 @@ import {
 import { useTodoStore } from "@/zustand/todoStore";
 import { v4 as uuidv4 } from "uuid";
 import TodoComponent from "./Todo";
+import { GradientButton } from "../customUIComponenets/CustomButton";
 
 export default function TodoList() {
   const [open, setOpen] = useState(false);
@@ -93,7 +94,6 @@ export default function TodoList() {
               className="h-9 bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none"
             />
           </div>
-
           <div className="flex gap-3 items-center justify-center">
             <div className="flex-1 space-y-1">
               <Label
@@ -153,14 +153,9 @@ export default function TodoList() {
                 </SelectContent>
               </Select>
             </div>
-
-            <Button
-              type="submit"
-              className=" mt-4 h-9 px-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-200 text-sm font-medium"
-            >
-              <PlusIcon className="h-3 w-3 mr-1" />
-              Add
-            </Button>
+            <GradientButton type="submit">
+              <Plus className="w-4 h-5" />
+            </GradientButton>
           </div>
         </div>
       </form>

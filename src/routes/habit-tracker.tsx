@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 
@@ -9,6 +9,7 @@ import { useHabitStore, type Habit } from "@/zustand/habbitStore";
 
 import { DAYS_OF_WEEK } from "@/constants/data";
 import HabitComponenet from "@/componenets/HabitTracker/Habit";
+import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 
 export const Route = createFileRoute("/habit-tracker")({
   component: RouteComponent,
@@ -45,7 +46,7 @@ function RouteComponent() {
           <CardTitle>Add New Habit</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <Input
               placeholder="Enter a new habit..."
               value={newHabitName}
@@ -53,9 +54,13 @@ function RouteComponent() {
               onKeyPress={(e) => e.key === "Enter" && addHabitHandler()}
               className="flex-1"
             />
-            <Button onClick={addHabitHandler}>
-              <Plus className="w-4 h-4" />
-            </Button>
+            <GradientButton
+              onClick={addHabitHandler}
+              size="icon"
+              className="h-10 w-10"
+            >
+              <Plus className="h-4 w-4" />
+            </GradientButton>
           </div>
         </CardContent>
       </Card>

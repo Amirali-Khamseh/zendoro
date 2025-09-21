@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useModeStore } from "@/zustand/modeStore";
-import { Button } from "@/components/ui/button";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 import { minToMilli } from "@/lib/minToMilli";
+import { GradientButton } from "./customUIComponenets/CustomButton";
 
 export function StatusTopLine() {
   const { name, changeMode, shortBreak, longBreak, focusTime } = useModeStore();
@@ -157,13 +157,7 @@ export function StatusTopLine() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            variant="outline"
-            className=" bg-slate-900 text-white"
-          >
-            Save
-          </Button>
+          <GradientButton type="submit">Save</GradientButton>
         </form>
       </PopoverContent>
     </Popover>

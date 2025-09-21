@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, Plus } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -21,6 +21,7 @@ import {
 import { useTodoStore } from "@/zustand/todoStore";
 import { v4 as uuidv4 } from "uuid";
 import TodoComponent from "@/componenets/TodoList/Todo";
+import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 
 export const Route = createFileRoute("/todo")({
   component: RouteComponent,
@@ -158,15 +159,71 @@ function RouteComponent() {
                 </SelectContent>
               </Select>
             </div>
-
-            <Button
-              type="submit"
-              className=" mt-4 h-9 px-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-200 text-sm font-medium"
-            >
-              <PlusIcon className="h-3 w-3 mr-1" />
-              Add
-            </Button>
           </div>
+        </div>
+        <div className="flex gap-3 items-end">
+          <div className="flex-1 space-y-1">
+            <Label
+              htmlFor="date"
+              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+            >
+              Due Date
+            </Label>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  id="date"
+                  type="button"
+                  className="h-9 w-full justify-between font-normal bg-white/80 border-slate-200 hover:bg-white text-sm"
+                >
+                  {date ? date.toLocaleDateString() : "Select date"}
+                  <ChevronDownIcon className="h-3 w-3 opacity-70" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-auto overflow-hidden p-0"
+                align="start"
+              >
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  captionLayout="dropdown"
+                  onSelect={(date) => {
+                    setDate(date);
+                    setOpen(false);
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          <div className="flex-1 ">
+            <Label
+              htmlFor="status"
+              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+            >
+              Status
+            </Label>
+            <Select value={status} onValueChange={setStatus} required>
+              <SelectTrigger
+                className="h-9 w-full bg-white/80 border-slate-200 hover:bg-white text-sm"
+                id="status"
+              >
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="TODO">TODO</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Done">Done</SelectItem>
+                <SelectItem value="Kill">Kill</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <GradientButton type="submit" className="h-9 ">
+            <Plus className="w-4 h-4" />
+          </GradientButton>
         </div>
       </form>
       {todos.length > 0 && (
