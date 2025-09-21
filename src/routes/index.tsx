@@ -5,12 +5,15 @@ import { ModeSelection } from "@/componenets/ModeSelection";
 import { useModeStore } from "@/zustand/modeStore";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  useDocumentTitle("Focus Timer");
+
   const { focusTime } = useModeStore();
   const [timerKey, setTimerKey] = useState(0);
 

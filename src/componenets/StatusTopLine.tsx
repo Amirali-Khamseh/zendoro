@@ -62,10 +62,10 @@ export function StatusTopLine() {
 
   return (
     <Popover>
-      <PopoverTrigger className="w-[400px] flex items-center justify-center gap-4 font-beba font-medium text-2xl  cursor-pointer">
-        <span className="flex-1 h-[0.5px] bg-white" />
-        <span className="text-white">{name}</span>
-        <span className="flex-1 h-[0.5px] bg-white" />
+      <PopoverTrigger className="w-[400px] flex items-center justify-center gap-2 font-beba font-medium text-2xl cursor-pointer">
+        <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />
+        <span className="text-white px-2">{name}</span>
+        <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />
       </PopoverTrigger>
 
       <PopoverContent className="w-80">

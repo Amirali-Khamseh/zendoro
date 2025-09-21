@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, CalendarIcon, CheckCircle2, Clock } from "lucide-react";
 import { useReminderStore } from "@/zustand/reminderStore";
@@ -10,12 +8,15 @@ import { ReminderForm } from "@/componenets/Reminder/ReminderForm";
 import { Calendar } from "@/componenets/Reminder/Calender";
 import { ReminderList } from "@/componenets/Reminder/ReminderList";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export const Route = createFileRoute("/reminder")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  useDocumentTitle("Reminders");
+
   const {
     reminders,
     selectedDate,
@@ -81,10 +82,8 @@ function RouteComponent() {
   return (
     <div className="p-4 overflow-x-hidden">
       <header className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">
-          Reminder App
-        </h1>
-        <p className="text-muted-foreground mb-4">
+        <h1 className="text-4xl font-bold text-white mb-2">Reminder App</h1>
+        <p className="text-white/70 mb-4">
           Stay organized and never miss important tasks
         </p>
 
@@ -125,44 +124,77 @@ function RouteComponent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-x-hidden">
         {/* Calendar Section */}
         <div className="lg:col-span-2">
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-semibold text-card-foreground">
-                Calendar
-              </h2>
-              <GradientButton onClick={() => setShowForm(true)} className="h-9">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Reminder
-              </GradientButton>
+          <div className="relative overflow-hidden rounded-lg p-6">
+            {/* Background Glow Effects */}
+            <div
+              className="absolute bottom-0 left-[-20%] right-0 top-[-10%] 
+                        h-[500px] w-[500px] rounded-full 
+                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
+            ></div>
+            <div
+              className="absolute bottom-0 right-[-20%] top-[-10%] 
+                        h-[500px] w-[500px] rounded-full 
+                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
+            ></div>
+
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
+
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold text-white">Calendar</h2>
+                <GradientButton
+                  onClick={() => setShowForm(true)}
+                  className="h-9"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Reminder
+                </GradientButton>
+              </div>
+              <Calendar
+                selectedDate={selectedDate}
+                onDateSelect={setSelectedDate}
+                reminders={reminders}
+              />
             </div>
-            <Calendar
-              selectedDate={selectedDate}
-              onDateSelect={setSelectedDate}
-              reminders={reminders}
-            />
           </div>
         </div>
 
         {/* Reminders Section */}
         <div className="lg:col-span-1">
-          <div className="bg-card rounded-lg border p-6">
-            <h2 className="text-2xl font-semibold text-card-foreground mb-4">
-              Reminders for {selectedDate.toLocaleDateString()}
-            </h2>
+          <div className="relative overflow-hidden rounded-lg p-6">
+            {/* Background Glow Effects */}
+            <div
+              className="absolute bottom-0 left-[-20%] right-0 top-[-10%] 
+                        h-[500px] w-[500px] rounded-full 
+                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
+            ></div>
+            <div
+              className="absolute bottom-0 right-[-20%] top-[-10%] 
+                        h-[500px] w-[500px] rounded-full 
+                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
+            ></div>
 
-            <div className="mb-4">
-              <QuickAddForm
-                selectedDate={selectedDate}
-                onAdd={handleAddReminder}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
+
+            <div className="relative z-10">
+              <h2 className="text-2xl font-semibold text-white mb-4">
+                Reminders for {selectedDate.toLocaleDateString()}
+              </h2>
+
+              <div className="mb-4">
+                <QuickAddForm
+                  selectedDate={selectedDate}
+                  onAdd={handleAddReminder}
+                />
+              </div>
+
+              <ReminderList
+                reminders={getRemindersByDate(selectedDate)}
+                onToggleComplete={handleToggleComplete}
+                onEdit={handleEditReminder}
+                onDelete={handleDeleteReminder}
               />
             </div>
-
-            <ReminderList
-              reminders={getRemindersByDate(selectedDate)}
-              onToggleComplete={handleToggleComplete}
-              onEdit={handleEditReminder}
-              onDelete={handleDeleteReminder}
-            />
           </div>
         </div>
       </div>

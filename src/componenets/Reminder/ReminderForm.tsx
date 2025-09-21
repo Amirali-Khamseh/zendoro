@@ -105,13 +105,13 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
-        return "text-foreground font-semibold";
+        return "text-white font-semibold";
       case "medium":
-        return "text-foreground";
+        return "text-white";
       case "low":
-        return "text-muted-foreground";
+        return "text-white";
       default:
-        return "text-muted-foreground";
+        return "text-white";
     }
   };
 
@@ -144,6 +144,7 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
               onChange={(e) => handleInputChange("title", e.target.value)}
               placeholder="Enter reminder title..."
               className={cn(
+                "text-white placeholder:text-white/50",
                 errors.title &&
                   "border-destructive focus-visible:ring-destructive",
               )}
@@ -164,7 +165,7 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Add a description (optional)..."
               rows={3}
-              className="resize-none"
+              className="resize-none text-white placeholder:text-white/50"
             />
           </div>
 
@@ -222,9 +223,13 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
                     <SelectValue placeholder="Select time" />
                   </div>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-white">
                   {timeOptions.map((time) => (
-                    <SelectItem key={time} value={time}>
+                    <SelectItem
+                      key={time}
+                      value={time}
+                      className="text-white focus:text-white"
+                    >
                       {time}
                     </SelectItem>
                   ))}
@@ -246,26 +251,32 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">
+              <SelectContent className="text-white">
+                <SelectItem value="low" className="text-white focus:text-white">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-muted border border-muted-foreground/30"></div>
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
                     <span className={getPriorityColor("low")}>
                       Low Priority
                     </span>
                   </div>
                 </SelectItem>
-                <SelectItem value="medium">
+                <SelectItem
+                  value="medium"
+                  className="text-white focus:text-white"
+                >
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-foreground/10 border border-foreground/20"></div>
+                    <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
                     <span className={getPriorityColor("medium")}>
                       Medium Priority
                     </span>
                   </div>
                 </SelectItem>
-                <SelectItem value="high">
+                <SelectItem
+                  value="high"
+                  className="text-white focus:text-white"
+                >
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-foreground/20 border border-foreground/30"></div>
+                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
                     <span className={getPriorityColor("high")}>
                       High Priority
                     </span>

@@ -217,7 +217,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-roboto;
   }
 }
 
@@ -328,8 +328,16 @@
   font-weight: 200 700;
   src: url("../public/fonts/BebasNeue-Regular.ttf") format("truetype");
 }
+@font-face {
+  font-family: "roboto";
+  font-style: normal;
+  font-weight: 200 300 400 500 600 700;
+  src: url("../public/fonts/Roboto-VariableFont_wdth,wght.ttf")
+    format("truetype");
+}
 @theme {
   --font-beba: "beba", sans-serif;
+  --font-roboto: "roboto", sans-serif;
 }
 
 /* Custom animations for sidebar */

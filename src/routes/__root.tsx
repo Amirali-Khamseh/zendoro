@@ -2,10 +2,13 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Sidebar } from "@/componenets/Sidebar";
 import { useSidebarStore } from "@/zustand/sidebarStore";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import "../index.css";
 
 const RootLayout = () => {
   const { isCollapsed } = useSidebarStore();
+
+  useDocumentTitle("Zendoro");
 
   return (
     <main className="w-full min-h-screen relative overflow-x-hidden">

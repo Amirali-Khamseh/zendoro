@@ -102,9 +102,9 @@ export function Calendar({
           <div className="flex flex-col h-full">
             <span
               className={cn(
-                "text-xs font-medium mb-0.5",
-                isSelected && "text-accent-foreground",
-                isToday && "text-primary font-bold",
+                "text-xs font-medium mb-0.5 text-white",
+                isSelected && "text-white font-bold",
+                isToday && "text-white font-bold",
               )}
             >
               {day}
@@ -115,13 +115,10 @@ export function Calendar({
                   <div
                     key={reminder.id}
                     className={cn(
-                      "text-xs px-1 py-0.5 rounded truncate",
-                      reminder.priority === "high" &&
-                        "bg-foreground/20 text-foreground font-semibold",
-                      reminder.priority === "medium" &&
-                        "bg-foreground/10 text-foreground",
-                      reminder.priority === "low" &&
-                        "bg-muted text-muted-foreground",
+                      "text-xs px-1 py-0.5 rounded truncate text-white font-medium",
+                      reminder.priority === "high" && "bg-red-500/80",
+                      reminder.priority === "medium" && "bg-yellow-500/80",
+                      reminder.priority === "low" && "bg-green-500/80",
                       reminder.completed && "opacity-60 line-through",
                     )}
                   >
@@ -129,7 +126,7 @@ export function Calendar({
                   </div>
                 ))}
                 {dayReminders.length > 1 && (
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-white/60">
                     +{dayReminders.length - 1} more
                   </div>
                 )}
@@ -156,7 +153,7 @@ export function Calendar({
           <ChevronLeft className="h-3 w-3" />
         </Button>
 
-        <h3 className="text-base font-semibold text-foreground">
+        <h3 className="text-base font-semibold text-white">
           {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
         </h3>
 
@@ -175,7 +172,7 @@ export function Calendar({
         {dayNames.map((day) => (
           <div
             key={day}
-            className="h-6 flex items-center justify-center text-xs font-medium text-muted-foreground border-b border-border"
+            className="h-6 flex items-center justify-center text-xs font-medium text-white/70 border-b border-border"
           >
             {day}
           </div>
@@ -187,17 +184,17 @@ export function Calendar({
         {renderCalendarDays()}
       </div>
 
-      <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
+      <div className="flex items-center gap-3 mt-3 text-xs text-white/70">
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 bg-foreground/20 rounded border border-foreground/30"></div>
+          <div className="w-2 h-2 bg-red-400 rounded"></div>
           <span>High Priority</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 bg-foreground/10 rounded border border-foreground/20"></div>
+          <div className="w-2 h-2 bg-orange-300 rounded"></div>
           <span>Medium Priority</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 bg-muted rounded border border-muted-foreground/30"></div>
+          <div className="w-2 h-2 bg-green-300 rounded"></div>
           <span>Low Priority</span>
         </div>
       </div>

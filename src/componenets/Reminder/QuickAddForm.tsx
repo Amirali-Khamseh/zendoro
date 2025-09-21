@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Clock } from "lucide-react";
 import type { Reminder } from "@/zustand/reminderStore";
 import { cn } from "@/lib/utils";
+import { GradientButton } from "../customUIComponenets/CustomButton";
 
 interface QuickAddFormProps {
   selectedDate: Date;
@@ -50,7 +51,7 @@ export function QuickAddForm({
         variant="outline"
         onClick={() => setIsExpanded(true)}
         className={cn(
-          "w-full justify-start text-muted-foreground hover:text-foreground",
+          "w-full justify-start text-white/70 hover:text-white",
           className,
         )}
       >
@@ -68,7 +69,7 @@ export function QuickAddForm({
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Enter reminder title..."
-          className="flex-1"
+          className="flex-1 text-white placeholder:text-white/50"
           autoFocus
         />
         <Button type="submit" size="sm" disabled={!title.trim()}>
@@ -76,21 +77,19 @@ export function QuickAddForm({
         </Button>
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+      <div className="flex items-center gap-2 text-xs text-white/60">
         <Clock className="w-3 h-3" />
         <span>Default: 9:00 AM, Medium priority</span>
-        <Button
+        <GradientButton
           type="button"
-          variant="ghost"
-          size="sm"
           onClick={() => {
             setTitle("");
             setIsExpanded(false);
           }}
-          className="ml-auto h-6 px-2 text-xs"
+          className="ml-auto h-6 px-2 text-xs text-white/70 hover:text-white"
         >
           Cancel
-        </Button>
+        </GradientButton>
       </div>
     </form>
   );

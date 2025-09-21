@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon, Plus } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   Popover,
   PopoverContent,
@@ -28,6 +29,8 @@ export const Route = createFileRoute("/todo")({
 });
 
 function RouteComponent() {
+  useDocumentTitle("Todo List");
+
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [status, setStatus] = useState<string>("");
@@ -62,15 +65,27 @@ function RouteComponent() {
     <div className="max-w-2xl mx-auto mt-6 space-y-4">
       <form
         onSubmit={formHandler}
-        className="relative overflow-hidden rounded-xl  bg-stone-200/80 p-5 shadow-lg border border-slate-200/60 backdrop-blur-sm"
+        className="relative overflow-hidden rounded-xl p-5"
       >
+        {/* Background Glow Effects */}
+        <div
+          className="absolute bottom-0 left-[-20%] right-0 top-[-10%] 
+                    h-[500px] w-[500px] rounded-full 
+                    bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
+        ></div>
+        <div
+          className="absolute bottom-0 right-[-20%] top-[-10%] 
+                    h-[500px] w-[500px] rounded-full 
+                    bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
+        ></div>
+
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
 
-        <div className="relative space-y-4">
+        <div className="relative z-10 space-y-4">
           <div className="space-y-1">
             <Label
               htmlFor="title"
-              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+              className="text-xs font-medium text-white uppercase tracking-wide"
             >
               Title
             </Label>
@@ -87,7 +102,7 @@ function RouteComponent() {
           <div className="space-y-1">
             <Label
               htmlFor="description"
-              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+              className="text-xs font-medium text-white uppercase tracking-wide"
             >
               Description
             </Label>
@@ -100,11 +115,11 @@ function RouteComponent() {
             />
           </div>
 
-          <div className="flex gap-3 items-center justify-center">
-            <div className="flex-1 space-y-1">
+          <div className="flex gap-3 items-end">
+            <div className="flex-1 ">
               <Label
                 htmlFor="date"
-                className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+                className="text-xs font-medium text-white uppercase tracking-wide"
               >
                 Due Date
               </Label>
@@ -137,10 +152,10 @@ function RouteComponent() {
               </Popover>
             </div>
 
-            <div className="flex-1 space-y-1">
+            <div className="flex-1 ">
               <Label
                 htmlFor="status"
-                className="text-xs font-medium text-slate-600 uppercase tracking-wide"
+                className="text-xs font-medium text-white uppercase tracking-wide"
               >
                 Status
               </Label>
@@ -159,71 +174,11 @@ function RouteComponent() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-        </div>
-        <div className="flex gap-3 items-end">
-          <div className="flex-1 space-y-1">
-            <Label
-              htmlFor="date"
-              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
-            >
-              Due Date
-            </Label>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date"
-                  type="button"
-                  className="h-9 w-full justify-between font-normal bg-white/80 border-slate-200 hover:bg-white text-sm"
-                >
-                  {date ? date.toLocaleDateString() : "Select date"}
-                  <ChevronDownIcon className="h-3 w-3 opacity-70" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden p-0"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  captionLayout="dropdown"
-                  onSelect={(date) => {
-                    setDate(date);
-                    setOpen(false);
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
 
-          <div className="flex-1 ">
-            <Label
-              htmlFor="status"
-              className="text-xs font-medium text-slate-600 uppercase tracking-wide"
-            >
-              Status
-            </Label>
-            <Select value={status} onValueChange={setStatus} required>
-              <SelectTrigger
-                className="h-9 w-full bg-white/80 border-slate-200 hover:bg-white text-sm"
-                id="status"
-              >
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="TODO">TODO</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Done">Done</SelectItem>
-                <SelectItem value="Kill">Kill</SelectItem>
-              </SelectContent>
-            </Select>
+            <GradientButton type="submit" className="h-9">
+              <Plus className="w-4 h-4" />
+            </GradientButton>
           </div>
-
-          <GradientButton type="submit" className="h-9 ">
-            <Plus className="w-4 h-4" />
-          </GradientButton>
         </div>
       </form>
       {todos.length > 0 && (
