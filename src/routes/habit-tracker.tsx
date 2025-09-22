@@ -44,20 +44,6 @@ function RouteComponent() {
 
       {/* Add new habit */}
       <div className="relative overflow-hidden rounded-xl p-6">
-        {/* Background Glow Effects */}
-        <div
-          className="absolute bottom-0 left-[-20%] right-0 top-[-10%] 
-                    h-[500px] w-[500px] rounded-full 
-                    bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-        ></div>
-        <div
-          className="absolute bottom-0 right-[-20%] top-[-10%] 
-                    h-[500px] w-[500px] rounded-full 
-                    bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-        ></div>
-
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
-
         <div className="relative z-10 space-y-4">
           <h3 className="text-lg font-semibold text-white">Add New Habit</h3>
           <div className="flex gap-2 items-center">

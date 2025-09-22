@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Reminder } from "@/zustand/reminderStore";
+import {
+  DAY_NAMES,
+  MONTH_NAMES,
+  REMINDER_PRIORITY_COLORS,
+} from "@/constants/data";
 
 interface CalendarProps {
   selectedDate: Date;
@@ -20,23 +25,6 @@ export function Calendar({
   const [currentMonth, setCurrentMonth] = useState(
     new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
   );
-
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -116,9 +104,12 @@ export function Calendar({
                     key={reminder.id}
                     className={cn(
                       "text-xs px-1 py-0.5 rounded truncate text-white font-medium",
-                      reminder.priority === "high" && "bg-red-500/80",
-                      reminder.priority === "medium" && "bg-yellow-500/80",
-                      reminder.priority === "low" && "bg-green-500/80",
+                      reminder.priority === "high" &&
+                        `${REMINDER_PRIORITY_COLORS.high}/80`,
+                      reminder.priority === "medium" &&
+                        `${REMINDER_PRIORITY_COLORS.medium}/80 text-black`,
+                      reminder.priority === "low" &&
+                        `${REMINDER_PRIORITY_COLORS.low}/80 text-black`,
                       reminder.completed && "opacity-60 line-through",
                     )}
                   >
@@ -154,7 +145,7 @@ export function Calendar({
         </Button>
 
         <h3 className="text-base font-semibold text-white">
-          {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+          {MONTH_NAMES[currentMonth.getMonth()]} {currentMonth.getFullYear()}
         </h3>
 
         <Button
@@ -169,7 +160,7 @@ export function Calendar({
 
       {/* Day Names Header */}
       <div className="grid grid-cols-7 gap-0 mb-1">
-        {dayNames.map((day) => (
+        {DAY_NAMES.map((day) => (
           <div
             key={day}
             className="h-6 flex items-center justify-center text-xs font-medium text-white/70 border-b border-border"
@@ -186,15 +177,21 @@ export function Calendar({
 
       <div className="flex items-center gap-3 mt-3 text-xs text-white/70">
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 bg-red-400 rounded"></div>
+          <div
+            className={`w-2 h-2 ${REMINDER_PRIORITY_COLORS.high} rounded`}
+          ></div>
           <span>High Priority</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 bg-orange-300 rounded"></div>
+          <div
+            className={`w-2 h-2 ${REMINDER_PRIORITY_COLORS.medium} rounded`}
+          ></div>
           <span>Medium Priority</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 bg-green-300 rounded"></div>
+          <div
+            className={`w-2 h-2 ${REMINDER_PRIORITY_COLORS.low} rounded`}
+          ></div>
           <span>Low Priority</span>
         </div>
       </div>

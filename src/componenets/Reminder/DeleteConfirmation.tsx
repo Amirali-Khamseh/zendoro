@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import type { Reminder } from "@/zustand/reminderStore";
 import { AlertTriangle } from "lucide-react";
+import { GradientButton } from "../customUIComponenets/CustomButton";
 
 interface DeleteConfirmationDialogProps {
   reminder: Reminder | null;
@@ -52,12 +52,12 @@ export function DeleteConfirmationDialog({
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <GradientButton type="button" onClick={onCancel}>
             Cancel
-          </Button>
-          <Button type="button" variant="destructive" onClick={onConfirm}>
+          </GradientButton>
+          <GradientButton type="button" onClick={onConfirm}>
             Delete Reminder
-          </Button>
+          </GradientButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

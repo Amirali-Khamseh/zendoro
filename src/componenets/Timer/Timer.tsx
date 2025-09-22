@@ -131,19 +131,7 @@ export function Timer({ initialTime }: Props) {
   );
 
   return (
-    <div className="relative w-[400px] rounded-xl flex flex-col items-center p-6 overflow-hidden">
-      {/* Background Glow Effects */}
-      <div
-        className="absolute bottom-0 left-[-20%] right-0 top-[-10%] 
-                  h-[500px] w-[500px] rounded-full 
-                  bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-      ></div>
-      <div
-        className="absolute bottom-0 right-[-20%] top-[-10%] 
-                  h-[500px] w-[500px] rounded-full 
-                  bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-      ></div>
-
+    <div className="relative w-[400px] rounded-xl flex flex-col items-center p-6 overflow-hidden ">
       {/* Content on top */}
       <div className="relative z-10">
         <h1 className="text-[6rem] font-beba font-bold text-white">

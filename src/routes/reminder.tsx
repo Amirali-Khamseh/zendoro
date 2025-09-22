@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Plus, CalendarIcon, CheckCircle2, Clock } from "lucide-react";
-import { useReminderStore } from "@/zustand/reminderStore";
+import { useReminderStore, type Reminder } from "@/zustand/reminderStore";
 import { DeleteConfirmationDialog } from "@/componenets/Reminder/DeleteConfirmation";
-import { QuickAddForm } from "@/componenets/Reminder/QuickAddForm";
 import { ReminderForm } from "@/componenets/Reminder/ReminderForm";
 import { Calendar } from "@/componenets/Reminder/Calender";
 import { ReminderList } from "@/componenets/Reminder/ReminderList";
@@ -39,11 +38,11 @@ function RouteComponent() {
     getRemindersByDate,
   } = useReminderStore();
 
-  const handleAddReminder = (reminder: Omit<any, "id">) => {
+  const handleAddReminder = (reminder: Omit<Reminder, "id">) => {
     addReminder(reminder);
   };
 
-  const handleUpdateReminder = (id: string, updates: Partial<any>) => {
+  const handleUpdateReminder = (id: string, updates: Partial<Reminder>) => {
     updateReminder(id, updates);
   };
 
@@ -64,7 +63,7 @@ function RouteComponent() {
     }
   };
 
-  const handleEditReminder = (reminder: any) => {
+  const handleEditReminder = (reminder: Reminder) => {
     setEditingReminder(reminder);
     setShowForm(true);
   };
@@ -125,20 +124,6 @@ function RouteComponent() {
         {/* Calendar Section */}
         <div className="lg:col-span-2">
           <div className="relative overflow-hidden rounded-lg p-6">
-            {/* Background Glow Effects */}
-            <div
-              className="absolute bottom-0 left-[-20%] right-0 top-[-10%] 
-                        h-[500px] w-[500px] rounded-full 
-                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-            ></div>
-            <div
-              className="absolute bottom-0 right-[-20%] top-[-10%] 
-                        h-[500px] w-[500px] rounded-full 
-                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-            ></div>
-
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
-
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-semibold text-white">Calendar</h2>
@@ -162,31 +147,10 @@ function RouteComponent() {
         {/* Reminders Section */}
         <div className="lg:col-span-1">
           <div className="relative overflow-hidden rounded-lg p-6">
-            {/* Background Glow Effects */}
-            <div
-              className="absolute bottom-0 left-[-20%] right-0 top-[-10%] 
-                        h-[500px] w-[500px] rounded-full 
-                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-            ></div>
-            <div
-              className="absolute bottom-0 right-[-20%] top-[-10%] 
-                        h-[500px] w-[500px] rounded-full 
-                        bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"
-            ></div>
-
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
-
             <div className="relative z-10">
               <h2 className="text-2xl font-semibold text-white mb-4">
                 Reminders for {selectedDate.toLocaleDateString()}
               </h2>
-
-              <div className="mb-4">
-                <QuickAddForm
-                  selectedDate={selectedDate}
-                  onAdd={handleAddReminder}
-                />
-              </div>
 
               <ReminderList
                 reminders={getRemindersByDate(selectedDate)}
@@ -203,6 +167,7 @@ function RouteComponent() {
       {showForm && (
         <ReminderForm
           reminder={editingReminder}
+          selectedDate={selectedDate}
           onSave={
             editingReminder
               ? (updates) => handleUpdateReminder(editingReminder.id, updates)

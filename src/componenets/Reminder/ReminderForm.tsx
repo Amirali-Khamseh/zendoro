@@ -27,18 +27,26 @@ import { CalendarIcon, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import type { Reminder } from "@/zustand/reminderStore";
+import { GradientButton } from "../customUIComponenets/CustomButton";
+import { REMINDER_PRIORITY_COLORS } from "@/constants/data";
 
 interface ReminderFormProps {
   reminder?: Reminder | null;
+  selectedDate?: Date;
   onSave: (reminder: Omit<Reminder, "id">) => void;
   onClose: () => void;
 }
 
-export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
+export function ReminderForm({
+  reminder,
+  selectedDate,
+  onSave,
+  onClose,
+}: ReminderFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    date: new Date(),
+    date: selectedDate || new Date(),
     time: "09:00",
     priority: "medium" as Reminder["priority"],
   });
@@ -54,8 +62,17 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
         time: reminder.time,
         priority: reminder.priority,
       });
+    } else if (selectedDate) {
+      // Reset form but keep the selected date when adding a new reminder
+      setFormData({
+        title: "",
+        description: "",
+        date: selectedDate,
+        time: "09:00",
+        priority: "medium",
+      });
     }
-  }, [reminder]);
+  }, [reminder, selectedDate]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -105,13 +122,13 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
-        return "text-white font-semibold";
+        return "text-red-400 font-semibold";
       case "medium":
-        return "text-white";
+        return "text-yellow-600";
       case "low":
-        return "text-white";
+        return "text-green-500";
       default:
-        return "text-white";
+        return "text-green-500";
     }
   };
 
@@ -144,7 +161,6 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
               onChange={(e) => handleInputChange("title", e.target.value)}
               placeholder="Enter reminder title..."
               className={cn(
-                "text-white placeholder:text-white/50",
                 errors.title &&
                   "border-destructive focus-visible:ring-destructive",
               )}
@@ -165,7 +181,7 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Add a description (optional)..."
               rows={3}
-              className="resize-none text-white placeholder:text-white/50"
+              className="resize-none"
             />
           </div>
 
@@ -254,7 +270,9 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
               <SelectContent className="text-white">
                 <SelectItem value="low" className="text-white focus:text-white">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    <div
+                      className={`w-2 h-2 rounded-full ${REMINDER_PRIORITY_COLORS.low}`}
+                    ></div>
                     <span className={getPriorityColor("low")}>
                       Low Priority
                     </span>
@@ -265,7 +283,9 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
                   className="text-white focus:text-white"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                    <div
+                      className={`w-2 h-2 rounded-full ${REMINDER_PRIORITY_COLORS.medium}`}
+                    ></div>
                     <span className={getPriorityColor("medium")}>
                       Medium Priority
                     </span>
@@ -276,7 +296,9 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
                   className="text-white focus:text-white"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                    <div
+                      className={`w-2 h-2 rounded-full ${REMINDER_PRIORITY_COLORS.high}`}
+                    ></div>
                     <span className={getPriorityColor("high")}>
                       High Priority
                     </span>
@@ -286,13 +308,16 @@ export function ReminderForm({ reminder, onSave, onClose }: ReminderFormProps) {
             </Select>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <DialogFooter
+            style={{ display: "flex", gap: "1rem" }}
+            className="sm:gap-0"
+          >
+            <GradientButton type="button" onClick={onClose}>
               Cancel
-            </Button>
-            <Button type="submit" className="bg-primary hover:bg-primary/90">
+            </GradientButton>
+            <GradientButton type="submit">
               {reminder ? "Update Reminder" : "Add Reminder"}
-            </Button>
+            </GradientButton>
           </DialogFooter>
         </form>
       </DialogContent>
