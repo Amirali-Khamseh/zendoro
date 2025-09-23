@@ -81,7 +81,7 @@ function RouteComponent() {
               name="title"
               id="title"
               required
-              className="h-9 bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm"
+              className="h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm"
             />
           </div>
 
@@ -97,7 +97,7 @@ function RouteComponent() {
               placeholder="What should be done?"
               maxLength={150}
               id="description"
-              className="h-9 bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none"
+              className="h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none"
             />
           </div>
 
@@ -115,7 +115,7 @@ function RouteComponent() {
                     variant="outline"
                     id="date"
                     type="button"
-                    className="h-9 w-full justify-between font-normal bg-white/80 border-slate-200 hover:bg-white text-sm"
+                    className="h-9 w-full justify-between font-normal bg-white border-slate-200 hover:bg-white text-sm"
                   >
                     {date ? date.toLocaleDateString() : "Select date"}
                     <ChevronDownIcon className="h-3 w-3 opacity-70" />
@@ -147,7 +147,7 @@ function RouteComponent() {
               </Label>
               <Select value={status} onValueChange={setStatus} required>
                 <SelectTrigger
-                  className="h-9 w-full bg-white/80 border-slate-200 hover:bg-white text-sm"
+                  className="h-9 w-full bg-white border-slate-200 hover:bg-white text-sm"
                   id="status"
                 >
                   <SelectValue placeholder="Select status" />

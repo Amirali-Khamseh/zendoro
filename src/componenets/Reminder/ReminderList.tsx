@@ -24,11 +24,11 @@ export function ReminderList({
       case "high":
         return `${REMINDER_PRIORITY_COLORS.high}/80 text-white border-red-400 font-semibold`;
       case "medium":
-        return `${REMINDER_PRIORITY_COLORS.medium}/80 text-black border-green-300`;
+        return `${REMINDER_PRIORITY_COLORS.medium}/80 text-white border-green-300`;
       case "low":
-        return `${REMINDER_PRIORITY_COLORS.low}/80 text-black border-yellow-100`;
+        return `${REMINDER_PRIORITY_COLORS.low}/80 text-white border-yellow-100`;
       default:
-        return `${REMINDER_PRIORITY_COLORS.low}/80 text-black border-yellow-100`;
+        return `${REMINDER_PRIORITY_COLORS.low}/80 text-white border-yellow-100`;
     }
   };
 

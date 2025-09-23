@@ -70,7 +70,7 @@ export function ReminderCard({
               <Badge
                 variant="outline"
                 className={cn(
-                  "text-xs capitalize",
+                  "text-xs capitalize text-white",
                   getPriorityColor(reminder.priority),
                 )}
               >
