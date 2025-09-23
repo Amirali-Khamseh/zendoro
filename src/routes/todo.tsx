@@ -65,7 +65,7 @@ function RouteComponent() {
     <div className="max-w-2xl mx-auto mt-6 space-y-4">
       <form
         onSubmit={formHandler}
-        className="relative overflow-hidden rounded-xl p-5"
+        className="relative overflow-hidden rounded-xl  py-5"
       >
         <div className="relative z-10 space-y-4">
           <div className="space-y-1">

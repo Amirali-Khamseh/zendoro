@@ -1,7 +1,7 @@
-import { RadioGroup } from "@/components/ui/radio-group";
 import { modesValue } from "@/constants/data";
-import { Mode } from "./Modes";
+
 import { useModeStore } from "@/zustand/modeStore";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ModeSelection() {
   const { name: currentMode, changeMode } = useModeStore();
@@ -14,28 +14,24 @@ export function ModeSelection() {
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Choose Focus Mode</h3>
-        <p className="text-sm text-muted-foreground">
-          Select the timer configuration that works best for you
-        </p>
-      </div>
-
-      <RadioGroup
+    <div className="">
+      <Tabs
         value={currentMode}
         onValueChange={handleModeChange}
-        className="space-y-3"
+        className="w-full"
       >
-        {modesValue.map((mode) => (
-          <Mode
-            key={mode.title}
-            title={mode.title}
-            details={mode.details}
-            time={mode.time}
-          />
-        ))}
-      </RadioGroup>
+        <TabsList className="grid w-full grid-cols-3">
+          {modesValue.map((mode) => (
+            <TabsTrigger
+              key={mode.title}
+              value={mode.time.name}
+              className="text-sm data-[state=active]:shadow-lg data-[state=active]:shadow-black/80"
+            >
+              {mode.title}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
     </div>
   );
 }

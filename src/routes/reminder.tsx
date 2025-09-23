@@ -88,22 +88,22 @@ function RouteComponent() {
 
         <div className="flex flex-wrap gap-4 overflow-x-hidden">
           <Badge
-            variant="outline"
-            className="flex items-center gap-2 px-3 py-1  text-white"
+            variant="default"
+            className="flex items-center gap-2 px-3 py-1"
           >
             <CalendarIcon className="w-4 h-4" />
             <span>{totalReminders} Total</span>
           </Badge>
           <Badge
-            variant="outline"
-            className="flex items-center gap-2 px-3 py-1  text-white"
+            variant="secondary"
+            className="flex items-center gap-2 px-3 py-1"
           >
             <CheckCircle2 className="w-4 h-4 text-primary" />
             <span>{completedReminders} Completed</span>
           </Badge>
           <Badge
-            variant="outline"
-            className="flex items-center gap-2 px-3 py-1  text-white"
+            variant="default"
+            className="flex items-center gap-2 px-3 py-1"
           >
             <Clock className="w-4 h-4 text-accent" />
             <span>{todayReminders} Today</span>
@@ -111,7 +111,7 @@ function RouteComponent() {
           {overdueReminders > 0 && (
             <Badge
               variant="destructive"
-              className="flex items-center gap-2 px-3 py-1  text-white"
+              className="flex items-center gap-2 px-3 py-1"
             >
               <Clock className="w-4 h-4" />
               <span>{overdueReminders} Overdue</span>

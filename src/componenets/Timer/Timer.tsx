@@ -131,7 +131,7 @@ export function Timer({ initialTime }: Props) {
   );
 
   return (
-    <div className="relative w-[400px] rounded-xl flex flex-col items-center p-6 overflow-hidden ">
+    <div className="relative w-[400px] rounded-xl flex flex-col items-center px-6 overflow-hidden ">
       {/* Content on top */}
       <div className="relative z-10">
         <h1 className="text-[6rem] font-beba font-bold text-white">

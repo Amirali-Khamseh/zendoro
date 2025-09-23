@@ -24,16 +24,13 @@ function RouteComponent() {
 
   return (
     <section className="w-full flex p-4 gap-8">
-      {/* Mode Selection Panel */}
-      <div className="w-80 flex-shrink-0">
-        <ModeSelection />
-      </div>
-
       {/* Timer Panel */}
       <div className="flex-1 flex flex-col gap-4 items-center">
         <StatusTopLine />
-        <StatusHeader />
+        <ModeSelection />
         <Timer key={timerKey} initialTime={focusTime} />
+
+        <StatusHeader />
       </div>
     </section>
   );

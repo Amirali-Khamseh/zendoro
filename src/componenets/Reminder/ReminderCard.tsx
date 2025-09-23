@@ -20,19 +20,6 @@ export function ReminderCard({
   onDelete,
   compact = false,
 }: ReminderCardProps) {
-  const getPriorityColor = (priority: Reminder["priority"]) => {
-    switch (priority) {
-      case "high":
-        return "bg-foreground/20 text-foreground border-foreground/30 font-semibold";
-      case "medium":
-        return "bg-foreground/10 text-foreground border-foreground/20";
-      case "low":
-        return "bg-muted text-muted-foreground border-muted-foreground/30";
-      default:
-        return "bg-muted text-muted-foreground border-muted-foreground/30";
-    }
-  };
-
   const getPriorityIcon = (priority: Reminder["priority"]) => {
     if (priority === "high") {
       return <AlertCircle className="w-3 h-3" />;
@@ -68,11 +55,8 @@ export function ReminderCard({
                 {reminder.time}
               </span>
               <Badge
-                variant="outline"
-                className={cn(
-                  "text-xs capitalize text-white",
-                  getPriorityColor(reminder.priority),
-                )}
+                variant={reminder.priority === "high" ? "destructive" : reminder.priority === "medium" ? "default" : "secondary"}
+                className="text-xs capitalize text-white"
               >
                 {reminder.priority}
               </Badge>
@@ -112,10 +96,9 @@ export function ReminderCard({
             </div>
 
             <Badge
-              variant="outline"
+              variant={reminder.priority === "high" ? "destructive" : reminder.priority === "medium" ? "default" : "secondary"}
               className={cn(
                 "text-xs capitalize shrink-0",
-                getPriorityColor(reminder.priority),
               )}
             >
               {reminder.priority}

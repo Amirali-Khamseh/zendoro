@@ -1,6 +1,4 @@
 import { useModeStore, type ZendoroModeType } from "@/zustand/modeStore";
-import { RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 
 type Props = {
@@ -32,22 +30,19 @@ export function Mode({ title, details, time }: Props) {
   return (
     <div
       className={`
-        flex items-center space-x-3 p-4 rounded-lg border transition-all duration-200 cursor-pointer
-        ${
-          isSelected
-            ? "border-primary bg-primary/5 shadow-sm"
-            : "border-border bg-background hover:bg-muted/50 hover:border-muted-foreground/20"
-        }
+      flex items-center space-x-3 p-4 rounded-lg border transition-all duration-200 cursor-pointer
+      ${
+        isSelected
+          ? "border-primary bg-primary/5 shadow-sm"
+          : "border-border bg-background hover:bg-muted/50 hover:border-muted-foreground/20"
+      }
       `}
       onClick={setContextMode}
     >
-      <RadioGroupItem
-        value={time.name}
-        id={time.name}
-        checked={isSelected}
-        className="shrink-0"
+      <div
+        className={`w-4 h-4 rounded-full border-2 shrink-0 ${isSelected ? "bg-primary border-primary" : "border-muted-foreground"}`}
       />
-      <Label htmlFor={time.name} className="flex-1 cursor-pointer">
+      <div className="flex-1 cursor-pointer">
         <div className="space-y-1">
           <div
             className={`font-medium ${isSelected ? "text-primary" : "text-foreground"}`}
@@ -58,7 +53,7 @@ export function Mode({ title, details, time }: Props) {
             {displayDetails}
           </div>
         </div>
-      </Label>
+      </div>
     </div>
   );
 }

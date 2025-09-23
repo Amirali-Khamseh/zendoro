@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Reminder } from "@/zustand/reminderStore";
-import { REMINDER_PRIORITY_COLORS } from "@/constants/data";
 
 interface ReminderListProps {
   reminders: Reminder[];
@@ -19,19 +18,6 @@ export function ReminderList({
   onEdit,
   onDelete,
 }: ReminderListProps) {
-  const getPriorityColor = (priority: Reminder["priority"]) => {
-    switch (priority) {
-      case "high":
-        return `${REMINDER_PRIORITY_COLORS.high}/80 text-white border-red-400 font-semibold`;
-      case "medium":
-        return `${REMINDER_PRIORITY_COLORS.medium}/80 text-white border-green-300`;
-      case "low":
-        return `${REMINDER_PRIORITY_COLORS.low}/80 text-white border-yellow-100`;
-      default:
-        return `${REMINDER_PRIORITY_COLORS.low}/80 text-white border-yellow-100`;
-    }
-  };
-
   const sortedReminders = [...reminders].sort((a, b) => {
     // Sort by completion status first (incomplete first)
     if (a.completed !== b.completed) {
@@ -94,10 +80,9 @@ export function ReminderList({
 
                 {/* Priority Badge */}
                 <Badge
-                  variant="outline"
+                  variant={reminder.priority === "high" ? "destructive" : reminder.priority === "medium" ? "default" : "secondary"}
                   className={cn(
                     "text-xs capitalize shrink-0",
-                    getPriorityColor(reminder.priority),
                   )}
                 >
                   {reminder.priority}
