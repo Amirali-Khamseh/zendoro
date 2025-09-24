@@ -79,57 +79,61 @@ function RouteComponent() {
   const overdueReminders = getOverdueReminders();
 
   return (
-    <div className="p-4 overflow-x-hidden">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2">Reminder App</h1>
-        <p className="text-white/70 mb-4">
+    <div className="p-2 md:p-4 overflow-x-hidden">
+      <header className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">
+          Reminder App
+        </h1>
+        <p className="text-white/70 mb-3 md:mb-4 text-sm md:text-base">
           Stay organized and never miss important tasks
         </p>
 
-        <div className="flex flex-wrap gap-4 overflow-x-hidden">
+        <div className="flex flex-wrap gap-2 md:gap-4 overflow-x-hidden">
           <Badge
             variant="default"
-            className="flex items-center gap-2 px-3 py-1"
+            className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm"
           >
-            <CalendarIcon className="w-4 h-4" />
+            <CalendarIcon className="w-3 h-3 md:w-4 md:h-4" />
             <span>{totalReminders} Total</span>
           </Badge>
           <Badge
             variant="secondary"
-            className="flex items-center gap-2 px-3 py-1"
+            className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm"
           >
-            <CheckCircle2 className="w-4 h-4 text-primary" />
+            <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4 text-primary" />
             <span>{completedReminders} Completed</span>
           </Badge>
           <Badge
             variant="default"
-            className="flex items-center gap-2 px-3 py-1"
+            className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm"
           >
-            <Clock className="w-4 h-4 text-accent" />
+            <Clock className="w-3 h-3 md:w-4 md:h-4 text-accent" />
             <span>{todayReminders} Today</span>
           </Badge>
           {overdueReminders > 0 && (
             <Badge
               variant="destructive"
-              className="flex items-center gap-2 px-3 py-1"
+              className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm"
             >
-              <Clock className="w-4 h-4" />
+              <Clock className="w-3 h-3 md:w-4 md:h-4" />
               <span>{overdueReminders} Overdue</span>
             </Badge>
           )}
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-x-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 overflow-x-hidden">
         {/* Calendar Section */}
         <div className="lg:col-span-2">
-          <div className="relative overflow-hidden rounded-lg p-6">
+          <div className="relative overflow-hidden rounded-lg p-3 md:p-6">
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold text-white">Calendar</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <h2 className="text-xl md:text-2xl font-semibold text-white">
+                  Calendar
+                </h2>
                 <GradientButton
                   onClick={() => setShowForm(true)}
-                  className="h-9"
+                  className="h-9 text-xs md:text-sm w-full sm:w-auto"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Reminder
@@ -146,9 +150,9 @@ function RouteComponent() {
 
         {/* Reminders Section */}
         <div className="lg:col-span-1">
-          <div className="relative overflow-hidden rounded-lg p-6">
+          <div className="relative overflow-hidden rounded-lg p-3 md:p-6">
             <div className="relative z-10">
-              <h2 className="text-2xl font-semibold text-white mb-4">
+              <h2 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4">
                 Reminders for {selectedDate.toLocaleDateString()}
               </h2>
 

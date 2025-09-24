@@ -80,10 +80,14 @@ export function ReminderList({
 
                 {/* Priority Badge */}
                 <Badge
-                  variant={reminder.priority === "high" ? "destructive" : reminder.priority === "medium" ? "default" : "secondary"}
-                  className={cn(
-                    "text-xs capitalize shrink-0",
-                  )}
+                  variant={
+                    reminder.priority === "high"
+                      ? "destructive"
+                      : reminder.priority === "medium"
+                        ? "default"
+                        : "secondary"
+                  }
+                  className={cn("text-xs capitalize shrink-0")}
                 >
                   {reminder.priority}
                 </Badge>

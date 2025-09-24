@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 import { Button } from "@/components/ui/button";
 import { minToMilli } from "@/lib/minToMilli";
+import { Minus, Plus } from "lucide-react";
 
 function TimeBadge({
   label,
@@ -17,23 +18,23 @@ function TimeBadge({
 }) {
   return (
     <Badge
-      variant="outline"
-      className="flex flex-col items-center gap-1 text-white text-sm px-3 py-2"
+      variant="secondary"
+      className="flex flex-col items-center gap-1  text-sm px-3 py-2"
     >
       <h3 className="text-xs">{label}</h3>
       <div className="flex items-center gap-1">
         <Button
-          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg"
+          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg text-black hover:text-white"
           onClick={onDecrease}
         >
-          -
+          <Minus />
         </Button>
         <span className="text-sm">{milliSecToMin(value)}</span>
         <Button
-          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg"
+          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg text-black hover:text-white"
           onClick={onIncrease}
         >
-          +
+          <Plus />
         </Button>
       </div>
     </Badge>

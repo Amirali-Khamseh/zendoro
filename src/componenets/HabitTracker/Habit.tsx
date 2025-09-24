@@ -27,8 +27,9 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
   };
   return (
     <Card key={habit.id}>
-      <CardContent className="p-4">
-        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center">
+      <CardContent className="p-3 md:p-4">
+        {/* Desktop Layout */}
+        <div className="hidden md:grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center">
           <div>
             <h3 className="font-medium text-foreground text-balance">
               {habit.name}
@@ -71,6 +72,59 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
           >
             <Trash2 className="w-4 h-4" />
           </Button>
+        </div>
+
+        {/* Mobile Layout */}
+        <div className="md:hidden space-y-3">
+          <div className="flex justify-between items-start">
+            <h3 className="font-medium text-foreground text-balance flex-1 pr-2">
+              {habit.name}
+            </h3>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">
+                {getCompletionRate(habit)}%
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => deleteHabit(habit.id)}
+                className="w-8 h-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="grid grid-cols-7 gap-1 text-xs text-muted-foreground text-center">
+              {DAYS_OF_WEEK.map((day) => (
+                <div key={day} className="font-medium">
+                  {day}
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-1">
+              {habit.completions.map((completed, index) => (
+                <button
+                  key={index}
+                  onClick={() => toggleCompletion(habit.id, index)}
+                  className={cn(
+                    "w-full aspect-square rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
+                    completed
+                      ? "bg-primary border-primary shadow-md"
+                      : "bg-background border-border hover:border-muted-foreground",
+                  )}
+                  aria-label={`${DAYS_OF_WEEK[index]} - ${completed ? `Completed` : `Not completed`}`}
+                >
+                  {completed && (
+                    <div className="w-full h-full rounded-full bg-primary flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full"></div>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

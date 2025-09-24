@@ -62,12 +62,12 @@ function RouteComponent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-6 space-y-4">
+    <div className="max-w-2xl mx-auto mt-3 md:mt-6 space-y-3 md:space-y-4 px-2 md:px-0">
       <form
         onSubmit={formHandler}
-        className="relative overflow-hidden rounded-xl  py-5"
+        className="relative overflow-hidden rounded-xl py-4 md:py-5"
       >
-        <div className="relative z-10 space-y-4">
+        <div className="relative z-10 space-y-3 md:space-y-4 px-2 md:px-0">
           <div className="space-y-1">
             <Label
               htmlFor="title"
@@ -81,7 +81,7 @@ function RouteComponent() {
               name="title"
               id="title"
               required
-              className="h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm"
+              className="h-8 md:h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm"
             />
           </div>
 
@@ -97,11 +97,11 @@ function RouteComponent() {
               placeholder="What should be done?"
               maxLength={150}
               id="description"
-              className="h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none"
+              className="h-8 md:h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none"
             />
           </div>
 
-          <div className="flex gap-3 items-end">
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 sm:items-end">
             <div className="flex-1 ">
               <Label
                 htmlFor="date"
@@ -115,7 +115,7 @@ function RouteComponent() {
                     variant="outline"
                     id="date"
                     type="button"
-                    className="h-9 w-full justify-between font-normal bg-white border-slate-200 hover:bg-white text-sm"
+                    className="h-8 md:h-9 w-full justify-between font-normal bg-white border-slate-200 hover:bg-white text-sm"
                   >
                     {date ? date.toLocaleDateString() : "Select date"}
                     <ChevronDownIcon className="h-3 w-3 opacity-70" />
@@ -147,7 +147,7 @@ function RouteComponent() {
               </Label>
               <Select value={status} onValueChange={setStatus} required>
                 <SelectTrigger
-                  className="h-9 w-full bg-white border-slate-200 hover:bg-white text-sm"
+                  className="h-8 md:h-9 w-full bg-white border-slate-200 hover:bg-white text-sm"
                   id="status"
                 >
                   <SelectValue placeholder="Select status" />
@@ -161,8 +161,12 @@ function RouteComponent() {
               </Select>
             </div>
 
-            <GradientButton type="submit" className="h-9">
-              <Plus className="w-4 h-4" />
+            <GradientButton
+              type="submit"
+              className="h-8 md:h-9 sm:flex-shrink-0 w-full sm:w-auto"
+            >
+              <Plus className="w-4 h-4 mr-2 sm:mr-0" />
+              <span className="sm:hidden">Add Task</span>
             </GradientButton>
           </div>
         </div>

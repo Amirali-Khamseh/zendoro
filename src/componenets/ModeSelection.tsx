@@ -14,7 +14,7 @@ export function ModeSelection() {
   };
 
   return (
-    <div className="">
+    <div className="w-full max-w-sm">
       <Tabs
         value={currentMode}
         onValueChange={handleModeChange}
@@ -25,7 +25,7 @@ export function ModeSelection() {
             <TabsTrigger
               key={mode.title}
               value={mode.time.name}
-              className="text-sm data-[state=active]:shadow-lg data-[state=active]:shadow-black/80"
+              className="text-xs md:text-sm data-[state=active]:shadow-lg data-[state=active]:shadow-black/80"
             >
               {mode.title}
             </TabsTrigger>

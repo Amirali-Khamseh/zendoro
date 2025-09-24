@@ -131,14 +131,14 @@ export function Timer({ initialTime }: Props) {
   );
 
   return (
-    <div className="relative w-[400px] rounded-xl flex flex-col items-center px-6 overflow-hidden ">
+    <div className="relative w-full max-w-[280px] sm:max-w-[400px] mx-auto rounded-xl flex flex-col items-center px-0 sm:px-4 md:px-6 overflow-hidden">
       {/* Content on top */}
-      <div className="relative z-10">
-        <h1 className="text-[6rem] font-beba font-bold text-white">
+      <div className="relative z-10 w-full flex flex-col items-center max-w-full">
+        <h1 className="text-xl text-[6rem] font-beba font-bold text-white text-center break-words px-2">
           {formatTime(timeLeft)}
         </h1>
 
-        <div className="flex gap-2">
+        <div className="flex gap-0.5 sm:gap-2 justify-center w-full flex-wrap max-w-full px-1">
           {isRunning ? (
             <TimerButtons type="pause" onClick={pause} />
           ) : (
@@ -153,35 +153,39 @@ export function Timer({ initialTime }: Props) {
           />
         </div>
         {/* Stepper */}
-        <div className="flex flex-col items-center w-full mt-6">
+        <div className="flex flex-col items-center w-full mt-2 sm:mt-6 max-w-full overflow-hidden">
           {/* Row with circles + connector */}
-          <div className="flex items-center w-full">
+          <div className="flex items-center w-full max-w-full px-0 sm:px-2">
             {/* Current Step Circle */}
-            <div className="flex items-center justify-center w-8 h-8 bg-white rounded-full border-4 border-white shadow-[0_0_12px_4px_rgba(255,255,255,0.7),0_0_0_6px_rgba(255,0,182,0.25)]">
-              {getCurrentSessionIcon(currentSessionType)}
+            <div className="flex items-center justify-center w-4 h-4 sm:w-8 sm:h-8 bg-white rounded-full border-1 sm:border-4 border-white shadow-[0_0_4px_1px_rgba(255,255,255,0.5)] sm:shadow-[0_0_12px_4px_rgba(255,255,255,0.7),0_0_0_6px_rgba(255,0,182,0.25)] flex-shrink-0">
+              <span className="scale-50 sm:scale-100">
+                {getCurrentSessionIcon(currentSessionType)}
+              </span>
             </div>
 
             {/* Connector */}
-            <div className="flex-1 h-[2px] bg-white/30 relative mx-2">
+            <div className="flex-1 h-[1px] sm:h-[2px] bg-white/30 relative mx-1 sm:mx-2 min-w-0">
               <div className="absolute inset-0 bg-gradient-to-r from-white/60 to-white/30 rounded-full"></div>
             </div>
 
             {/* Next Step Circle */}
-            <div className="flex items-center justify-center w-8 h-8 bg-white/20 rounded-full border-2 border-white/40">
-              {nextSessionInfo.icon}
+            <div className="flex items-center justify-center w-4 h-4 sm:w-8 sm:h-8 bg-white/20 rounded-full border-1 sm:border-2 border-white/40 flex-shrink-0">
+              <span className="scale-50 sm:scale-100">
+                {nextSessionInfo.icon}
+              </span>
             </div>
           </div>
 
           {/* Row with labels */}
-          <div className="flex justify-between w-full mt-2">
-            <span className="text-white text-xs font-semibold capitalize">
+          <div className="flex justify-between w-full mt-0.5 sm:mt-2 px-0 sm:px-2 max-w-full overflow-hidden">
+            <span className="text-white text-[8px] sm:text-xs font-medium capitalize truncate max-w-[35%] leading-tight">
               {currentSessionType === "longBreak"
                 ? "Long Break"
                 : currentSessionType === "shortBreak"
                   ? "Short Break"
                   : "Focus"}
             </span>
-            <span className="text-white/70 text-xs font-medium">
+            <span className="text-white/60 text-[8px] sm:text-xs font-light truncate max-w-[35%] text-right leading-tight">
               {nextSessionInfo.label}
             </span>
           </div>

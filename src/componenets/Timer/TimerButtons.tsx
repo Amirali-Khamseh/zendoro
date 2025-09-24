@@ -16,10 +16,12 @@ const icons = {
 export function TimerButtons({ type, onClick }: Props) {
   return (
     <Button
-      className="w-[40px] h-[40px] rounded-full bg-transparent cursor-pointer hover:bg-slate-600 border-2"
+      className="w-6 h-6 sm:w-8 sm:h-8 md:w-[40px] md:h-[40px] rounded-full bg-transparent cursor-pointer hover:bg-slate-600 border-2 flex-shrink-0"
       onClick={onClick}
     >
-      {icons[type]}
+      <span className="[&>svg]:w-3 [&>svg]:h-3 sm:[&>svg]:w-4 sm:[&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5">
+        {icons[type]}
+      </span>
     </Button>
   );
 }

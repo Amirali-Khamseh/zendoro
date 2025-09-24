@@ -17,12 +17,12 @@ export function Sidebar() {
     <aside
       className={`${isCollapsed ? "w-16" : "w-64"} h-screen border-r bg-background transition-all duration-300 ease-in-out relative`}
     >
-      {/* Toggle Button on Border */}
+      {/* Toggle Button on Border - Desktop only */}
       <Button
         variant="ghost"
         size="icon"
         onClick={toggleSidebar}
-        className="absolute -right-3 top-6 h-6 w-6 rounded-full border bg-background shadow-md hover:shadow-lg z-10"
+        className="hidden md:flex absolute -right-3 top-6 h-6 w-6 rounded-full border bg-background shadow-md hover:shadow-lg z-10"
       >
         {isCollapsed ? (
           <ChevronRight className="h-3 w-3" />

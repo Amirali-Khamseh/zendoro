@@ -55,7 +55,13 @@ export function ReminderCard({
                 {reminder.time}
               </span>
               <Badge
-                variant={reminder.priority === "high" ? "destructive" : reminder.priority === "medium" ? "default" : "secondary"}
+                variant={
+                  reminder.priority === "high"
+                    ? "destructive"
+                    : reminder.priority === "medium"
+                      ? "default"
+                      : "secondary"
+                }
                 className="text-xs capitalize text-white"
               >
                 {reminder.priority}
@@ -96,10 +102,14 @@ export function ReminderCard({
             </div>
 
             <Badge
-              variant={reminder.priority === "high" ? "destructive" : reminder.priority === "medium" ? "default" : "secondary"}
-              className={cn(
-                "text-xs capitalize shrink-0",
-              )}
+              variant={
+                reminder.priority === "high"
+                  ? "destructive"
+                  : reminder.priority === "medium"
+                    ? "default"
+                    : "secondary"
+              }
+              className={cn("text-xs capitalize shrink-0")}
             >
               {reminder.priority}
             </Badge>
