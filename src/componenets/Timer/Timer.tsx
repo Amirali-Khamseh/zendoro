@@ -153,11 +153,11 @@ export function Timer({ initialTime }: Props) {
           />
         </div>
         {/* Stepper */}
-        <div className="flex flex-col items-center w-full mt-2 sm:mt-6 max-w-full overflow-hidden">
+        <div className="flex flex-col items-center w-full mt-2 sm:mt-6 max-w-full">
           {/* Row with circles + connector */}
-          <div className="flex items-center w-full max-w-full px-0 sm:px-2">
+          <div className="flex items-center w-full max-w-full px-0 sm:px-6 py-2 sm:py-4">
             {/* Current Step Circle */}
-            <div className="flex items-center justify-center w-4 h-4 sm:w-8 sm:h-8 bg-white rounded-full border-1 sm:border-4 border-white shadow-[0_0_4px_1px_rgba(255,255,255,0.5)] sm:shadow-[0_0_12px_4px_rgba(255,255,255,0.7),0_0_0_6px_rgba(255,0,182,0.25)] flex-shrink-0">
+            <div className="flex items-center justify-center w-4 h-4 sm:w-8 sm:h-8 bg-white rounded-full border-1 sm:border-4 border-white shadow-[0_0_4px_1px_rgba(255,255,255,0.5)] sm:shadow-[0_0_8px_2px_rgba(255,255,255,0.6),0_0_0_4px_rgba(255,0,182,0.2)] flex-shrink-0">
               <span className="scale-50 sm:scale-100">
                 {getCurrentSessionIcon(currentSessionType)}
               </span>
@@ -177,7 +177,7 @@ export function Timer({ initialTime }: Props) {
           </div>
 
           {/* Row with labels */}
-          <div className="flex justify-between w-full mt-0.5 sm:mt-2 px-0 sm:px-2 max-w-full overflow-hidden">
+          <div className="flex justify-between w-full mt-0.5 sm:mt-2 px-0 sm:px-6 max-w-full overflow-hidden">
             <span className="text-white text-[8px] sm:text-xs font-medium capitalize truncate max-w-[35%] leading-tight">
               {currentSessionType === "longBreak"
                 ? "Long Break"

@@ -60,7 +60,7 @@ export function Calendar({
       days.push(
         <div
           key={`empty-${i}`}
-          className="h-16 p-1 border border-border/50"
+          className="h-12 md:h-16 p-1 border-r border-b border-border/50"
         ></div>,
       );
     }
@@ -81,16 +81,16 @@ export function Calendar({
         <div
           key={day}
           className={cn(
-            "h-16 p-1 border border-border/50 cursor-pointer transition-colors hover:bg-muted/50",
+            "h-12 md:h-16 p-1 border-r border-b border-border/50 cursor-pointer transition-colors hover:bg-muted/50",
             isSelected && "bg-accent/20 border-accent",
             isToday && "bg-primary/10 border-primary/30",
           )}
           onClick={() => onDateSelect(date)}
         >
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full overflow-hidden">
             <span
               className={cn(
-                "text-xs font-medium mb-0.5 text-white",
+                "text-xs font-medium mb-0.5 text-white flex-shrink-0",
                 isSelected && "text-white font-bold",
                 isToday && "text-white font-bold",
               )}
@@ -98,12 +98,12 @@ export function Calendar({
               {day}
             </span>
             {hasReminders && (
-              <div className="flex-1 space-y-0.5">
+              <div className="flex-1 space-y-0.5 overflow-hidden">
                 {dayReminders.slice(0, 1).map((reminder) => (
                   <div
                     key={reminder.id}
                     className={cn(
-                      "text-xs px-1 py-0.5 rounded truncate text-white font-medium",
+                      "text-[10px] md:text-xs px-1 py-0.5 rounded truncate text-white font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap",
                       reminder.priority === "high" &&
                         `${REMINDER_PRIORITY_COLORS.high}/80`,
                       reminder.priority === "medium" &&
@@ -117,7 +117,7 @@ export function Calendar({
                   </div>
                 ))}
                 {dayReminders.length > 1 && (
-                  <div className="text-xs text-white/60">
+                  <div className="text-[10px] md:text-xs text-white/60 truncate">
                     +{dayReminders.length - 1} more
                   </div>
                 )}
@@ -171,7 +171,7 @@ export function Calendar({
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-0 border border-border rounded-lg overflow-hidden">
+      <div className="grid grid-cols-7 gap-0 border border-border/50 rounded-lg overflow-hidden">
         {renderCalendarDays()}
       </div>
 
