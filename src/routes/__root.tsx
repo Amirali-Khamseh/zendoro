@@ -58,7 +58,7 @@ const RootLayout = () => {
         )}
 
         <div
-          className={`flex-1 p-2 md:p-4 overflow-x-hidden transition-all duration-300 ease-in-out ${isCollapsed ? "md:max-w-4xl md:mx-auto" : ""}`}
+          className={`flex-1 p-2 md:p-4 overflow-x-hidden transition-all duration-300 ease-in-out ${isCollapsed ? "" : "md:max-w-4xl md:mx-auto"}`}
         >
           <Outlet />
         </div>
