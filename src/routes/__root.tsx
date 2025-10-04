@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+// import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Sidebar } from "@/componenets/Sidebar";
 import { useSidebarStore } from "@/zustand/sidebarStore";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -29,7 +29,7 @@ const RootLayout = () => {
             <Menu className="h-4 w-4" />
           </Button>
           <h1 className="text-lg font-semibold">Zendoro</h1>
-          <div className="w-8" /> {/* Spacer for centering */}
+          <div className="w-8" />
         </div>
       </div>
 
@@ -57,13 +57,11 @@ const RootLayout = () => {
           />
         )}
 
-        <div
-          className={`flex-1 p-2 md:p-4 overflow-x-hidden transition-all duration-300 ease-in-out ${isCollapsed ? "" : "md:max-w-4xl md:mx-auto"}`}
-        >
+        <div className="flex-1 overflow-x-hidden transition-all duration-300 ease-in-out">
           <Outlet />
         </div>
       </div>
-      <TanStackRouterDevtools />
+      {/* <TanStackRouterDevtools /> */}
     </main>
   );
 };

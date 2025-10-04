@@ -60,3 +60,5 @@ export const REMINDER_PRIORITY_COLORS = {
   medium: "bg-green-300",
   high: "bg-red-400",
 };
+
+export const API_BASE_URL = "https://zendoro-backend.onrender.com";

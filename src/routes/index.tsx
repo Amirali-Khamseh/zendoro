@@ -23,14 +23,16 @@ function RouteComponent() {
   }, [focusTime]);
 
   return (
-    <section className="w-full flex p-2 md:p-4 gap-4 md:gap-8">
-      {/* Timer Panel */}
-      <div className="flex-1 flex flex-col gap-3 md:gap-4 items-center">
-        <StatusTopLine />
-        <ModeSelection />
-        <Timer key={timerKey} initialTime={focusTime} />
-        <StatusHeader />
-      </div>
-    </section>
+    <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
+      <section className="flex gap-4 md:gap-8">
+        {/* Timer Panel */}
+        <div className="flex-1 flex flex-col gap-3 md:gap-4 items-center">
+          <StatusTopLine />
+          <ModeSelection />
+          <Timer key={timerKey} initialTime={focusTime} />
+          <StatusHeader />
+        </div>
+      </section>
+    </div>
   );
 }

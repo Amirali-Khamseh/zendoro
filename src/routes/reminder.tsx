@@ -79,7 +79,7 @@ function RouteComponent() {
   const overdueReminders = getOverdueReminders();
 
   return (
-    <div className="p-2 md:p-4 overflow-x-hidden">
+    <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
       <header className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">
           Reminder App
@@ -121,7 +121,6 @@ function RouteComponent() {
           )}
         </div>
       </header>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 overflow-x-hidden">
         {/* Calendar Section */}
         <div className="lg:col-span-2">
