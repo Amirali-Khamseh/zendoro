@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import {
   Card,
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
-import { API_BASE_URL } from "@/constants/data";
+import { API_BASE_URL, LS_ZENDORO_AUTH } from "@/constants/data";
 
 export const Route = createFileRoute("/login")({
   component: LoginComponent,
@@ -30,6 +30,7 @@ type logInResponseType = {
 };
 function LoginComponent() {
   useDocumentTitle("Login - Zendoro");
+  const router = useRouter();
 
   const formRef = useRef<HTMLFormElement>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -71,19 +72,28 @@ function LoginComponent() {
       const password = formData.get("password") as string;
       const result = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           email,
           password,
         }),
       });
-      console.log(result);
-      if (result.status === 201) {
+
+      if (result.ok || result.status === 200) {
         const response: logInResponseType = await result.json();
-        localStorage.setItem(`zendoro-auth-token`, response.token);
+        localStorage.setItem(LS_ZENDORO_AUTH, response.token);
         formRef.current?.reset();
         setErrors({});
+        router.navigate({ to: "/" });
       } else {
-        const errorData = await result.json().catch(() => ({}));
+        console.log("Login failed with status:", result.status);
+        const errorData = await result.json().catch((e) => {
+          console.log("Failed to parse error response:", e);
+          return {};
+        });
+        console.log("Error data:", errorData);
         setErrors({
           general: errorData.message || "Login failed. Please try again.",
         });

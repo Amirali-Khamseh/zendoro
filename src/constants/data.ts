@@ -62,3 +62,4 @@ export const REMINDER_PRIORITY_COLORS = {
 };
 
 export const API_BASE_URL = "https://zendoro-backend.onrender.com";
+export const LS_ZENDORO_AUTH = "zendoro-auth-token";

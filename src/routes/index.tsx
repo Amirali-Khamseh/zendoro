@@ -3,12 +3,20 @@ import { StatusTopLine } from "@/componenets/StatusTopLine";
 import { Timer } from "@/componenets/Timer/Timer";
 import { ModeSelection } from "@/componenets/ModeSelection";
 import { useModeStore } from "@/zustand/modeStore";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { isAuthenticated } from "@/lib/authVerification";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
+  beforeLoad: async () => {
+    if (!isAuthenticated()) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+  },
 });
 
 function RouteComponent() {

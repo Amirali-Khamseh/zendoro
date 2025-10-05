@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -11,9 +11,17 @@ import { DAYS_OF_WEEK } from "@/constants/data";
 import HabitComponenet from "@/componenets/HabitTracker/Habit";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { isAuthenticated } from "@/lib/authVerification";
 
 export const Route = createFileRoute("/habit-tracker")({
   component: RouteComponent,
+  beforeLoad: async () => {
+    if (!isAuthenticated()) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+  },
 });
 
 function RouteComponent() {

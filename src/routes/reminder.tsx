@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Plus, CalendarIcon, CheckCircle2, Clock } from "lucide-react";
 import { useReminderStore, type Reminder } from "@/zustand/reminderStore";
@@ -8,9 +8,17 @@ import { Calendar } from "@/componenets/Reminder/Calender";
 import { ReminderList } from "@/componenets/Reminder/ReminderList";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { isAuthenticated } from "@/lib/authVerification";
 
 export const Route = createFileRoute("/reminder")({
   component: RouteComponent,
+  beforeLoad: async () => {
+    if (!isAuthenticated()) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+  },
 });
 
 function RouteComponent() {
