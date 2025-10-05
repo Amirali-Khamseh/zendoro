@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
-import { API_BASE_URL, LS_ZENDORO_AUTH } from "@/constants/data";
+import { API_BASE_URL } from "@/constants/data";
+import { setAuthToken } from "@/lib/authHelpers";
 
 export const Route = createFileRoute("/signup")({
   component: SignupComponent,
@@ -99,7 +100,7 @@ function SignupComponent() {
       });
       if (result.status === 201) {
         const response: signUpResponseType = await result.json();
-        localStorage.setItem(LS_ZENDORO_AUTH, response.token);
+        setAuthToken(response.token);
         formRef.current?.reset();
         setErrors({});
       } else {

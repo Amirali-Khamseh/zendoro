@@ -1,7 +1,7 @@
-import { LS_ZENDORO_AUTH } from "@/constants/data";
+import { getAuthToken } from "./authHelpers";
 
 export function isAuthenticated() {
-  const token = localStorage.getItem(LS_ZENDORO_AUTH);
+  const token = getAuthToken();
   const expiration = token?.split(".")[1];
   const isExpired = expiration
     ? Date.now() > JSON.parse(atob(expiration)).exp * 1000
