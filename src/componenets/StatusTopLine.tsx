@@ -20,19 +20,12 @@ export function StatusTopLine() {
     const formData = new FormData(e.currentTarget);
 
     const newMode = {
-      name: (formData.get("name") as string)?.trim(),
       focusTime: Number(formData.get("focusTime")),
       shortBreak: Number(formData.get("shortBreak")),
       longBreak: Number(formData.get("longBreak")),
     };
 
     const newErrors: Record<string, string> = {};
-
-    if (!newMode.name) {
-      newErrors.name = "Mode name is required.";
-    } else if (newMode.name.length > 30) {
-      newErrors.name = "Mode name cannot exceed 30 characters.";
-    }
 
     if (!newMode.focusTime || newMode.focusTime <= 0) {
       newErrors.focusTime = "Focus time must be greater than 0.";
@@ -82,6 +75,7 @@ export function StatusTopLine() {
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="maxHeight">Mode name</Label>
                 <Input
+                  readOnly
                   id="maxHeight"
                   name="name"
                   defaultValue={name}

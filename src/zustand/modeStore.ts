@@ -1,4 +1,5 @@
-import { modesValue } from "@/constants/data";
+import { API_BASE_URL, modesValue } from "@/constants/data";
+import { getAuthToken } from "@/lib/authHelpers";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -19,6 +20,28 @@ type ZendoroModeTypeHelpers = ZendoroModeType & {
   changeMode: (mode: ZendoroModeType) => void;
 };
 
+const sendModeToAPI = async (mode: ZendoroModeType) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/timer`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `bearer ${getAuthToken()}`,
+      },
+      body: JSON.stringify(mode),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to send mode to API:", error);
+    throw error;
+  }
+};
+
 export const useModeStore = create<ZendoroModeTypeHelpers>()(
   persist(
     (set) => ({
@@ -26,10 +49,12 @@ export const useModeStore = create<ZendoroModeTypeHelpers>()(
       focusTime: modesValue[0].time.focusTime,
       shortBreak: modesValue[0].time.shortBreak,
       longBreak: modesValue[0].time.longBreak,
-      changeMode: (mode: ZendoroModeType) =>
+      changeMode: async (mode: ZendoroModeType) => {
+        await sendModeToAPI(mode);
         set(() => ({
           ...mode,
-        })),
+        }));
+      },
     }),
     {
       name: "mode-storage",
