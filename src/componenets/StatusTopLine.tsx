@@ -20,6 +20,7 @@ export function StatusTopLine() {
     const formData = new FormData(e.currentTarget);
 
     const newMode = {
+      name: formData.get("name") as "Standard" | "Extended" | "Long run",
       focusTime: Number(formData.get("focusTime")),
       shortBreak: Number(formData.get("shortBreak")),
       longBreak: Number(formData.get("longBreak")),
