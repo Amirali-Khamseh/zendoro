@@ -65,7 +65,7 @@ function RouteComponent() {
                 value={newHabitName}
                 onChange={(e) => setNewHabitName(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addHabitHandler()}
-                className="flex-1 text-sm md:text-base"
+                className="flex-1 text-sm md:text-base text-white"
               />
               <GradientButton
                 onClick={addHabitHandler}
