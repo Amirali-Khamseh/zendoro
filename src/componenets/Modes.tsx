@@ -8,24 +8,22 @@ type Props = {
 };
 
 export function Mode({ title, details, time }: Props) {
-  const {
-    changeMode,
-    name: currentMode,
-    focusTime,
-    shortBreak,
-    longBreak,
-  } = useModeStore();
+  const { changeMode, currentMode } = useModeStore() as {
+    changeMode: (mode: ZendoroModeType) => void;
+    currentMode: ZendoroModeType | null;
+  };
 
   function setContextMode() {
     changeMode(time);
   }
 
-  const isSelected = currentMode === time.name;
+  const isSelected = currentMode?.name === time.name;
 
   // Show current store values if this mode is selected, otherwise show the mode's default values
-  const displayDetails = isSelected
-    ? `${milliSecToMin(focusTime)}min / ${milliSecToMin(shortBreak)}min / ${milliSecToMin(longBreak)}min`
-    : details;
+  const displayDetails =
+    isSelected && currentMode
+      ? `${milliSecToMin(currentMode.focusTime)}min / ${milliSecToMin(currentMode.shortBreak)}min / ${milliSecToMin(currentMode.longBreak)}min`
+      : details;
 
   return (
     <div

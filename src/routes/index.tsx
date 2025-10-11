@@ -2,7 +2,7 @@ import { StatusHeader } from "@/componenets/StatusHeader";
 import { StatusTopLine } from "@/componenets/StatusTopLine";
 import { Timer } from "@/componenets/Timer/Timer";
 import { ModeSelection } from "@/componenets/ModeSelection";
-import { useModeStore } from "@/zustand/modeStore";
+import { useModeStore, type ZendoroModeType } from "@/zustand/modeStore";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -22,13 +22,25 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   useDocumentTitle("Focus Timer");
 
-  const { focusTime } = useModeStore();
+  const { currentMode, fetchAvailableModes } = useModeStore() as {
+    currentMode: ZendoroModeType | null;
+    fetchAvailableModes: () => void;
+  };
   const [timerKey, setTimerKey] = useState(0);
+
+  const focusTime = currentMode?.focusTime || 25 * 60 * 1000; // Default to 25 minutes
+
+  // Fetch available modes when component mounts
+  useEffect(() => {
+    if (!currentMode) {
+      fetchAvailableModes();
+    }
+  }, [currentMode, fetchAvailableModes]);
 
   // Force timer re-render when mode changes
   useEffect(() => {
     setTimerKey((prev) => prev + 1);
-  }, [focusTime]);
+  }, [currentMode]);
 
   return (
     <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">

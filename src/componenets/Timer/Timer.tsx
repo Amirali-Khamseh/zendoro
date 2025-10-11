@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TimerButtons } from "./TimerButtons";
 import { formatTime } from "@/lib/formatTime";
 import { FocusButton } from "../FocusButton";
-import { useModeStore } from "@/zustand/modeStore";
+import { useModeStore, type ZendoroModeType } from "@/zustand/modeStore";
 
 import { getNextSessionInfo } from "./utils/getNextSessionInfo";
 import { getCurrentSessionIcon } from "./utils/getCurrentSessionIcon";
@@ -13,7 +13,14 @@ type Props = {
 };
 
 export function Timer({ initialTime }: Props) {
-  const { focusTime, longBreak, shortBreak } = useModeStore();
+  const { currentMode } = useModeStore() as {
+    currentMode: ZendoroModeType | null;
+  };
+
+  // Get timer values from currentMode, with fallbacks
+  const focusTime = currentMode?.focusTime || initialTime;
+  const shortBreak = currentMode?.shortBreak || initialTime;
+  const longBreak = currentMode?.longBreak || initialTime;
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(false);
   const [focusSessionCount, setFocusSessionCount] = useState(0);
@@ -25,6 +32,13 @@ export function Timer({ initialTime }: Props) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const isInFocusSession = currentSessionType === "focus";
+
+  // Initialize timer when currentMode is first loaded
+  useEffect(() => {
+    if (currentMode && timeLeft === initialTime) {
+      setTimeLeft(focusTime);
+    }
+  }, [currentMode, focusTime, initialTime, timeLeft]);
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
@@ -69,23 +83,19 @@ export function Timer({ initialTime }: Props) {
     currentSessionType,
   ]);
 
+  // Update timer when currentMode changes or session type changes
   useEffect(() => {
-    if (currentSessionType === "focus") {
-      setTimeLeft(focusTime);
+    if (!isRunning) {
+      // Only update if timer is not running
+      if (currentSessionType === "focus") {
+        setTimeLeft(focusTime);
+      } else if (currentSessionType === "shortBreak") {
+        setTimeLeft(shortBreak);
+      } else if (currentSessionType === "longBreak") {
+        setTimeLeft(longBreak);
+      }
     }
-  }, [focusTime]);
-
-  useEffect(() => {
-    if (currentSessionType === "shortBreak") {
-      setTimeLeft(shortBreak);
-    }
-  }, [shortBreak]);
-
-  useEffect(() => {
-    if (currentSessionType === "longBreak") {
-      setTimeLeft(longBreak);
-    }
-  }, [longBreak]);
+  }, [focusTime, shortBreak, longBreak, currentSessionType, isRunning]);
 
   {
     /* Handlers and Helper functions */
@@ -103,7 +113,13 @@ export function Timer({ initialTime }: Props) {
   };
   const reset = () => {
     setIsRunning(false);
-    setTimeLeft(initialTime);
+    if (currentSessionType === "focus") {
+      setTimeLeft(focusTime);
+    } else if (currentSessionType === "shortBreak") {
+      setTimeLeft(shortBreak);
+    } else {
+      setTimeLeft(longBreak);
+    }
   };
   const handleSkip = () => {
     if (isInFocusSession) {

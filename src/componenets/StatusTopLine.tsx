@@ -6,14 +6,30 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useModeStore } from "@/zustand/modeStore";
+import { useModeStore, type ZendoroModeType } from "@/zustand/modeStore";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 import { minToMilli } from "@/lib/minToMilli";
 import { GradientButton } from "./customUIComponenets/CustomButton";
 
 export function StatusTopLine() {
-  const { name, changeMode, shortBreak, longBreak, focusTime } = useModeStore();
+  const { currentMode, changeMode } = useModeStore() as {
+    currentMode: ZendoroModeType | null;
+    changeMode: (mode: ZendoroModeType) => void;
+  };
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // If no currentMode is loaded yet, show loading state
+  if (!currentMode) {
+    return (
+      <div className="w-[400px] flex items-center justify-center gap-2 font-beba font-medium text-2xl">
+        <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />
+        <span className="text-white px-2">Loading...</span>
+        <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />
+      </div>
+    );
+  }
+
+  const { name, focusTime, shortBreak, longBreak } = currentMode;
 
   function handleSumbit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

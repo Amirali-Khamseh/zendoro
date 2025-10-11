@@ -1,15 +1,21 @@
-import { useModeStore } from "@/zustand/modeStore";
+import { useModeStore, type ZendoroModeType } from "@/zustand/modeStore";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect } from "react";
 
 export function ModeSelection() {
   const {
-    name: currentMode,
+    currentMode,
     changeMode,
     availableModes,
     isLoading,
     fetchAvailableModes,
-  } = useModeStore();
+  } = useModeStore() as {
+    currentMode: ZendoroModeType | null;
+    changeMode: (mode: ZendoroModeType) => void;
+    availableModes: ZendoroModeType[];
+    isLoading: boolean;
+    fetchAvailableModes: () => void;
+  };
 
   useEffect(() => {
     // Fetch available modes when component mounts
@@ -17,6 +23,13 @@ export function ModeSelection() {
       fetchAvailableModes();
     }
   }, [fetchAvailableModes, availableModes.length]);
+
+  // Auto-select the first mode if no current mode is set and modes are available
+  useEffect(() => {
+    if (availableModes.length > 0 && !currentMode) {
+      changeMode(availableModes[0]);
+    }
+  }, [availableModes, currentMode, changeMode]);
 
   const handleModeChange = (value: string) => {
     const selectedMode = availableModes.find((mode) => mode.name === value);
@@ -36,7 +49,7 @@ export function ModeSelection() {
   return (
     <div className="w-full max-w-sm">
       <Tabs
-        value={currentMode}
+        value={currentMode?.name || ""}
         onValueChange={handleModeChange}
         className="w-full"
       >
@@ -44,7 +57,7 @@ export function ModeSelection() {
           {availableModes.map((mode) => (
             <TabsTrigger
               key={mode.name}
-              value={mode.name}
+              value={mode.name || ""}
               className="text-xs md:text-sm data-[state=active]:shadow-lg data-[state=active]:shadow-black/80"
             >
               {mode.name}

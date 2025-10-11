@@ -1,4 +1,4 @@
-import { useModeStore } from "@/zustand/modeStore";
+import { useModeStore, type ZendoroModeType } from "@/zustand/modeStore";
 import { Badge } from "@/components/ui/badge";
 import { milliSecToMin } from "@/lib/miliSecToMin";
 import { Button } from "@/components/ui/button";
@@ -42,8 +42,17 @@ function TimeBadge({
 }
 
 export function StatusHeader() {
-  const { name, focusTime, shortBreak, longBreak, changeMode } = useModeStore();
+  const { currentMode, changeMode } = useModeStore() as {
+    currentMode: ZendoroModeType | null;
+    changeMode: (mode: ZendoroModeType) => void;
+  };
 
+  // If no currentMode is loaded yet, don't render anything
+  if (!currentMode) {
+    return null;
+  }
+
+  const { name, focusTime, shortBreak, longBreak } = currentMode;
   const safeChange = (value: number) => Math.max(value, minToMilli(1));
 
   return (
