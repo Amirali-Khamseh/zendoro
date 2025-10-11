@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Input } from "@/components/ui/input";
@@ -27,8 +27,16 @@ export const Route = createFileRoute("/habit-tracker")({
 function RouteComponent() {
   useDocumentTitle("Habit Tracker");
 
-  const { habits, addHabit } = useHabitStore();
+  const { habits, addHabit, fetchHabits, isLoading, error, hasInitialized } =
+    useHabitStore();
   const [newHabitName, setNewHabitName] = useState("");
+
+  useEffect(() => {
+    if (!hasInitialized && !isLoading) {
+      fetchHabits();
+    }
+  }, [fetchHabits, hasInitialized, isLoading]);
+
   const addHabitHandler = () => {
     if (newHabitName.trim()) {
       const newHabit: Habit = {
@@ -40,6 +48,51 @@ function RouteComponent() {
       setNewHabitName("");
     }
   };
+
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
+        <div className="max-w-4xl mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl md:text-4xl font-bold text-foreground">
+              Habit Tracker
+            </h1>
+            <p className="text-red-500 text-base md:text-lg">Error: {error}</p>
+            <GradientButton onClick={() => fetchHabits()}>
+              Try Again
+            </GradientButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while fetching habits
+  if (isLoading && habits.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
+        <div className="max-w-4xl mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl md:text-4xl font-bold text-foreground">
+              Habit Tracker
+            </h1>
+            <p className="text-muted-foreground text-base md:text-lg">
+              Loading your habits...
+            </p>
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="animate-pulse bg-gray-200 h-16 rounded-md"
+              ></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">

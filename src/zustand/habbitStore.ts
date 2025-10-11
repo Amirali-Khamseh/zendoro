@@ -1,7 +1,6 @@
 import { API_BASE_URL } from "@/constants/data";
 import { getAuthToken } from "@/lib/authHelpers";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 export type Habit = {
   id: string;
@@ -13,6 +12,7 @@ type HabitStore = {
   habits: Habit[];
   isLoading: boolean;
   error: string | null;
+  hasInitialized: boolean;
   addHabit: (habit: Omit<Habit, "id">) => Promise<void>;
   updateHabit: (id: string, updated: Omit<Habit, "id">) => Promise<void>;
   deleteHabit: (id: string) => Promise<void>;
@@ -124,94 +124,90 @@ const deleteHabitAPI = async (id: string): Promise<void> => {
     throw error;
   }
 };
-export const useHabitStore = create<HabitStore>()(
-  persist(
-    (set) => ({
-      habits: [],
-      isLoading: false,
-      error: null,
-      addHabit: async (habit) => {
-        set({ isLoading: true, error: null });
-        try {
-          const newHabit = await createHabitAPI(habit);
-          set((state) => ({
-            habits: [...state.habits, newHabit],
-            isLoading: false,
-          }));
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error ? error.message : "Failed to create habit",
-            isLoading: false,
-          });
-        }
-      },
-      updateHabit: async (id, updated) => {
-        set({ isLoading: true, error: null });
-        try {
-          const updatedHabit = await updateHabitAPI(id, updated);
-          set((state) => ({
-            habits: state.habits.map((habit) =>
-              habit.id === id ? updatedHabit : habit,
-            ),
-            isLoading: false,
-          }));
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error ? error.message : "Failed to update habit",
-            isLoading: false,
-          });
-        }
-      },
-      deleteHabit: async (id) => {
-        set({ isLoading: true, error: null });
-        try {
-          await deleteHabitAPI(id);
-          set((state) => ({
-            habits: state.habits.filter((habit) => habit.id !== id),
-            isLoading: false,
-          }));
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error ? error.message : "Failed to delete habit",
-            isLoading: false,
-          });
-        }
-      },
-      clearHabit: () => set({ habits: [] }),
-      fetchHabits: async () => {
-        set({ isLoading: true, error: null });
-        try {
-          const habits = await getHabits();
-          set({ habits, isLoading: false });
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error ? error.message : "Failed to fetch habits",
-            isLoading: false,
-          });
-        }
-      },
-      initialize: async () => {
-        try {
-          const habits = await getHabits();
-          set({ habits, isLoading: false, error: null });
-        } catch (error) {
-          console.error("Failed to initialize habits:", error);
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : "Failed to initialize habits",
-            isLoading: false,
-          });
-        }
-      },
-    }),
-    {
-      name: "habit-storage",
-    },
-  ),
-);
+export const useHabitStore = create<HabitStore>()((set) => ({
+  habits: [],
+  isLoading: false,
+  error: null,
+  hasInitialized: false,
+  addHabit: async (habit) => {
+    set({ isLoading: true, error: null });
+    try {
+      const newHabit = await createHabitAPI(habit);
+      set((state) => ({
+        habits: [...state.habits, newHabit],
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to create habit",
+        isLoading: false,
+      });
+    }
+  },
+  updateHabit: async (id, updated) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updatedHabit = await updateHabitAPI(id, updated);
+      set((state) => ({
+        habits: state.habits.map((habit) =>
+          habit.id === id ? updatedHabit : habit,
+        ),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to update habit",
+        isLoading: false,
+      });
+    }
+  },
+  deleteHabit: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      await deleteHabitAPI(id);
+      set((state) => ({
+        habits: state.habits.filter((habit) => habit.id !== id),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to delete habit",
+        isLoading: false,
+      });
+    }
+  },
+  clearHabit: () => set({ habits: [] }),
+  fetchHabits: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const habits = await getHabits();
+      set({ habits, isLoading: false, hasInitialized: true });
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to fetch habits",
+        isLoading: false,
+        hasInitialized: true,
+      });
+    }
+  },
+  initialize: async () => {
+    try {
+      const habits = await getHabits();
+      set({ habits, isLoading: false, error: null, hasInitialized: true });
+    } catch (error) {
+      console.error("Failed to initialize habits:", error);
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to initialize habits",
+        isLoading: false,
+        hasInitialized: true,
+      });
+    }
+  },
+}));
