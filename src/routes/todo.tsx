@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTodoStore } from "@/zustand/todoStore";
-import { v4 as uuidv4 } from "uuid";
 import TodoComponent from "@/componenets/TodoList/Todo";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { isAuthenticated } from "@/lib/authVerification";
@@ -56,7 +55,6 @@ function RouteComponent() {
     }
 
     addTodo({
-      id: uuidv4(),
       title: title.trim(),
       description: description?.trim() || "",
       dueDate: date || null,
