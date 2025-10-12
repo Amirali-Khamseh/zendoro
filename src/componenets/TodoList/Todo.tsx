@@ -49,7 +49,7 @@ export default function TodoComponent({
   const [dueDate, setDueDate] = useState<Date | null>(initialDueDate ?? null);
 
   const handleUpdate = () => {
-    updateTodo(id, { id, title, description, status, dueDate });
+    updateTodo(id, { title, description, status, dueDate });
   };
 
   const statusConfig = getStatusConfig(status);
