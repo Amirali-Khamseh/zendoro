@@ -24,6 +24,24 @@ type ApiReminder = {
   userId?: number;
 };
 
+// Helpers to avoid timezone-related off-by-one date issues
+const serializeDateForApi = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const parseDateFromApi = (value: string | null): Date => {
+  if (!value) return new Date();
+  if (value.includes("T")) return new Date(value);
+  const [y, m, d] = value.split("-").map((v) => Number(v));
+  if (Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d)) {
+    return new Date(y, m - 1, d);
+  }
+  return new Date(value);
+};
+
 interface ReminderStore {
   reminders: Reminder[];
   selectedDate: Date;
@@ -78,7 +96,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         id: Number(r.id),
         title: r.title,
         description: r.description ?? undefined,
-        date: r.date ? new Date(r.date) : new Date(),
+        date: parseDateFromApi(r.date),
         time: r.time,
         priority: r.priority,
         completed: r.completed,
@@ -103,7 +121,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         headers,
         body: JSON.stringify({
           ...reminder,
-          date: reminder.date ? reminder.date.toISOString() : null,
+          date: reminder.date ? serializeDateForApi(reminder.date) : null,
         }),
       });
       if (!res.ok) throw new Error("Failed to add reminder");
@@ -112,7 +130,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         id: Number(data.id),
         title: data.title,
         description: data.description ?? undefined,
-        date: data.date ? new Date(data.date) : new Date(),
+        date: parseDateFromApi(data.date),
         time: data.time,
         priority: data.priority,
         completed: data.completed,
@@ -140,7 +158,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         headers,
         body: JSON.stringify({
           ...updates,
-          date: updates.date ? updates.date.toISOString() : undefined,
+          date: updates.date ? serializeDateForApi(updates.date) : undefined,
         }),
       });
       if (!res.ok) throw new Error("Failed to update reminder");
@@ -149,7 +167,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         id: Number(data.id),
         title: data.title,
         description: data.description ?? undefined,
-        date: data.date ? new Date(data.date) : new Date(),
+        date: parseDateFromApi(data.date),
         time: data.time,
         priority: data.priority,
         completed: data.completed,

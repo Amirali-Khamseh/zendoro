@@ -108,7 +108,7 @@ export function Calendar({
             "h-12 md:h-16 p-1 border-r border-b border-border/50 cursor-pointer transition-colors hover:bg-muted/50",
             !day.isCurrentMonth && "opacity-40",
             day.isSelected && "bg-accent/20 border-accent",
-            day.isToday && "bg-primary/10 border-primary/30",
+            day.isToday && "bg-primary/10 border-white",
           )}
           onClick={() => onDateSelect(day.date)}
         >
