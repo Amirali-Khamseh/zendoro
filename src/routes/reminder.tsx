@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Plus, CalendarIcon, CheckCircle2, Clock } from "lucide-react";
 import { useReminderStore, type Reminder } from "@/zustand/reminderStore";
@@ -30,6 +31,7 @@ function RouteComponent() {
     showForm,
     editingReminder,
     deletingReminder,
+    fetchReminders,
     addReminder,
     updateReminder,
     deleteReminder,
@@ -46,28 +48,36 @@ function RouteComponent() {
     getRemindersByDate,
   } = useReminderStore();
 
-  const handleAddReminder = (reminder: Omit<Reminder, "id">) => {
-    addReminder(reminder);
+  // fetch on mount
+  React.useEffect(() => {
+    fetchReminders();
+  }, [fetchReminders]);
+
+  const handleAddReminder = (reminder: Omit<Reminder, "id" | "userId">) => {
+    void addReminder(reminder);
   };
 
-  const handleUpdateReminder = (id: string, updates: Partial<Reminder>) => {
-    updateReminder(id, updates);
+  const handleUpdateReminder = (
+    id: number,
+    updates: Partial<Omit<Reminder, "id" | "userId">>,
+  ) => {
+    void updateReminder(id, updates);
   };
 
-  const handleDeleteReminder = (id: string) => {
-    deleteReminder(id);
+  const handleDeleteReminder = (id: number) => {
+    void deleteReminder(id);
   };
 
   const handleConfirmDelete = () => {
     if (deletingReminder) {
-      confirmDelete();
+      void confirmDelete();
     }
   };
 
-  const handleToggleComplete = (id: string) => {
+  const handleToggleComplete = (id: number) => {
     const reminder = reminders.find((r) => r.id === id);
     if (reminder) {
-      toggleComplete(id);
+      void toggleComplete(id);
     }
   };
 

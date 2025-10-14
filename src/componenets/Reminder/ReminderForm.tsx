@@ -33,7 +33,7 @@ import { REMINDER_PRIORITY_COLORS } from "@/constants/data";
 interface ReminderFormProps {
   reminder?: Reminder | null;
   selectedDate?: Date;
-  onSave: (reminder: Omit<Reminder, "id">) => void;
+  onSave: (reminder: Omit<Reminder, "id" | "userId">) => void;
   onClose: () => void;
 }
 
@@ -100,7 +100,7 @@ export function ReminderForm({
       return;
     }
 
-    const reminderData: Omit<Reminder, "id"> = {
+    const reminderData: Omit<Reminder, "id" | "userId"> = {
       title: formData.title.trim(),
       description: formData.description.trim() || undefined,
       date: formData.date,

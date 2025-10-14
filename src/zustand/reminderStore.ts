@@ -1,15 +1,28 @@
+import { API_BASE_URL } from "@/constants/data";
+import { getAuthToken } from "@/lib/authHelpers";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 export interface Reminder {
-  id: string;
+  id: number;
   title: string;
   description?: string;
   date: Date;
   time: string;
   priority: "low" | "medium" | "high";
   completed: boolean;
+  userId?: number;
 }
+
+type ApiReminder = {
+  id: number;
+  title: string;
+  description?: string | null;
+  date: string | null;
+  time: string;
+  priority: "low" | "medium" | "high";
+  completed: boolean;
+  userId?: number;
+};
 
 interface ReminderStore {
   reminders: Reminder[];
@@ -19,11 +32,15 @@ interface ReminderStore {
   deletingReminder: Reminder | null;
 
   // Actions
-  addReminder: (reminder: Omit<Reminder, "id">) => void;
-  updateReminder: (id: string, updates: Partial<Reminder>) => void;
-  deleteReminder: (id: string) => void;
-  confirmDelete: () => void;
-  toggleComplete: (id: string) => void;
+  fetchReminders: () => Promise<void>;
+  addReminder: (reminder: Omit<Reminder, "id" | "userId">) => Promise<void>;
+  updateReminder: (
+    id: number,
+    updates: Partial<Omit<Reminder, "id" | "userId">>,
+  ) => Promise<void>;
+  deleteReminder: (id: number) => Promise<void>;
+  confirmDelete: () => Promise<void>;
+  toggleComplete: (id: number) => Promise<void>;
   setSelectedDate: (date: Date) => void;
   setShowForm: (show: boolean) => void;
   setEditingReminder: (reminder: Reminder | null) => void;
@@ -37,128 +54,181 @@ interface ReminderStore {
   getRemindersByDate: (date: Date) => Reminder[];
 }
 
-export const useReminderStore = create<ReminderStore>()(
-  persist(
-    (set, get) => ({
-      reminders: [],
-      selectedDate: new Date(),
-      showForm: false,
-      editingReminder: null,
-      deletingReminder: null,
+export const useReminderStore = create<ReminderStore>()((set, get) => ({
+  reminders: [],
+  selectedDate: new Date(),
+  showForm: false,
+  editingReminder: null,
+  deletingReminder: null,
 
-      addReminder: (reminder) => {
-        const newReminder: Reminder = {
+  fetchReminders: async () => {
+    try {
+      const authToken = getAuthToken();
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      };
+      const res = await fetch(`${API_BASE_URL}/reminder`, {
+        method: "GET",
+        headers,
+      });
+      if (!res.ok) throw new Error("Failed to fetch reminders");
+      const data: ApiReminder[] = await res.json();
+      const reminders: Reminder[] = data.map((r) => ({
+        id: Number(r.id),
+        title: r.title,
+        description: r.description ?? undefined,
+        date: r.date ? new Date(r.date) : new Date(),
+        time: r.time,
+        priority: r.priority,
+        completed: r.completed,
+        userId: r.userId,
+      }));
+      set({ reminders });
+    } catch (e) {
+      console.error("Error fetching reminders", e);
+      set({ reminders: [] });
+    }
+  },
+
+  addReminder: async (reminder) => {
+    try {
+      const authToken = getAuthToken();
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      };
+      const res = await fetch(`${API_BASE_URL}/reminder`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
           ...reminder,
-          id: Date.now().toString(),
-        };
-        set((state) => ({
-          reminders: [...state.reminders, newReminder],
-          showForm: false,
-        }));
-      },
+          date: reminder.date ? reminder.date.toISOString() : null,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to add reminder");
+      const data: ApiReminder = await res.json();
+      const created: Reminder = {
+        id: Number(data.id),
+        title: data.title,
+        description: data.description ?? undefined,
+        date: data.date ? new Date(data.date) : new Date(),
+        time: data.time,
+        priority: data.priority,
+        completed: data.completed,
+        userId: data.userId,
+      };
+      set((state) => ({
+        reminders: [...state.reminders, created],
+        showForm: false,
+      }));
+    } catch (e) {
+      console.error("Error adding reminder", e);
+      throw e;
+    }
+  },
 
-      updateReminder: (id, updates) => {
-        set((state) => ({
-          reminders: state.reminders.map((reminder) =>
-            reminder.id === id ? { ...reminder, ...updates } : reminder,
-          ),
-          editingReminder: null,
-          showForm: false,
-        }));
-      },
+  updateReminder: async (id, updates) => {
+    try {
+      const authToken = getAuthToken();
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      };
+      const res = await fetch(`${API_BASE_URL}/reminder/${id}`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({
+          ...updates,
+          date: updates.date ? updates.date.toISOString() : undefined,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update reminder");
+      const data: ApiReminder = await res.json();
+      const updated: Reminder = {
+        id: Number(data.id),
+        title: data.title,
+        description: data.description ?? undefined,
+        date: data.date ? new Date(data.date) : new Date(),
+        time: data.time,
+        priority: data.priority,
+        completed: data.completed,
+        userId: data.userId,
+      };
+      set((state) => ({
+        reminders: state.reminders.map((r) => (r.id === id ? updated : r)),
+        editingReminder: null,
+        showForm: false,
+      }));
+    } catch (e) {
+      console.error("Error updating reminder", e);
+      throw e;
+    }
+  },
 
-      deleteReminder: (id) => {
-        const reminder = get().reminders.find((r) => r.id === id);
-        if (reminder) {
-          set({ deletingReminder: reminder });
-        }
-      },
+  deleteReminder: async (id) => {
+    const reminder = get().reminders.find((r) => r.id === id) || null;
+    set({ deletingReminder: reminder });
+  },
 
-      confirmDelete: () => {
-        const { deletingReminder } = get();
-        if (deletingReminder) {
-          set((state) => ({
-            reminders: state.reminders.filter(
-              (reminder) => reminder.id !== deletingReminder.id,
-            ),
-            deletingReminder: null,
-          }));
-        }
-      },
-
-      toggleComplete: (id) => {
-        set((state) => ({
-          reminders: state.reminders.map((reminder) =>
-            reminder.id === id
-              ? { ...reminder, completed: !reminder.completed }
-              : reminder,
-          ),
-        }));
-      },
-
-      setSelectedDate: (date) => set({ selectedDate: date }),
-      setShowForm: (show) => set({ showForm: show }),
-      setEditingReminder: (reminder) => set({ editingReminder: reminder }),
-      setDeletingReminder: (reminder) => set({ deletingReminder: reminder }),
-
-      // Computed values
-      getTotalReminders: () => get().reminders.length,
-      getCompletedReminders: () =>
-        get().reminders.filter((r) => r.completed).length,
-      getTodayReminders: () => {
-        const today = new Date().toDateString();
-        return get().reminders.filter((r) => r.date.toDateString() === today)
-          .length;
-      },
-      getOverdueReminders: () => {
-        const today = new Date();
-        const todayString = today.toDateString();
-        return get().reminders.filter(
-          (r) =>
-            !r.completed &&
-            r.date < today &&
-            r.date.toDateString() !== todayString,
-        ).length;
-      },
-      getRemindersByDate: (date) => {
-        return get().reminders.filter(
-          (reminder) => reminder.date.toDateString() === date.toDateString(),
-        );
-      },
-    }),
-    {
-      name: "reminder-storage",
-      storage: {
-        getItem: (name: string) => {
-          const str = localStorage.getItem(name);
-          if (!str) return null;
-          const parsed = JSON.parse(str);
-          return {
-            state: {
-              ...parsed,
-              reminders: parsed.reminders.map(
-                (r: Reminder & { date: string }) => ({
-                  ...r,
-                  date: new Date(r.date),
-                }),
-              ),
-              selectedDate: new Date(parsed.selectedDate),
-            },
-          };
+  confirmDelete: async () => {
+    const { deletingReminder } = get();
+    if (!deletingReminder) return;
+    try {
+      const authToken = getAuthToken();
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      };
+      const res = await fetch(
+        `${API_BASE_URL}/reminder/${deletingReminder.id}`,
+        {
+          method: "DELETE",
+          headers,
         },
-        setItem: (name: string, value: { state: ReminderStore }) => {
-          const serialized = {
-            ...value.state,
-            reminders: value.state.reminders.map((r) => ({
-              ...r,
-              date: r.date.toISOString(),
-            })),
-            selectedDate: value.state.selectedDate.toISOString(),
-          };
-          localStorage.setItem(name, JSON.stringify(serialized));
-        },
-        removeItem: (name: string) => localStorage.removeItem(name),
-      },
-    },
-  ),
-);
+      );
+      if (!res.ok) throw new Error("Failed to delete reminder");
+      set((state) => ({
+        reminders: state.reminders.filter((r) => r.id !== deletingReminder.id),
+        deletingReminder: null,
+      }));
+    } catch (e) {
+      console.error("Error deleting reminder", e);
+      throw e;
+    }
+  },
+
+  toggleComplete: async (id) => {
+    const reminder = get().reminders.find((r) => r.id === id);
+    if (!reminder) return;
+    await get().updateReminder(id, { completed: !reminder.completed });
+  },
+
+  setSelectedDate: (date) => set({ selectedDate: date }),
+  setShowForm: (show) => set({ showForm: show }),
+  setEditingReminder: (reminder) => set({ editingReminder: reminder }),
+  setDeletingReminder: (reminder) => set({ deletingReminder: reminder }),
+
+  // Computed values
+  getTotalReminders: () => get().reminders.length,
+  getCompletedReminders: () =>
+    get().reminders.filter((r) => r.completed).length,
+  getTodayReminders: () => {
+    const today = new Date().toDateString();
+    return get().reminders.filter((r) => r.date.toDateString() === today)
+      .length;
+  },
+  getOverdueReminders: () => {
+    const today = new Date();
+    const todayString = today.toDateString();
+    return get().reminders.filter(
+      (r) =>
+        !r.completed && r.date < today && r.date.toDateString() !== todayString,
+    ).length;
+  },
+  getRemindersByDate: (date) => {
+    return get().reminders.filter(
+      (reminder) => reminder.date.toDateString() === date.toDateString(),
+    );
+  },
+}));

@@ -7,9 +7,9 @@ import type { Reminder } from "@/zustand/reminderStore";
 
 interface ReminderListProps {
   reminders: Reminder[];
-  onToggleComplete: (id: string) => void;
+  onToggleComplete: (id: number) => void;
   onEdit: (reminder: Reminder) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 }
 
 export function ReminderList({

@@ -7,9 +7,9 @@ import type { Reminder } from "@/zustand/reminderStore";
 
 interface ReminderCardProps {
   reminder: Reminder;
-  onToggleComplete: (id: string) => void;
+  onToggleComplete: (id: number) => void;
   onEdit: (reminder: Reminder) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
   compact?: boolean;
 }
 
