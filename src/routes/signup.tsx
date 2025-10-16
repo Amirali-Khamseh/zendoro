@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import {
   Card,
@@ -31,6 +31,7 @@ type signUpResponseType = {
 };
 function SignupComponent() {
   useDocumentTitle("Sign Up - Zendoro");
+  const router = useRouter();
 
   const formRef = useRef<HTMLFormElement>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -60,10 +61,17 @@ function SignupComponent() {
 
     if (!password?.trim()) {
       newErrors.password = "Password is required";
-    } else if (password.length < 6) {
+    } else if (password.length < 8) {
       newErrors.password = "Password must be at least 6 characters";
     }
-
+    if (
+      !password.match(
+        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+_!@#$%^&*.,?]).+$",
+      )
+    ) {
+      newErrors.password =
+        "Password must include uppercase, lowercase, number, and special character";
+    }
     if (!confirmPassword?.trim()) {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (password !== confirmPassword) {
@@ -102,6 +110,7 @@ function SignupComponent() {
         const response: signUpResponseType = await result.json();
         setAuthToken(response.token);
         formRef.current?.reset();
+        router.navigate({ to: "/" });
         setErrors({});
       } else {
         const errorData = await result.json().catch(() => ({}));
