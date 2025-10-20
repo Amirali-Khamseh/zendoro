@@ -9,6 +9,7 @@ import {
   Target,
   CheckSquare,
   Bell,
+  Bot,
   ChevronLeft,
   ChevronRight,
   LogIn,
@@ -114,6 +115,18 @@ export function Sidebar() {
                   <Bell className="h-5 w-5" />
                 </Link>
               </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                title="AI Assistant"
+                asChild
+              >
+                <Link to="/agent">
+                  <Bot className="h-5 w-5" />
+                </Link>
+              </Button>
             </div>
           ) : (
             // Expanded view - full content
@@ -163,6 +176,18 @@ export function Sidebar() {
                 <Link to="/reminder">
                   <Bell className="h-4 w-4 mr-2" />
                   Reminder
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/agent">
+                  <Bot className="h-4 w-4 mr-2" />
+                  AI Assistant
                 </Link>
               </Button>
             </>

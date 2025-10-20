@@ -2,6 +2,8 @@ import { isAuthenticated } from "@/lib/authVerification";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { useState, useRef, useEffect } from "react";
+import { API_BASE_URL } from "@/constants/data";
+import { getAuthToken } from "@/lib/authHelpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -41,6 +43,73 @@ function RouteComponent() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Helper to sanitize assistant responses that may be JSON-wrapped or escaped
+  const sanitizeAssistantContent = (raw: string | null | undefined) => {
+    if (!raw) return "";
+    let s = raw.trim();
+
+    const tryParse = (str: string) => {
+      try {
+        return JSON.parse(str);
+      } catch {
+        return null;
+      }
+    };
+
+    // Direct JSON parse
+    const parsed = tryParse(s);
+    if (parsed !== null) {
+      if (typeof parsed === "string") return parsed;
+      if (typeof parsed === "object") {
+        const keys = ["reply", "content", "message", "result", "text"];
+        for (const k of keys) {
+          if (parsed[k] && typeof parsed[k] === "string") return parsed[k];
+        }
+        const stringKey = Object.keys(parsed).find(
+          (k) => typeof parsed[k] === "string",
+        );
+        if (stringKey) return parsed[stringKey] as string;
+        return JSON.stringify(parsed, null, 2);
+      }
+      return String(parsed);
+    }
+
+    // Try to find JSON substring inside
+    const jsonMatch = s.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const p = tryParse(jsonMatch[0]);
+      if (p && typeof p === "object") {
+        const keys = ["reply", "content", "message", "result", "text"];
+        for (const k of keys) {
+          if (p[k] && typeof p[k] === "string") return p[k];
+        }
+        const stringKey = Object.keys(p).find((k) => typeof p[k] === "string");
+        if (stringKey) return p[stringKey] as string;
+        return JSON.stringify(p, null, 2);
+      }
+    }
+
+    // Attempt to unescape common sequences
+    try {
+      const maybeUnescaped = tryParse(
+        '"' + s.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"',
+      );
+      if (typeof maybeUnescaped === "string") return maybeUnescaped;
+    } catch (e) {
+      // ignore parse/unescape attempt failures
+      // no-op
+      void e;
+    }
+
+    s = s
+      .replace(/\\n/g, "\n")
+      .replace(/\\t/g, "\t")
+      .replace(/\\"/g, '"')
+      .replace(/\\\\/g, "\\");
+
+    return s;
+  };
+
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
@@ -61,18 +130,113 @@ function RouteComponent() {
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content:
-          "This is a **simulated response** with markdown support.\n\n- You can use *italic* and **bold** text\n- Create lists and links\n- Add `inline code` or code blocks\n\n```javascript\nconst example = 'Hello World';\n```\n\nIn a real implementation, this would connect to an AI service using the Vercel AI SDK.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
+    try {
+      const token = getAuthToken();
+
+      const res = await fetch(`${API_BASE_URL}/agent/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ message: userMessage.content }),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => "");
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: `Error: ${res.status} ${res.statusText} ${errText}`,
+            timestamp: new Date(),
+          },
+        ]);
+        setIsTyping(false);
+        return;
+      }
+
+      const contentType = res.headers.get("content-type") || "";
+
+      if (
+        res.body &&
+        (contentType.includes("text/event-stream") ||
+          contentType.includes("stream"))
+      ) {
+        // Stream response
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let assistantContent = "";
+
+        while (!done) {
+          const { value, done: readerDone } = await reader.read();
+          done = !!readerDone;
+          if (value) {
+            assistantContent += decoder.decode(value, { stream: true });
+            setMessages((prev) => {
+              const withoutTemp = prev.filter((m) => !m.id.startsWith("temp-"));
+              return [
+                ...withoutTemp,
+                {
+                  id: `temp-${Date.now()}`,
+                  role: "assistant",
+                  content: assistantContent,
+                  timestamp: new Date(),
+                },
+              ];
+            });
+          }
+        }
+
+        setMessages((prev) => [
+          ...prev.filter((m) => !m.id.startsWith("temp-")),
+          {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: sanitizeAssistantContent(assistantContent),
+            timestamp: new Date(),
+          },
+        ]);
+      } else {
+        // JSON fallback
+        const data = await res.json().catch(() => null);
+        const assistantContentRaw =
+          (data && (data.content || data.message || data.result)) ||
+          JSON.stringify(data) ||
+          "(no response)";
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: sanitizeAssistantContent(assistantContentRaw),
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    } catch (err: unknown) {
+      console.error("Agent request failed", err);
+      const message =
+        err instanceof Error
+          ? err.message
+          : String(
+              err ?? "Request failed. Please check your connection or server.",
+            );
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: message,
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -100,8 +264,10 @@ function RouteComponent() {
       </header>
 
       {/* Chat Messages */}
-      <ScrollArea className="flex-1 px-4 py-6" ref={scrollAreaRef}>
-        <div className="mx-auto max-w-4xl space-y-6">
+      {/* Make the ScrollArea a flex child that can shrink properly by adding min-h-0
+          and forward the ref to the internal viewport so scrolling works correctly. */}
+      <ScrollArea className="flex-1 min-h-0 px-4 py-6" ref={scrollAreaRef}>
+        <div className="mx-auto max-w-4xl space-y-6 min-h-0">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -132,83 +298,86 @@ function RouteComponent() {
                       : "bg-muted text-foreground"
                   }`}
                 >
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    // className="prose prose-sm dark:prose-invert max-w-none text-pretty"
-                    components={{
-                      p: ({ children }) => (
-                        <p className="mb-2 last:mb-0 leading-relaxed">
-                          {children}
-                        </p>
-                      ),
-                      ul: ({ children }) => (
-                        <ul className="mb-2 ml-4 list-disc space-y-1">
-                          {children}
-                        </ul>
-                      ),
-                      ol: ({ children }) => (
-                        <ol className="mb-2 ml-4 list-decimal space-y-1">
-                          {children}
-                        </ol>
-                      ),
-                      li: ({ children }) => (
-                        <li className="leading-relaxed">{children}</li>
-                      ),
-                      code: ({ className, children, ...props }) => {
-                        const isInline = !className;
-                        return isInline ? (
-                          <code
-                            className="rounded bg-background/50 px-1.5 py-0.5 font-mono text-xs"
-                            {...props}
+                  <div className="max-h-[48vh] overflow-auto whitespace-pre-wrap break-words">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({ children }) => (
+                          <p className="mb-2 last:mb-0 leading-relaxed">
+                            {children}
+                          </p>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="mb-2 ml-4 list-disc space-y-1">
+                            {children}
+                          </ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="mb-2 ml-4 list-decimal space-y-1">
+                            {children}
+                          </ol>
+                        ),
+                        li: ({ children }) => (
+                          <li className="leading-relaxed">{children}</li>
+                        ),
+                        code: ({ className, children, ...props }) => {
+                          const isInline = !className;
+                          return isInline ? (
+                            <code
+                              className="rounded bg-background/50 px-1.5 py-0.5 font-mono text-xs"
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          ) : (
+                            <code
+                              className="block rounded-lg bg-background/50 p-3 font-mono text-xs overflow-x-auto"
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          );
+                        },
+                        pre: ({ children }) => (
+                          <pre className="mb-2 overflow-x-auto">{children}</pre>
+                        ),
+                        a: ({ children, href }) => (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline underline-offset-2 hover:opacity-80"
                           >
                             {children}
-                          </code>
-                        ) : (
-                          <code
-                            className="block rounded-lg bg-background/50 p-3 font-mono text-xs overflow-x-auto"
-                            {...props}
-                          >
+                          </a>
+                        ),
+                        strong: ({ children }) => (
+                          <strong className="font-semibold">{children}</strong>
+                        ),
+                        em: ({ children }) => (
+                          <em className="italic">{children}</em>
+                        ),
+                        h1: ({ children }) => (
+                          <h1 className="mb-2 text-lg font-bold">{children}</h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="mb-2 text-base font-bold">
                             {children}
-                          </code>
-                        );
-                      },
-                      pre: ({ children }) => (
-                        <pre className="mb-2 overflow-x-auto">{children}</pre>
-                      ),
-                      a: ({ children, href }) => (
-                        <a
-                          href={href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline underline-offset-2 hover:opacity-80"
-                        >
-                          {children}
-                        </a>
-                      ),
-                      strong: ({ children }) => (
-                        <strong className="font-semibold">{children}</strong>
-                      ),
-                      em: ({ children }) => (
-                        <em className="italic">{children}</em>
-                      ),
-                      h1: ({ children }) => (
-                        <h1 className="mb-2 text-lg font-bold">{children}</h1>
-                      ),
-                      h2: ({ children }) => (
-                        <h2 className="mb-2 text-base font-bold">{children}</h2>
-                      ),
-                      h3: ({ children }) => (
-                        <h3 className="mb-2 text-sm font-bold">{children}</h3>
-                      ),
-                      blockquote: ({ children }) => (
-                        <blockquote className="border-l-2 border-foreground/20 pl-3 italic">
-                          {children}
-                        </blockquote>
-                      ),
-                    }}
-                  >
-                    {message.content}
-                  </ReactMarkdown>
+                          </h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="mb-2 text-sm font-bold">{children}</h3>
+                        ),
+                        blockquote: ({ children }) => (
+                          <blockquote className="border-l-2 border-foreground/20 pl-3 italic">
+                            {children}
+                          </blockquote>
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {message.timestamp.toLocaleTimeString([], {
