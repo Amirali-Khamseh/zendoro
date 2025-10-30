@@ -7,6 +7,8 @@ import { useModeStore, type ZendoroModeType } from "@/zustand/modeStore";
 import { getNextSessionInfo } from "./utils/getNextSessionInfo";
 import { getCurrentSessionIcon } from "./utils/getCurrentSessionIcon";
 import SessionCount from "./SessionCount";
+import { API_BASE_URL } from "@/constants/data";
+import { getAuthToken } from "@/lib/authHelpers";
 
 type Props = {
   initialTime: number;
@@ -96,7 +98,29 @@ export function Timer({ initialTime }: Props) {
       }
     }
   }, [focusTime, shortBreak, longBreak, currentSessionType, isRunning]);
+  //Keep the number of focus sessions
+  useEffect(() => {
+    const updateSessionCount = async () => {
+      try {
+        //eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const response = await fetch(`${API_BASE_URL}/timer/session-count`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sessionCount: focusSessionCount,
+            date: new Date().toISOString(),
+          }),
+        });
+      } catch (error) {
+        console.error("Error updating focus session count:", error);
+      }
+    };
 
+    updateSessionCount();
+  }, [focusSessionCount]);
   {
     /* Handlers and Helper functions */
   }

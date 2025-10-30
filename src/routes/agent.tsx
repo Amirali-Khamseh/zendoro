@@ -264,8 +264,6 @@ function RouteComponent() {
       </header>
 
       {/* Chat Messages */}
-      {/* Make the ScrollArea a flex child that can shrink properly by adding min-h-0
-          and forward the ref to the internal viewport so scrolling works correctly. */}
       <ScrollArea className="flex-1 min-h-0 px-4 py-6" ref={scrollAreaRef}>
         <div className="mx-auto max-w-4xl space-y-6 min-h-0">
           {messages.map((message) => (
