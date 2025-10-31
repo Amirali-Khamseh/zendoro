@@ -114,6 +114,9 @@ export function Timer({ initialTime }: Props) {
             date: new Date().toISOString(),
           }),
         });
+        if (!response.ok) {
+          throw new Error("Failed to update session count");
+        }
       } catch (error) {
         console.error("Error updating focus session count:", error);
       }
