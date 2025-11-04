@@ -15,8 +15,9 @@ type Props = {
 };
 
 export function Timer({ initialTime }: Props) {
-  const { currentMode } = useModeStore() as {
+  const { currentMode, fetchFocusSessionCount } = useModeStore() as {
     currentMode: ZendoroModeType | null;
+    fetchFocusSessionCount?: () => Promise<void>;
   };
 
   // Get timer values from currentMode, with fallbacks
@@ -102,7 +103,7 @@ export function Timer({ initialTime }: Props) {
   useEffect(() => {
     const updateSessionCount = async () => {
       try {
-        //eslint-disable-next-line @typescript-eslint/no-unused-vars
+        if (focusSessionCount === 0) return;
         const response = await fetch(`${API_BASE_URL}/timer/session-count`, {
           method: "POST",
           headers: {
@@ -117,13 +118,17 @@ export function Timer({ initialTime }: Props) {
         if (!response.ok) {
           throw new Error("Failed to update session count");
         }
+        // After successfully updating the API, refresh the Zustand store
+        if (fetchFocusSessionCount) {
+          await fetchFocusSessionCount();
+        }
       } catch (error) {
         console.error("Error updating focus session count:", error);
       }
     };
 
     updateSessionCount();
-  }, [focusSessionCount]);
+  }, [focusSessionCount, fetchFocusSessionCount]);
   {
     /* Handlers and Helper functions */
   }
@@ -235,7 +240,7 @@ export function Timer({ initialTime }: Props) {
         </div>
 
         {/* Session Count */}
-        <SessionCount sessionCount={focusSessionCount} />
+        <SessionCount />
       </div>
     </div>
   );

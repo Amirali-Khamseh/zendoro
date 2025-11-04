@@ -66,21 +66,65 @@ const getModes = async () => {
     throw error;
   }
 };
+const getCurrentFocusSessionCount = async (): Promise<number> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/timer/session-count`, {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
 
-export const useModeStore = create((set) => ({
-  availableModes: [],
-  currentMode: null,
-  isLoading: false,
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const result = await response.json();
+    return result.data.sessionCount || 0;
+  } catch (error) {
+    console.error("Failed to fetch focus session count from API:", error);
+    throw error;
+  }
+};
 
-  fetchAvailableModes: async () => {
-    set({ isLoading: true });
-    const modes = await getModes();
-    set({ availableModes: modes, isLoading: false });
-  },
+export const useModeStore = create((set) => {
+  // fetch initial focus session count asynchronously and populate the store
+  getCurrentFocusSessionCount()
+    .then((count) => {
+      set({ currentFocusSessionCount: count });
+    })
+    .catch((error) =>
+      console.error("Failed to fetch initial focus session count:", error),
+    );
 
-  changeMode: async (mode: ZendoroModeType) => {
-    set({ isLoading: true });
-    await sendModeToAPI(mode);
-    set({ currentMode: mode, isLoading: false });
-  },
-}));
+  return {
+    availableModes: [],
+    currentMode: null,
+    isLoading: false,
+    // initialize with a sensible default (number) instead of a Promise
+    currentFocusSessionCount: 0,
+
+    // action to refresh the count on demand
+    fetchFocusSessionCount: async () => {
+      try {
+        const count = await getCurrentFocusSessionCount();
+        set({ currentFocusSessionCount: count });
+      } catch (error) {
+        console.error("Failed to fetch focus session count:", error);
+      }
+    },
+
+    fetchAvailableModes: async () => {
+      set({ isLoading: true });
+      const modes = await getModes();
+      set({ availableModes: modes, isLoading: false });
+    },
+
+    changeMode: async (mode: ZendoroModeType) => {
+      set({ isLoading: true });
+      await sendModeToAPI(mode);
+      set({ currentMode: mode, isLoading: false });
+    },
+  };
+});
+
+// Export the store's return type for typed selectors in components
+export type ModeStore = ReturnType<typeof useModeStore>;
