@@ -22,6 +22,7 @@ export const REMINDER_PRIORITY_COLORS = {
   high: "bg-red-400",
 };
 
-// export const API_BASE_URL = "https://zendoro-backend.onrender.com";
-export const API_BASE_URL = "http://localhost:3000";
+export const API_BASE_URL = import.meta.env.PROD 
+  ? "/backend" 
+  : "http://localhost/backend";
 export const LS_ZENDORO_AUTH = "zendoro-auth-token";
