@@ -57,7 +57,36 @@ const RootLayout = () => {
           />
         )}
 
-        <div className="flex-1 overflow-x-hidden transition-all duration-300 ease-in-out">
+        <div className="flex-1 overflow-x-hidden overflow-y-hidden transition-all duration-300 ease-in-out">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-xs text-gray-300 mt-2 text-center">
+            Made with ❤️ for{" "}
+            <a
+              href="https://staffbase.com/ai-challenge"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-white"
+            >
+              Staffbase AI Challenge
+            </a>{" "}
+            by{" "}
+            <a
+              href="https://www.amir-khamseh.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-white"
+            >
+              Amir
+            </a>{" "}
+            &{" "}
+            <a
+              href="http://www.linkedin.com/in/oleksandr-boretskyi-4155a422b"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-white"
+            >
+              Oleksandr
+            </a>
+          </div>
           <Outlet />
         </div>
       </div>
