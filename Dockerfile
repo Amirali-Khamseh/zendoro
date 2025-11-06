@@ -1,4 +1,4 @@
-# Build stage
+
 FROM node:22-alpine AS builder
 
 WORKDIR /app
@@ -8,13 +8,10 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Production stage with nginx
 FROM nginx:alpine
 
-# Copy built static files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration for SPA routing
 RUN echo 'server { \
     listen 80; \
     server_name localhost; \
