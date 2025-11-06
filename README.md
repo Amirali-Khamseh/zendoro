@@ -30,6 +30,13 @@ you could simply ask for the earliest possible date available for an appointment
 
 or any sort of question you want to ask about your information, including How well am I keeping my promises to my habits?
 
+## Screenshots
+
+![Zendoro Screenshot 1](./public/images/1.png)
+![Zendoro Screenshot 2](./public/images/2.png)
+![Zendoro Screenshot 3](./public/images/3.png)
+![Zendoro Screenshot 4](./public/images/4.png)
+
 ## Evolution of the App
 
 You could also ask for a summary of your day, such as What meetings do I have today and what tasks should I focus on first?,
