@@ -56,7 +56,9 @@ This app, at its core, is built to collect all my productivity tools in one plac
 
 And of course, what makes this app stand out is the fact that it has an **AI assistant** that is always there, so you can communicate in human-like language to keep your time organized and plan ahead.It is built on a three-tier architecture and MVC pattern, using TypeScript, React, Node (Express), and Docker for production deployment, along with PostgreSQL as the database.
 
-### What You Can Ask:For example, in the future, if I continue developing this app, I would make it possible to have multiple integrations from different calendars, a reminder service, and even an email system that sends notifications one day before a task deadline, as well as real-time voice assistance that can communicate not just via text but also by voice.
+### What You Can Ask:
+
+For example, in the future, if I continue developing this app, I would make it possible to have multiple integrations from different calendars, a reminder service, and even an email system that sends notifications one day before a task deadline, as well as real-time voice assistance that can communicate not just via text but also by voice.
 
 When you have a busy calendar full of meetings, you could:However, all these features require resources and time, and I have neither at the moment, since I am working and studying full-time. But still, at this point, I am happy that I could bring this app to life and create a starting point for a bigger vision.
 
