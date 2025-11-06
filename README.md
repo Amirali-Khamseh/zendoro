@@ -32,10 +32,15 @@ or any sort of question you want to ask about your information, including How we
 
 ## Screenshots
 
-![Zendoro Screenshot 1](./public/images/1.png)
-![Zendoro Screenshot 2](./public/images/2.png)
-![Zendoro Screenshot 3](./public/images/3.png)
-![Zendoro Screenshot 4](./public/images/4.png)
+<p align="center">
+  <img src="./public/images/1.png" alt="Zendoro Screenshot 1" width="45%" />
+  <img src="./public/images/2.png" alt="Zendoro Screenshot 2" width="45%" />
+</p>
+
+<p align="center">
+  <img src="./public/images/3.png" alt="Zendoro Screenshot 3" width="45%" />
+  <img src="./public/images/4.png" alt="Zendoro Screenshot 4" width="45%" />
+</p>
 
 ## Evolution of the App
 
@@ -56,6 +61,11 @@ It can remind you of recurring commitments, track your progress on long-term goa
 - **To-Do List** - To keep tasks and their priorities organizedThis functionality uses the Gemini API Function Calling feature (https://ai.google.dev/gemini-api/docs/function-calling?example=meeting
 
 ), which allows Gemini to interact with your API and endpoints to get the relevant data within the scope you define.
+
+<p align="center">
+  <img src="./public/images/5.png" alt=" Gemini API Function Calling " width="45%" />
+  
+</p>
 
 ## AI Assistant Integration
 
