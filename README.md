@@ -41,6 +41,10 @@ or any sort of question you want to ask about your information, including How we
   <img src="./public/images/3.png" alt="Zendoro Screenshot 3" width="45%" />
   <img src="./public/images/4.png" alt="Zendoro Screenshot 4" width="45%" />
 </p>
+<p align="center">
+  <img src="./public/images/6.png" alt="Zendoro AI assistant " width="45%" />
+
+</p>
 
 ## Evolution of the App
 
