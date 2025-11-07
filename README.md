@@ -127,6 +127,8 @@ However, all these features require resources and time, and I have neither at th
 
 I believe this app is a strong candidate for the **AI and Smarter Work of the Staff Base AI Challenge**, and I truly hope it wins. 🙋🏼‍♂️
 
+Production version Up & Running ✅ (https://zendoro.app)
+
 ### Contributors
 
 - **Developer:** [Amir Khamseh](https://amir-khamseh.com/)
