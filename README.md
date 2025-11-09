@@ -127,6 +127,7 @@ However, all these features require resources and time, and I have neither at th
 
 I believe this app is a strong candidate for the **AI and Smarter Work of the Staff Base AI Challenge**, and I truly hope it wins. 🙋🏼‍♂️
 
+Backend Repo 🏭 (https://github.com/Amirali-Khamseh/zendoro-backend)
 Production version Up & Running ✅ (https://zendoro.app)
 
 ### Contributors
