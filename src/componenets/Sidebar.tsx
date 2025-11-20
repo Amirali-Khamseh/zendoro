@@ -56,10 +56,11 @@ export function Sidebar() {
         {/* Header */}
         {!isCollapsed && (
           <div className="mb-6">
-            <h1 className="text-lg font-semibold">Zendoro</h1>
+            {/* <h1 className="text-lg font-semibold">Zendoro</h1>
             <p className="text-sm text-muted-foreground">
               Focus & Productivity
-            </p>
+            </p> */}
+            <img src="./public/logo.svg" alt="Zendoro Logo" />
           </div>
         )}
 

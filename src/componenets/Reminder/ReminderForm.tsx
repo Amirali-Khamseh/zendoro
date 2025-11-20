@@ -239,13 +239,9 @@ export function ReminderForm({
                     <SelectValue placeholder="Select time" />
                   </div>
                 </SelectTrigger>
-                <SelectContent className="text-white">
+                <SelectContent className="">
                   {timeOptions.map((time) => (
-                    <SelectItem
-                      key={time}
-                      value={time}
-                      className="text-white focus:text-white"
-                    >
+                    <SelectItem key={time} value={time} className="">
                       {time}
                     </SelectItem>
                   ))}

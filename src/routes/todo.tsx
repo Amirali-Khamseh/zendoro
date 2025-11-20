@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon, Plus } from "lucide-react";
@@ -41,7 +41,11 @@ function RouteComponent() {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [status, setStatus] = useState<string>("");
-  const { addTodo, todos } = useTodoStore();
+  const { addTodo, todos, fetchTodos } = useTodoStore();
+
+  useEffect(() => {
+    fetchTodos();
+  }, [fetchTodos]);
 
   function formHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
