@@ -16,6 +16,7 @@ import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
 import { setAuthToken } from "@/lib/authHelpers";
+import { validateNoInjection } from "@/lib/inputSanitization";
 
 export const Route = createFileRoute("/signup")({
   component: SignupComponent,
@@ -77,6 +78,9 @@ function SignupComponent() {
     } else if (password !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
+
+    const injectionErrors = validateNoInjection({ name, email });
+    Object.assign(newErrors, injectionErrors);
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

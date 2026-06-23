@@ -23,6 +23,7 @@ import { useTodoStore } from "@/zustand/todoStore";
 import TodoComponent from "@/componenets/TodoList/Todo";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { isAuthenticated } from "@/lib/authVerification";
+import { containsDangerousInput } from "@/lib/inputSanitization";
 
 export const Route = createFileRoute("/todo")({
   component: RouteComponent,
@@ -47,6 +48,8 @@ function RouteComponent() {
     fetchTodos();
   }, [fetchTodos]);
 
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
   function formHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -54,9 +57,22 @@ function RouteComponent() {
     const description = formData.get("description") as string;
 
     if (!title.trim()) {
-      alert("Please enter a title");
+      setFormErrors({ title: "Please enter a title" });
       return;
     }
+
+    const errors: Record<string, string> = {};
+    if (containsDangerousInput(title)) {
+      errors.title = "Invalid characters detected. HTML and scripts are not allowed.";
+    }
+    if (description && containsDangerousInput(description)) {
+      errors.description = "Invalid characters detected. HTML and scripts are not allowed.";
+    }
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+    setFormErrors({});
 
     addTodo({
       title: title.trim(),
@@ -92,8 +108,11 @@ function RouteComponent() {
                 name="title"
                 id="title"
                 required
-                className="h-8 md:h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm"
+                className={`h-8 md:h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm${formErrors.title ? " border-red-500" : ""}`}
               />
+              {formErrors.title && (
+                <p className="text-xs text-red-400">{formErrors.title}</p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -108,8 +127,11 @@ function RouteComponent() {
                 placeholder="What should be done?"
                 maxLength={150}
                 id="description"
-                className="h-8 md:h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none"
+                className={`h-8 md:h-9 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 text-sm resize-none${formErrors.description ? " border-red-500" : ""}`}
               />
+              {formErrors.description && (
+                <p className="text-xs text-red-400">{formErrors.description}</p>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2 md:gap-3 sm:items-end">

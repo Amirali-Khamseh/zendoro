@@ -29,6 +29,7 @@ import { format } from "date-fns";
 import type { Reminder } from "@/zustand/reminderStore";
 import { GradientButton } from "../customUIComponenets/CustomButton";
 import { REMINDER_PRIORITY_COLORS } from "@/constants/data";
+import { containsDangerousInput } from "@/lib/inputSanitization";
 
 interface ReminderFormProps {
   reminder?: Reminder | null;
@@ -79,6 +80,12 @@ export function ReminderForm({
 
     if (!formData.title.trim()) {
       newErrors.title = "Title is required";
+    } else if (containsDangerousInput(formData.title)) {
+      newErrors.title = "Invalid characters detected. HTML and scripts are not allowed.";
+    }
+
+    if (formData.description && containsDangerousInput(formData.description)) {
+      newErrors.description = "Invalid characters detected. HTML and scripts are not allowed.";
     }
 
     if (!formData.date) {
@@ -181,8 +188,15 @@ export function ReminderForm({
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Add a description (optional)..."
               rows={3}
-              className="resize-none"
+              className={cn(
+                "resize-none",
+                errors.description &&
+                  "border-destructive focus-visible:ring-destructive",
+              )}
             />
+            {errors.description && (
+              <p className="text-sm text-destructive">{errors.description}</p>
+            )}
           </div>
 
           {/* Date and Time Row */}

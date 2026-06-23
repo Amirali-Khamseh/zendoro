@@ -12,6 +12,7 @@ import HabitComponenet from "@/componenets/HabitTracker/Habit";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { isAuthenticated } from "@/lib/authVerification";
+import { containsDangerousInput } from "@/lib/inputSanitization";
 
 export const Route = createFileRoute("/habit-tracker")({
   component: RouteComponent,
@@ -30,6 +31,7 @@ function RouteComponent() {
   const { habits, addHabit, fetchHabits, isLoading, error, hasInitialized } =
     useHabitStore();
   const [newHabitName, setNewHabitName] = useState("");
+  const [habitNameError, setHabitNameError] = useState("");
 
   useEffect(() => {
     if (!hasInitialized && !isLoading) {
@@ -38,15 +40,22 @@ function RouteComponent() {
   }, [fetchHabits, hasInitialized, isLoading]);
 
   const addHabitHandler = () => {
-    if (newHabitName.trim()) {
-      const newHabit: Habit = {
-        id: Date.now().toString(),
-        name: newHabitName.trim(),
-        completions: [false, false, false, false, false, false, false],
-      };
-      addHabit(newHabit);
-      setNewHabitName("");
+    const trimmed = newHabitName.trim();
+    if (!trimmed) return;
+
+    if (containsDangerousInput(trimmed)) {
+      setHabitNameError("Invalid characters detected. HTML and scripts are not allowed.");
+      return;
     }
+
+    setHabitNameError("");
+    const newHabit: Habit = {
+      id: Date.now().toString(),
+      name: trimmed,
+      completions: [false, false, false, false, false, false, false],
+    };
+    addHabit(newHabit);
+    setNewHabitName("");
   };
 
   // Show error state if there's an error
@@ -116,9 +125,12 @@ function RouteComponent() {
               <Input
                 placeholder="Enter a new habit..."
                 value={newHabitName}
-                onChange={(e) => setNewHabitName(e.target.value)}
+                onChange={(e) => {
+                  setNewHabitName(e.target.value);
+                  if (habitNameError) setHabitNameError("");
+                }}
                 onKeyPress={(e) => e.key === "Enter" && addHabitHandler()}
-                className="flex-1 text-sm md:text-base text-white"
+                className={`flex-1 text-sm md:text-base text-white${habitNameError ? " border-red-500" : ""}`}
               />
               <GradientButton
                 onClick={addHabitHandler}
@@ -128,6 +140,9 @@ function RouteComponent() {
                 <Plus className="h-4 w-4" />
               </GradientButton>
             </div>
+            {habitNameError && (
+              <p className="text-xs text-red-400">{habitNameError}</p>
+            )}
           </div>
         </div>
 

@@ -16,6 +16,7 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
 import { setAuthToken } from "@/lib/authHelpers";
+import { validateNoInjection } from "@/lib/inputSanitization";
 
 export const Route = createFileRoute("/login")({
   component: LoginComponent,
@@ -55,6 +56,9 @@ function LoginComponent() {
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
+
+    const injectionErrors = validateNoInjection({ email, password });
+    Object.assign(newErrors, injectionErrors);
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
