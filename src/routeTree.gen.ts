@@ -14,6 +14,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ReminderRouteImport } from './routes/reminder'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HabitTrackerRouteImport } from './routes/habit-tracker'
+import { Route as FocusRouteImport } from './routes/focus'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -42,6 +43,11 @@ const HabitTrackerRoute = HabitTrackerRouteImport.update({
   path: '/habit-tracker',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FocusRoute = FocusRouteImport.update({
+  id: '/focus',
+  path: '/focus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
   path: '/agent',
@@ -56,6 +62,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
+  '/focus': typeof FocusRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
   '/reminder': typeof ReminderRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
+  '/focus': typeof FocusRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
   '/reminder': typeof ReminderRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
+  '/focus': typeof FocusRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
   '/reminder': typeof ReminderRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agent'
+    | '/focus'
     | '/habit-tracker'
     | '/login'
     | '/reminder'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/agent'
+    | '/focus'
     | '/habit-tracker'
     | '/login'
     | '/reminder'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/agent'
+    | '/focus'
     | '/habit-tracker'
     | '/login'
     | '/reminder'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentRoute: typeof AgentRoute
+  FocusRoute: typeof FocusRoute
   HabitTrackerRoute: typeof HabitTrackerRoute
   LoginRoute: typeof LoginRoute
   ReminderRoute: typeof ReminderRoute
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HabitTrackerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/focus': {
+      id: '/focus'
+      path: '/focus'
+      fullPath: '/focus'
+      preLoaderRoute: typeof FocusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent': {
       id: '/agent'
       path: '/agent'
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentRoute: AgentRoute,
+  FocusRoute: FocusRoute,
   HabitTrackerRoute: HabitTrackerRoute,
   LoginRoute: LoginRoute,
   ReminderRoute: ReminderRoute,
