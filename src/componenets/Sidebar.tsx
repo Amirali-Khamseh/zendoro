@@ -5,6 +5,7 @@ import { useSidebarStore } from "@/zustand/sidebarStore";
 import { isAuthenticated } from "@/lib/authVerification";
 import { logout } from "@/lib/authHelpers";
 import {
+  LayoutDashboard,
   Timer,
   Target,
   CheckSquare,
@@ -73,10 +74,22 @@ export function Sidebar() {
                 variant="ghost"
                 size="icon"
                 className="h-10 w-10"
-                title="Focus Time"
+                title="Dashboard"
                 asChild
               >
                 <Link to="/">
+                  <LayoutDashboard className="h-5 w-5" />
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                title="Focus Time"
+                asChild
+              >
+                <Link to="/focus">
                   <Timer className="h-5 w-5" />
                 </Link>
               </Button>
@@ -139,6 +152,18 @@ export function Sidebar() {
                 asChild
               >
                 <Link to="/">
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/focus">
                   <Timer className="h-4 w-4 mr-2" />
                   Focus Time
                 </Link>
