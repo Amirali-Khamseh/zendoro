@@ -31,7 +31,7 @@ export function ReminderCard({
     return (
       <div
         className={cn(
-          "bg-card border rounded-md p-2 transition-all duration-200 hover:shadow-sm",
+          "bg-white/5 border border-white/10 rounded-md p-2 transition-all duration-200 hover:bg-white/10",
           reminder.completed && "opacity-60",
         )}
       >
@@ -44,14 +44,14 @@ export function ReminderCard({
           <div className="flex-1 min-w-0">
             <p
               className={cn(
-                "text-sm font-medium text-card-foreground truncate",
+                "text-sm font-medium text-white truncate",
                 reminder.completed && "line-through",
               )}
             >
               {reminder.title}
             </p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-white/60">
                 {reminder.time}
               </span>
               <Badge
@@ -76,7 +76,7 @@ export function ReminderCard({
   return (
     <div
       className={cn(
-        "bg-card border rounded-lg p-4 transition-all duration-200 hover:shadow-sm",
+        "bg-white/5 border border-white/10 rounded-lg p-4 transition-all duration-200 hover:bg-white/10",
         reminder.completed && "opacity-60",
       )}
     >
@@ -92,7 +92,7 @@ export function ReminderCard({
             <div className="flex items-center gap-2">
               <h3
                 className={cn(
-                  "font-medium text-card-foreground leading-tight",
+                  "font-medium text-white leading-tight",
                   reminder.completed && "line-through",
                 )}
               >
@@ -118,7 +118,7 @@ export function ReminderCard({
           {reminder.description && (
             <p
               className={cn(
-                "text-sm text-muted-foreground mb-3 leading-relaxed",
+                "text-sm text-white/60 mb-3 leading-relaxed",
                 reminder.completed && "line-through",
               )}
             >
@@ -127,7 +127,7 @@ export function ReminderCard({
           )}
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1 text-xs text-white/60">
               <Clock className="w-3 h-3" />
               <span>{reminder.time}</span>
             </div>

@@ -64,7 +64,7 @@ function RouteComponent() {
       <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
         <div className="max-w-4xl mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl md:text-4xl font-bold text-foreground">
+            <h1 className="text-2xl md:text-4xl font-bold text-white">
               Habit Tracker
             </h1>
             <p className="text-red-500 text-base md:text-lg">Error: {error}</p>
@@ -83,10 +83,10 @@ function RouteComponent() {
       <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
         <div className="max-w-4xl mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl md:text-4xl font-bold text-foreground">
+            <h1 className="text-2xl md:text-4xl font-bold text-white">
               Habit Tracker
             </h1>
-            <p className="text-muted-foreground text-base md:text-lg">
+            <p className="text-white/60 text-base md:text-lg">
               Loading your habits...
             </p>
           </div>
@@ -94,7 +94,7 @@ function RouteComponent() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="animate-pulse bg-gray-200 h-16 rounded-md"
+                className="animate-pulse bg-white/10 h-16 rounded-md"
               ></div>
             ))}
           </div>
@@ -107,10 +107,10 @@ function RouteComponent() {
     <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
       <div className="max-w-4xl mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl md:text-4xl font-bold text-foreground">
+          <h1 className="text-2xl md:text-4xl font-bold text-white">
             Habit Tracker
           </h1>
-          <p className="text-muted-foreground text-base md:text-lg">
+          <p className="text-white/60 text-base md:text-lg">
             Build better habits, one day at a time
           </p>
         </div>
@@ -148,18 +148,18 @@ function RouteComponent() {
 
         {/* Days of week header - Desktop only */}
         <div className="hidden md:grid grid-cols-[1fr_auto_auto_auto] gap-4 px-4">
-          <div className="text-sm font-medium text-muted-foreground">Habit</div>
+          <div className="text-sm font-medium text-white/60">Habit</div>
           <div className="grid grid-cols-7 gap-2">
             {DAYS_OF_WEEK.map((day) => (
               <div
                 key={day}
-                className="w-8 text-center text-sm font-medium text-muted-foreground"
+                className="w-8 text-center text-sm font-medium text-white/60"
               >
                 {day}
               </div>
             ))}
           </div>
-          <div className="w-16 text-center text-sm font-medium text-muted-foreground">
+          <div className="w-16 text-center text-sm font-medium text-white/60">
             Progress
           </div>
           <div className="w-10"></div>
@@ -175,7 +175,7 @@ function RouteComponent() {
         {habits.length === 0 && (
           <Card>
             <CardContent className="p-8 text-center">
-              <p className="text-muted-foreground text-lg">
+              <p className="text-white/60 text-lg">
                 No habits yet. Add your first habit above to get started!
               </p>
             </CardContent>

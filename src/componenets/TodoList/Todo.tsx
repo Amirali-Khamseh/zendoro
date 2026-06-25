@@ -56,7 +56,7 @@ export default function TodoComponent({
   const StatusIcon = statusConfig.icon;
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br bg-white border border-slate-200/60 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02] p-3">
+    <div className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-sm hover:bg-white/10 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] p-3">
       <div
         className={`absolute top-3 right-3 w-2 h-2 rounded-full ${statusConfig.dot} opacity-60`}
       />
@@ -67,7 +67,7 @@ export default function TodoComponent({
           onChange={(e) => setTitle(e.target.value)}
           onBlur={handleUpdate}
           placeholder="Task title..."
-          className="border-0 bg-transparent p-0 text-base font-medium text-slate-800 placeholder:text-slate-400 focus-visible:ring-0 h-auto"
+          className="border-0 bg-transparent p-0 text-base font-medium text-white placeholder:text-white/40 focus-visible:ring-0 h-auto"
         />
 
         <Textarea
@@ -75,7 +75,7 @@ export default function TodoComponent({
           onChange={(e) => setDescription(e.target.value)}
           onBlur={handleUpdate}
           placeholder="Add details..."
-          className="border-0 bg-transparent p-0 text-sm text-slate-600 placeholder:text-slate-400 focus-visible:ring-0 resize-none min-h-0"
+          className="border-0 bg-transparent p-0 text-sm text-white/70 placeholder:text-white/40 focus-visible:ring-0 resize-none min-h-0"
           rows={1}
         />
       </div>
@@ -132,7 +132,7 @@ export default function TodoComponent({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-xs text-slate-600 hover:text-slate-800 hover:bg-slate-100/80"
+              className="h-7 px-2 text-xs text-white/70 hover:text-white hover:bg-white/10"
             >
               <CalendarIcon className="mr-1 h-3 w-3" />
               {dueDate ? format(dueDate, "MMM d") : "Date"}
@@ -156,7 +156,7 @@ export default function TodoComponent({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all duration-200"
+              className="h-7 w-7 p-0 text-white/40 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all duration-200"
             >
               <Trash className="h-3 w-3" />
             </Button>

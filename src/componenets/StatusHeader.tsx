@@ -19,19 +19,19 @@ function TimeBadge({
   return (
     <Badge
       variant="secondary"
-      className="flex flex-col items-center gap-1  text-sm px-3 py-2"
+      className="flex flex-col items-center gap-1 text-sm px-3 py-2 bg-white/5 border border-white/10 text-white"
     >
       <h3 className="text-xs">{label}</h3>
       <div className="flex items-center gap-1">
         <Button
-          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg text-black hover:text-white"
+          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg text-white/70 hover:text-white hover:bg-white/10"
           onClick={onDecrease}
         >
           <Minus />
         </Button>
         <span className="text-sm">{milliSecToMin(value)}</span>
         <Button
-          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg text-black hover:text-white"
+          className="rounded-full w-6 h-6 p-0 bg-transparent text-lg text-white/70 hover:text-white hover:bg-white/10"
           onClick={onIncrease}
         >
           <Plus />

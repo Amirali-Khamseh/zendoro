@@ -247,18 +247,18 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex h-screen flex-col bg-transparent">
       {/* Header */}
-      <header className="border-b border-border bg-card px-6 py-4">
+      <header className="border-b border-white/10 bg-white/5 backdrop-blur-sm px-6 py-4">
         <div className="mx-auto flex max-w-4xl items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
             <Bot className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-foreground">
+            <h1 className="text-lg font-semibold text-white">
               AI Assistant
             </h1>
-            <p className="text-sm text-muted-foreground">Always here to help</p>
+            <p className="text-sm text-white/60">Always here to help</p>
           </div>
         </div>
       </header>
@@ -275,7 +275,7 @@ function RouteComponent() {
                 <AvatarFallback
                   className={
                     message.role === "user"
-                      ? "bg-secondary text-secondary-foreground"
+                      ? "bg-white/10 text-white"
                       : "bg-primary text-primary-foreground"
                   }
                 >
@@ -293,7 +293,7 @@ function RouteComponent() {
                   className={`rounded-2xl px-4 py-3 ${
                     message.role === "user"
                       ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground"
+                      : "bg-white/10 text-white"
                   }`}
                 >
                   <div className="max-h-[48vh] overflow-auto whitespace-pre-wrap break-words">
@@ -322,14 +322,14 @@ function RouteComponent() {
                           const isInline = !className;
                           return isInline ? (
                             <code
-                              className="rounded bg-background/50 px-1.5 py-0.5 font-mono text-xs"
+                              className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs"
                               {...props}
                             >
                               {children}
                             </code>
                           ) : (
                             <code
-                              className="block rounded-lg bg-background/50 p-3 font-mono text-xs overflow-x-auto"
+                              className="block rounded-lg bg-white/10 p-3 font-mono text-xs overflow-x-auto"
                               {...props}
                             >
                               {children}
@@ -367,7 +367,7 @@ function RouteComponent() {
                           <h3 className="mb-2 text-sm font-bold">{children}</h3>
                         ),
                         blockquote: ({ children }) => (
-                          <blockquote className="border-l-2 border-foreground/20 pl-3 italic">
+                          <blockquote className="border-l-2 border-white/20 pl-3 italic">
                             {children}
                           </blockquote>
                         ),
@@ -377,7 +377,7 @@ function RouteComponent() {
                     </ReactMarkdown>
                   </div>
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-white/60">
                   {message.timestamp.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -394,10 +394,10 @@ function RouteComponent() {
                   <Bot className="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
-              <div className="flex items-center gap-1 rounded-2xl bg-muted px-4 py-3">
-                <div className="h-2 w-2 animate-bounce rounded-full bg-foreground/60 [animation-delay:-0.3s]" />
-                <div className="h-2 w-2 animate-bounce rounded-full bg-foreground/60 [animation-delay:-0.15s]" />
-                <div className="h-2 w-2 animate-bounce rounded-full bg-foreground/60" />
+              <div className="flex items-center gap-1 rounded-2xl bg-white/10 px-4 py-3">
+                <div className="h-2 w-2 animate-bounce rounded-full bg-white/60 [animation-delay:-0.3s]" />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-white/60 [animation-delay:-0.15s]" />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-white/60" />
               </div>
             </div>
           )}
@@ -405,7 +405,7 @@ function RouteComponent() {
       </ScrollArea>
 
       {/* Input Area */}
-      <div className="border-t border-border bg-card px-4 py-4">
+      <div className="border-t border-white/10 bg-white/5 backdrop-blur-sm px-4 py-4">
         <div className="mx-auto flex max-w-4xl gap-2">
           <Input
             ref={inputRef}
@@ -413,7 +413,7 @@ function RouteComponent() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type your message..."
-            className="flex-1 bg-background"
+            className="flex-1 bg-white/5 text-white placeholder:text-white/40"
             disabled={isTyping}
           />
           <Button
@@ -426,7 +426,7 @@ function RouteComponent() {
             <span className="sr-only">Send message</span>
           </Button>
         </div>
-        <p className="mx-auto mt-2 max-w-4xl text-center text-xs text-muted-foreground">
+        <p className="mx-auto mt-2 max-w-4xl text-center text-xs text-white/60">
           AI can make mistakes. Consider checking important information.
         </p>
       </div>

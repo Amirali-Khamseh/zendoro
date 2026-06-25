@@ -31,23 +31,23 @@ export function Mode({ title, details, time }: Props) {
       flex items-center space-x-3 p-4 rounded-lg border transition-all duration-200 cursor-pointer
       ${
         isSelected
-          ? "border-primary bg-primary/5 shadow-sm"
-          : "border-border bg-background hover:bg-muted/50 hover:border-muted-foreground/20"
+          ? "border-white/40 bg-white/10 shadow-sm"
+          : "border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30"
       }
       `}
       onClick={setContextMode}
     >
       <div
-        className={`w-4 h-4 rounded-full border-2 shrink-0 ${isSelected ? "bg-primary border-primary" : "border-muted-foreground"}`}
+        className={`w-4 h-4 rounded-full border-2 shrink-0 ${isSelected ? "bg-white border-white" : "border-white/40"}`}
       />
       <div className="flex-1 cursor-pointer">
         <div className="space-y-1">
           <div
-            className={`font-medium ${isSelected ? "text-primary" : "text-foreground"}`}
+            className={`font-medium ${isSelected ? "text-white" : "text-white/80"}`}
           >
             {title}
           </div>
-          <div className="text-xs text-muted-foreground font-mono">
+          <div className="text-xs text-white/60 font-mono">
             {displayDetails}
           </div>
         </div>

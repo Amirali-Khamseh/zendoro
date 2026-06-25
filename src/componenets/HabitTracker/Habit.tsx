@@ -31,7 +31,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
         {/* Desktop Layout */}
         <div className="hidden md:grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center">
           <div>
-            <h3 className="font-medium text-foreground text-balance">
+            <h3 className="font-medium text-white text-balance">
               {habit.name}
             </h3>
           </div>
@@ -45,7 +45,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
                   "w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                   completed
                     ? "bg-primary border-primary shadow-md"
-                    : "bg-background border-border hover:border-muted-foreground",
+                    : "bg-white/5 border-white/15 hover:border-white/40",
                 )}
                 aria-label={`${DAYS_OF_WEEK[index]} - ${completed ? `Completed` : `Not completed`}`}
               >
@@ -59,7 +59,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
           </div>
 
           <div className="w-16 text-center">
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-sm font-medium text-white/60">
               {getCompletionRate(habit)}%
             </span>
           </div>
@@ -68,7 +68,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
             variant="ghost"
             size="sm"
             onClick={() => deleteHabit(habit.id)}
-            className="w-10 h-10 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            className="w-10 h-10 p-0 text-white/60 hover:text-destructive hover:bg-destructive/10"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -77,18 +77,18 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
         {/* Mobile Layout */}
         <div className="md:hidden space-y-3">
           <div className="flex justify-between items-start">
-            <h3 className="font-medium text-foreground text-balance flex-1 pr-2">
+            <h3 className="font-medium text-white text-balance flex-1 pr-2">
               {habit.name}
             </h3>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="text-sm font-medium text-white/60">
                 {getCompletionRate(habit)}%
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => deleteHabit(habit.id)}
-                className="w-8 h-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                className="w-8 h-8 p-0 text-white/60 hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
               >
                 <Trash2 className="w-3 h-3" />
               </Button>
@@ -96,7 +96,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
           </div>
 
           <div className="space-y-2">
-            <div className="grid grid-cols-7 gap-1 text-xs text-muted-foreground text-center">
+            <div className="grid grid-cols-7 gap-1 text-xs text-white/60 text-center">
               {DAYS_OF_WEEK.map((day) => (
                 <div key={day} className="font-medium">
                   {day}
@@ -112,7 +112,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
                     "w-full aspect-square rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                     completed
                       ? "bg-primary border-primary shadow-md"
-                      : "bg-background border-border hover:border-muted-foreground",
+                      : "bg-white/5 border-white/15 hover:border-white/40",
                   )}
                   aria-label={`${DAYS_OF_WEEK[index]} - ${completed ? `Completed` : `Not completed`}`}
                 >

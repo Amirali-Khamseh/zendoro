@@ -41,7 +41,7 @@ export function ModeSelection() {
   if (isLoading) {
     return (
       <div className="w-full max-w-sm">
-        <div className="animate-pulse bg-gray-200 h-10 rounded-md"></div>
+        <div className="animate-pulse bg-white/10 h-10 rounded-md"></div>
       </div>
     );
   }
@@ -53,12 +53,12 @@ export function ModeSelection() {
         onValueChange={handleModeChange}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-3 bg-white/15 text-white">
           {availableModes.map((mode) => (
             <TabsTrigger
               key={mode.name}
               value={mode.name || ""}
-              className="text-xs md:text-sm data-[state=active]:shadow-lg data-[state=active]:shadow-black/80"
+              className="text-xs md:text-sm text-white/60 data-[state=active]:bg-white/30 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-black/80"
             >
               {mode.name}
             </TabsTrigger>

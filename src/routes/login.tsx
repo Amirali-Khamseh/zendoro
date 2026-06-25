@@ -194,11 +194,11 @@ function LoginComponent() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 pt-0">
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-white/60">
               Don't have an account?{" "}
               <Link
                 to="/signup"
-                className="font-medium text-primary hover:underline"
+                className="font-medium text-white hover:underline"
               >
                 Sign up here
               </Link>
