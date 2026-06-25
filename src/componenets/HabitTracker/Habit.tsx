@@ -44,14 +44,14 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
                 className={cn(
                   "w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                   completed
-                    ? "bg-primary border-primary shadow-md"
-                    : "bg-white/5 border-white/15 hover:border-white/40",
+                    ? "bg-emerald-500 border-emerald-400 shadow-md shadow-emerald-900/50"
+                    : "bg-white/10 border-white/20 hover:border-white/40 hover:bg-white/15",
                 )}
                 aria-label={`${DAYS_OF_WEEK[index]} - ${completed ? `Completed` : `Not completed`}`}
               >
                 {completed && (
-                  <div className="w-full h-full rounded-full bg-primary flex items-center justify-center">
-                    <div className="w-2 h-2 bg-primary-foreground rounded-full"></div>
+                  <div className="w-full h-full rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 )}
               </button>
@@ -111,14 +111,14 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
                   className={cn(
                     "w-full aspect-square rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                     completed
-                      ? "bg-primary border-primary shadow-md"
-                      : "bg-white/5 border-white/15 hover:border-white/40",
+                      ? "bg-emerald-500 border-emerald-400 shadow-md shadow-emerald-900/50"
+                      : "bg-white/10 border-white/20 hover:border-white/40 hover:bg-white/15",
                   )}
                   aria-label={`${DAYS_OF_WEEK[index]} - ${completed ? `Completed` : `Not completed`}`}
                 >
                   {completed && (
-                    <div className="w-full h-full rounded-full bg-primary flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full"></div>
+                    <div className="w-full h-full rounded-full flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
                     </div>
                   )}
                 </button>
