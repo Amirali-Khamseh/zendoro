@@ -18,13 +18,13 @@ const RootLayout = () => {
       <div className="absolute inset-0 -z-10 bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]"></div>
 
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white shadow-sm border-b">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white/5 backdrop-blur-md shadow-sm border-b border-white/10 text-white">
         <div className="flex items-center justify-between p-3">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => useSidebarStore.getState().toggleSidebar()}
-            className="h-8 w-8"
+            className="h-8 w-8 text-white hover:bg-white/10"
           >
             <Menu className="h-4 w-4" />
           </Button>
@@ -37,14 +37,14 @@ const RootLayout = () => {
       <div className="flex w-full h-full pt-14 md:pt-0">
         {/* Desktop/Tablet Sidebar */}
         <div
-          className={`hidden md:block ${isCollapsed ? "w-16" : "w-64"} bg-white rounded-r-2xl shadow-md transition-all duration-300 ease-in-out`}
+          className={`hidden md:block ${isCollapsed ? "w-16" : "w-64"} bg-white/5 backdrop-blur-md border-r border-white/10 rounded-r-2xl shadow-md transition-all duration-300 ease-in-out`}
         >
           <Sidebar />
         </div>
 
         {/* Mobile Sidebar - Overlay */}
         <div
-          className={`md:hidden fixed inset-y-0 left-0 z-50 ${isCollapsed ? "-translate-x-full" : "translate-x-0"} w-64 bg-white shadow-xl transition-transform duration-300 ease-in-out pt-14`}
+          className={`md:hidden fixed inset-y-0 left-0 z-50 ${isCollapsed ? "-translate-x-full" : "translate-x-0"} w-64 bg-[#00091d]/95 backdrop-blur-md border-r border-white/10 shadow-xl transition-transform duration-300 ease-in-out pt-14`}
         >
           <Sidebar />
         </div>
