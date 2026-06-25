@@ -51,7 +51,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
               >
                 {completed && (
                   <div className="w-full h-full rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-[#8A00C4] rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#8A00C4] rounded-full shadow-[0_0_6px_3px_rgba(138,0,196,0.8),0_0_12px_4px_rgba(138,0,196,0.4)]"></div>
                   </div>
                 )}
               </button>
@@ -118,7 +118,7 @@ export default function HabitComponenet({ habit }: { habit: Habit }) {
                 >
                   {completed && (
                     <div className="w-full h-full rounded-full flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 bg-[#8A00C4] rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-[#8A00C4] rounded-full shadow-[0_0_6px_3px_rgba(138,0,196,0.8),0_0_12px_4px_rgba(138,0,196,0.4)]"></div>
                     </div>
                   )}
                 </button>
