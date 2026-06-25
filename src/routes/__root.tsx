@@ -13,7 +13,7 @@ const RootLayout = () => {
   useDocumentTitle("Zendoro");
 
   return (
-    <main className="w-full min-h-screen relative overflow-x-hidden">
+    <main className="w-full h-screen relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 -z-10 bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]"></div>
 
@@ -57,7 +57,7 @@ const RootLayout = () => {
           />
         )}
 
-        <div className="flex-1 overflow-x-hidden overflow-y-hidden transition-all duration-300 ease-in-out">
+        <div className="flex-1 overflow-x-hidden overflow-y-auto transition-all duration-300 ease-in-out">
           <Outlet />
         </div>
       </div>
