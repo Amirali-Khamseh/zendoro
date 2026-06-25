@@ -37,7 +37,7 @@ const RootLayout = () => {
       <div className="flex w-full h-full pt-14 md:pt-0">
         {/* Desktop/Tablet Sidebar */}
         <div
-          className={`hidden md:block ${isCollapsed ? "w-16" : "w-64"} bg-white/5 backdrop-blur-md border-r border-white/10 rounded-r-2xl shadow-md transition-all duration-300 ease-in-out`}
+          className={`hidden md:block relative z-10 ${isCollapsed ? "w-16" : "w-64"} bg-white/5 backdrop-blur-md border-r border-white/10 rounded-r-2xl shadow-md transition-all duration-300 ease-in-out`}
         >
           <Sidebar />
         </div>
