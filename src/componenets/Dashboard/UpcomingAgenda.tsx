@@ -115,7 +115,7 @@ function DroppableKanbanColumn({ col }: { col: ColDef }) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex min-w-0 flex-1 flex-col rounded-xl border ${col.borderColor} bg-white/3 overflow-hidden transition-shadow duration-150 ${
+      className={`flex min-w-[160px] flex-1 flex-col rounded-xl border ${col.borderColor} bg-white/3 overflow-hidden transition-shadow duration-150 ${
         isOver && droppable ? `ring-2 ring-inset ${col.ringColor}` : ""
       }`}
     >
@@ -238,7 +238,7 @@ export function UpcomingAgenda({ items }: UpcomingAgendaProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-3 overflow-x-auto pb-1">
+      <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
         {columns.map((col) => (
           <DroppableKanbanColumn key={col.key} col={col} />
         ))}

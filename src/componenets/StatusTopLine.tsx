@@ -21,7 +21,7 @@ export function StatusTopLine() {
   // If no currentMode is loaded yet, show loading state
   if (!currentMode) {
     return (
-      <div className="w-[400px] flex items-center justify-center gap-2 font-beba font-medium text-2xl">
+      <div className="w-full max-w-[400px] flex items-center justify-center gap-2 font-beba font-medium text-2xl">
         <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />
         <span className="text-white px-2">Loading...</span>
         <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />
@@ -72,7 +72,7 @@ export function StatusTopLine() {
 
   return (
     <Popover>
-      <PopoverTrigger className="w-[400px] flex items-center justify-center gap-2 font-beba font-medium text-2xl cursor-pointer">
+      <PopoverTrigger className="w-full max-w-[400px] flex items-center justify-center gap-2 font-beba font-medium text-2xl cursor-pointer">
         <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />
         <span className="text-white px-2">{name}</span>
         <div className="h-px bg-gradient-to-r from-transparent via-white to-transparent flex-1" />

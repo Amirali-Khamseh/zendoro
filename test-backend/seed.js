@@ -147,9 +147,9 @@ async function seed() {
   // Timer modes
   await pool.query(`
     INSERT INTO timer_modes (name, focus_time, short_break, long_break, user_id) VALUES
-    ('Standard', 25, 5, 15, ${uid}),
-    ('Extended', 45, 10, 20, ${uid}),
-    ('Long run', 90, 15, 30, ${uid})
+    ('Standard', ${25 * 60 * 1000}, ${5 * 60 * 1000}, ${15 * 60 * 1000}, ${uid}),
+    ('Extended', ${45 * 60 * 1000}, ${10 * 60 * 1000}, ${20 * 60 * 1000}, ${uid}),
+    ('Long run', ${90 * 60 * 1000}, ${15 * 60 * 1000}, ${30 * 60 * 1000}, ${uid})
   `);
 
   // Focus session count for today

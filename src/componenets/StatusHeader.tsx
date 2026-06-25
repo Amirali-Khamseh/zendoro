@@ -56,7 +56,7 @@ export function StatusHeader() {
   const safeChange = (value: number) => Math.max(value, minToMilli(1));
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-wrap justify-center gap-2 md:gap-4 w-full px-2">
       <TimeBadge
         label="Focus Time"
         value={focusTime}
