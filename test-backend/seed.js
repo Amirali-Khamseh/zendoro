@@ -62,6 +62,7 @@ async function seed() {
       time VARCHAR(10),
       priority VARCHAR(10) DEFAULT 'low',
       completed BOOLEAN DEFAULT false,
+      todo_id INTEGER REFERENCES todos(id) ON DELETE CASCADE,
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
       created_at TIMESTAMP DEFAULT NOW()
     );
@@ -142,6 +143,15 @@ async function seed() {
     ('Monthly review', 'Personal OKR review session', '2026-06-30', '10:00', 'medium', false, ${uid}),
     ('Doctor appointment', 'Annual checkup', '2026-07-05', '11:30', 'medium', false, ${uid}),
     ('Setup dev environment', 'Completed task for reference', '2026-06-18', '09:00', 'low', true, ${uid})
+  `);
+
+  // Reminders linked to a todo (demo of the todo ↔ reminder connection)
+  await pool.query(`
+    INSERT INTO reminders (title, description, date, time, priority, completed, todo_id, user_id) VALUES
+    ('Prep dashboard demo', 'Linked to the dashboard analytics task', '${today}', '13:00', 'medium', false,
+      (SELECT id FROM todos WHERE title = 'Dashboard analytics' AND user_id = ${uid} LIMIT 1), ${uid}),
+    ('Draft notification spec', 'Linked to the notification system task', '2026-07-04', '11:00', 'low', false,
+      (SELECT id FROM todos WHERE title = 'Notification system' AND user_id = ${uid} LIMIT 1), ${uid})
   `);
 
   // Timer modes

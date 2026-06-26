@@ -48,8 +48,55 @@ function reminderRow(r) {
     time: r.time,
     priority: r.priority,
     completed: r.completed,
+    todoId: r.todo_id ?? null,
     userId: r.user_id,
   };
+}
+
+// Two-way completion sync between a todo and its linked reminders.
+
+// Called after a todo's status changes: bring its reminders in line.
+async function syncRemindersToTodo(todoId, status, userId) {
+  if (todoId == null) return;
+  if (status === "Done" || status === "Kill") {
+    await pool.query(
+      "UPDATE reminders SET completed = true WHERE todo_id = $1 AND user_id = $2",
+      [todoId, userId]
+    );
+  } else if (status === "TODO" || status === "In Progress") {
+    await pool.query(
+      "UPDATE reminders SET completed = false WHERE todo_id = $1 AND user_id = $2",
+      [todoId, userId]
+    );
+  }
+}
+
+// Called after a linked reminder's completion changes: nudge the parent todo.
+async function syncTodoToReminders(todoId, userId) {
+  if (todoId == null) return;
+  const { rows: siblings } = await pool.query(
+    "SELECT completed FROM reminders WHERE todo_id = $1 AND user_id = $2",
+    [todoId, userId]
+  );
+  if (siblings.length === 0) return;
+  const allDone = siblings.every((s) => s.completed);
+  const { rows: todoRows } = await pool.query(
+    "SELECT status FROM todos WHERE id = $1 AND user_id = $2",
+    [todoId, userId]
+  );
+  const status = todoRows[0]?.status;
+  if (status == null) return;
+  if (allDone && status !== "Done" && status !== "Kill") {
+    await pool.query(
+      "UPDATE todos SET status = 'Done' WHERE id = $1 AND user_id = $2",
+      [todoId, userId]
+    );
+  } else if (!allDone && status === "Done") {
+    await pool.query(
+      "UPDATE todos SET status = 'In Progress' WHERE id = $1 AND user_id = $2",
+      [todoId, userId]
+    );
+  }
 }
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
@@ -135,6 +182,10 @@ app.put("/todo/:id", auth, async (req, res) => {
       [title, description, status, dueDate || null, req.params.id, req.userId]
     );
     if (!rows[0]) return res.status(404).json({ message: "Not found" });
+    // If the status changed, bring linked reminders in line (two-way sync).
+    if (status !== undefined) {
+      await syncRemindersToTodo(rows[0].id, rows[0].status, req.userId);
+    }
     res.json(todoRow(rows[0]));
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -233,9 +284,10 @@ app.get("/reminder", auth, async (req, res) => {
 
 app.post("/reminder", auth, async (req, res) => {
   try {
-    const { title, description, date, time, priority, completed } = req.body;
+    const { title, description, date, time, priority, completed, todoId } =
+      req.body;
     const { rows } = await pool.query(
-      "INSERT INTO reminders (title, description, date, time, priority, completed, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO reminders (title, description, date, time, priority, completed, todo_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
         title,
         description,
@@ -243,6 +295,7 @@ app.post("/reminder", auth, async (req, res) => {
         time,
         priority || "low",
         completed || false,
+        todoId ?? null,
         req.userId,
       ]
     );
@@ -254,16 +307,18 @@ app.post("/reminder", auth, async (req, res) => {
 
 app.put("/reminder/:id", auth, async (req, res) => {
   try {
-    const { title, description, date, time, priority, completed } = req.body;
+    const { title, description, date, time, priority, completed, todoId } =
+      req.body;
     const { rows } = await pool.query(
       `UPDATE reminders SET
         title = COALESCE($1, title),
         description = COALESCE($2, description),
-        date = $3,
+        date = COALESCE($3::date, date),
         time = COALESCE($4, time),
         priority = COALESCE($5, priority),
-        completed = COALESCE($6, completed)
-       WHERE id = $7 AND user_id = $8 RETURNING *`,
+        completed = COALESCE($6, completed),
+        todo_id = COALESCE($7, todo_id)
+       WHERE id = $8 AND user_id = $9 RETURNING *`,
       [
         title,
         description,
@@ -271,11 +326,16 @@ app.put("/reminder/:id", auth, async (req, res) => {
         time,
         priority,
         completed,
+        todoId ?? null,
         req.params.id,
         req.userId,
       ]
     );
     if (!rows[0]) return res.status(404).json({ message: "Not found" });
+    // If completion changed on a linked reminder, nudge the parent todo.
+    if (completed !== undefined && rows[0].todo_id != null) {
+      await syncTodoToReminders(rows[0].todo_id, req.userId);
+    }
     res.json(reminderRow(rows[0]));
   } catch (err) {
     res.status(500).json({ message: err.message });

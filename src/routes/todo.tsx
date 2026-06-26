@@ -33,6 +33,7 @@ import {
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useTodoStore, type Todo } from "@/zustand/todoStore";
+import { useReminderStore } from "@/zustand/reminderStore";
 import TodoComponent from "@/componenets/TodoList/Todo";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { isAuthenticated } from "@/lib/authVerification";
@@ -163,11 +164,13 @@ function RouteComponent() {
   const [status, setStatus] = useState<string>("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const { addTodo, updateTodo, todos, fetchTodos } = useTodoStore();
+  const fetchReminders = useReminderStore((s) => s.fetchReminders);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetchTodos();
-  }, [fetchTodos]);
+    fetchReminders();
+  }, [fetchTodos, fetchReminders]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
