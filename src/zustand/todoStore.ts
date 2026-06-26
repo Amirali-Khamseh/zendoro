@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@/constants/data";
 import { getAuthToken } from "@/lib/authHelpers";
 import { create } from "zustand";
+import { useReminderStore } from "./reminderStore";
 
 export type Todo = {
   id: number;
@@ -152,6 +153,11 @@ export const useTodoStore = create<TodoStore>()((set) => ({
       set((state) => ({
         todos: state.todos.map((todo) => (todo.id === id ? updatedTodo : todo)),
       }));
+      // A status change may auto-complete/reopen linked reminders on the
+      // backend (two-way sync) — refresh reminders to reflect it.
+      if (updates.status !== undefined) {
+        await useReminderStore.getState().fetchReminders();
+      }
     } catch (error) {
       console.error("Failed to update todo:", error);
       throw error;
@@ -164,6 +170,8 @@ export const useTodoStore = create<TodoStore>()((set) => ({
       set((state) => ({
         todos: state.todos.filter((todo) => todo.id !== id),
       }));
+      // Linked reminders are removed by the DB cascade — refresh them.
+      await useReminderStore.getState().fetchReminders();
     } catch (error) {
       console.error("Failed to delete todo:", error);
       throw error;

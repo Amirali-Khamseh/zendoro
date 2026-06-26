@@ -34,6 +34,7 @@ import { containsDangerousInput } from "@/lib/inputSanitization";
 interface ReminderFormProps {
   reminder?: Reminder | null;
   selectedDate?: Date;
+  defaultTitle?: string;
   onSave: (reminder: Omit<Reminder, "id" | "userId">) => void;
   onClose: () => void;
 }
@@ -41,11 +42,12 @@ interface ReminderFormProps {
 export function ReminderForm({
   reminder,
   selectedDate,
+  defaultTitle,
   onSave,
   onClose,
 }: ReminderFormProps) {
   const [formData, setFormData] = useState({
-    title: "",
+    title: defaultTitle || "",
     description: "",
     date: selectedDate || new Date(),
     time: "09:00",
@@ -66,14 +68,14 @@ export function ReminderForm({
     } else if (selectedDate) {
       // Reset form but keep the selected date when adding a new reminder
       setFormData({
-        title: "",
+        title: defaultTitle || "",
         description: "",
         date: selectedDate,
         time: "09:00",
         priority: "medium",
       });
     }
-  }, [reminder, selectedDate]);
+  }, [reminder, selectedDate, defaultTitle]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

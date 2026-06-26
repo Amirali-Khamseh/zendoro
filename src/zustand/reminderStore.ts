@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@/constants/data";
 import { getAuthToken } from "@/lib/authHelpers";
 import { create } from "zustand";
+import { useTodoStore } from "./todoStore";
 
 export interface Reminder {
   id: number;
@@ -10,6 +11,7 @@ export interface Reminder {
   time: string;
   priority: "low" | "medium" | "high";
   completed: boolean;
+  todoId?: number | null;
   userId?: number;
 }
 
@@ -21,6 +23,7 @@ type ApiReminder = {
   time: string;
   priority: "low" | "medium" | "high";
   completed: boolean;
+  todoId?: number | null;
   userId?: number;
 };
 
@@ -70,6 +73,7 @@ interface ReminderStore {
   getTodayReminders: () => number;
   getOverdueReminders: () => number;
   getRemindersByDate: (date: Date) => Reminder[];
+  getRemindersByTodo: (todoId: number) => Reminder[];
 }
 
 export const useReminderStore = create<ReminderStore>()((set, get) => ({
@@ -100,6 +104,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         time: r.time,
         priority: r.priority,
         completed: r.completed,
+        todoId: r.todoId ?? null,
         userId: r.userId,
       }));
       set({ reminders });
@@ -134,6 +139,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         time: data.time,
         priority: data.priority,
         completed: data.completed,
+        todoId: data.todoId ?? null,
         userId: data.userId,
       };
       set((state) => ({
@@ -171,6 +177,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         time: data.time,
         priority: data.priority,
         completed: data.completed,
+        todoId: data.todoId ?? null,
         userId: data.userId,
       };
       set((state) => ({
@@ -178,6 +185,11 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         editingReminder: null,
         showForm: false,
       }));
+      // A linked reminder's completion can flip its parent todo's status
+      // (two-way sync happens on the backend) — refresh todos to reflect it.
+      if (updated.todoId != null && updates.completed !== undefined) {
+        await useTodoStore.getState().fetchTodos();
+      }
     } catch (e) {
       console.error("Error updating reminder", e);
       throw e;
@@ -248,5 +260,8 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
     return get().reminders.filter(
       (reminder) => reminder.date.toDateString() === date.toDateString(),
     );
+  },
+  getRemindersByTodo: (todoId) => {
+    return get().reminders.filter((reminder) => reminder.todoId === todoId);
   },
 }));

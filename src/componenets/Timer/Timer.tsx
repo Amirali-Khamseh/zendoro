@@ -182,7 +182,7 @@ export function Timer({ initialTime }: Props) {
     <div className="relative w-full max-w-[280px] sm:max-w-[400px] mx-auto rounded-xl flex flex-col items-center px-0 sm:px-4 md:px-6 overflow-hidden">
       {/* Content on top */}
       <div className="relative z-10 w-full flex flex-col items-center max-w-full">
-        <h1 className="text-xl text-[6rem] font-beba font-bold text-white text-center break-words px-2">
+        <h1 className="text-[4rem] sm:text-[6rem] font-beba font-bold text-white text-center break-words px-2">
           {formatTime(timeLeft)}
         </h1>
 

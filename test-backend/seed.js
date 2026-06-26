@@ -62,6 +62,7 @@ async function seed() {
       time VARCHAR(10),
       priority VARCHAR(10) DEFAULT 'low',
       completed BOOLEAN DEFAULT false,
+      todo_id INTEGER REFERENCES todos(id) ON DELETE CASCADE,
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
       created_at TIMESTAMP DEFAULT NOW()
     );
@@ -144,12 +145,21 @@ async function seed() {
     ('Setup dev environment', 'Completed task for reference', '2026-06-18', '09:00', 'low', true, ${uid})
   `);
 
+  // Reminders linked to a todo (demo of the todo ↔ reminder connection)
+  await pool.query(`
+    INSERT INTO reminders (title, description, date, time, priority, completed, todo_id, user_id) VALUES
+    ('Prep dashboard demo', 'Linked to the dashboard analytics task', '${today}', '13:00', 'medium', false,
+      (SELECT id FROM todos WHERE title = 'Dashboard analytics' AND user_id = ${uid} LIMIT 1), ${uid}),
+    ('Draft notification spec', 'Linked to the notification system task', '2026-07-04', '11:00', 'low', false,
+      (SELECT id FROM todos WHERE title = 'Notification system' AND user_id = ${uid} LIMIT 1), ${uid})
+  `);
+
   // Timer modes
   await pool.query(`
     INSERT INTO timer_modes (name, focus_time, short_break, long_break, user_id) VALUES
-    ('Standard', 25, 5, 15, ${uid}),
-    ('Extended', 45, 10, 20, ${uid}),
-    ('Long run', 90, 15, 30, ${uid})
+    ('Standard', ${25 * 60 * 1000}, ${5 * 60 * 1000}, ${15 * 60 * 1000}, ${uid}),
+    ('Extended', ${45 * 60 * 1000}, ${10 * 60 * 1000}, ${20 * 60 * 1000}, ${uid}),
+    ('Long run', ${90 * 60 * 1000}, ${15 * 60 * 1000}, ${30 * 60 * 1000}, ${uid})
   `);
 
   // Focus session count for today
