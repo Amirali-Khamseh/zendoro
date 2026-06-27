@@ -39,9 +39,6 @@ import {
   Trash,
   Trash2,
   CalendarIcon,
-  CheckCircle2,
-  Circle,
-  Zap,
   Bell,
   Plus,
   Edit,
@@ -161,30 +158,10 @@ export default function TodoComponent({
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="TODO">
-                <div className="flex items-center gap-2">
-                  <Circle className="h-3 w-3" />
-                  Todo
-                </div>
-              </SelectItem>
-              <SelectItem value="In Progress">
-                <div className="flex items-center gap-2">
-                  <Zap className="h-3 w-3" />
-                  In Progress
-                </div>
-              </SelectItem>
-              <SelectItem value="Done">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3" />
-                  Done
-                </div>
-              </SelectItem>
-              <SelectItem value="Kill">
-                <div className="flex items-center gap-2">
-                  <Circle className="h-3 w-3" />
-                  Kill
-                </div>
-              </SelectItem>
+              <SelectItem value="TODO">Todo</SelectItem>
+              <SelectItem value="In Progress">In Progress</SelectItem>
+              <SelectItem value="Done">Done</SelectItem>
+              <SelectItem value="Kill">Kill</SelectItem>
             </SelectContent>
           </Select>
         </div>
