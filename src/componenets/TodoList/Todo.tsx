@@ -220,7 +220,7 @@ export default function TodoComponent({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 text-xs text-white/70 hover:text-white"
+                  className="h-6 px-2 text-xs text-white/70 hover:bg-white/10 hover:text-white"
                   onClick={openAddReminder}
                 >
                   <Plus className="mr-1 h-3 w-3" />
@@ -247,7 +247,7 @@ export default function TodoComponent({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 w-6 shrink-0 p-0 text-white/50 hover:text-white"
+                      className="h-6 w-6 shrink-0 p-0 text-white/50 hover:bg-white/10 hover:text-white"
                       onClick={() => openEditReminder(reminder)}
                     >
                       <Edit className="h-3 w-3" />
@@ -255,7 +255,7 @@ export default function TodoComponent({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 w-6 shrink-0 p-0 text-white/50 hover:text-red-400"
+                      className="h-6 w-6 shrink-0 p-0 text-white/50 hover:bg-red-500/10 hover:text-red-400"
                       onClick={() => handleDeleteReminder(reminder.id)}
                     >
                       <Trash2 className="h-3 w-3" />
