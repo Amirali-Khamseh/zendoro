@@ -208,7 +208,10 @@ export default function TodoComponent({
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-72 p-2" align="end">
+          <PopoverContent
+            className="w-72 p-2 bg-neutral-900 border-white/10 text-white"
+            align="end"
+          >
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <span className="text-xs font-semibold uppercase tracking-wide text-white/60">
