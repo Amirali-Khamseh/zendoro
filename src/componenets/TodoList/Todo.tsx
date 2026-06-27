@@ -39,9 +39,6 @@ import {
   Trash,
   Trash2,
   CalendarIcon,
-  CheckCircle2,
-  Circle,
-  Zap,
   Bell,
   Plus,
   Edit,
@@ -117,7 +114,7 @@ export default function TodoComponent({
   const StatusIcon = statusConfig.icon;
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-sm hover:bg-white/10 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] p-3">
+    <div className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-sm hover:bg-white/10 hover:shadow-lg hover:z-10 transition-all duration-300 p-3">
       <div
         className={`absolute top-3 right-3 w-2 h-2 rounded-full ${statusConfig.dot} opacity-60`}
       />
@@ -141,9 +138,9 @@ export default function TodoComponent({
         />
       </div>
 
-      <div className="flex items-center gap-2 mt-3">
+      <div className="mt-3 flex flex-col gap-2">
         {/* Status with icon */}
-        <div className="min-w-0 flex-1">
+        <div className="w-full">
           <Select
             value={status}
             onValueChange={(val) => {
@@ -155,41 +152,23 @@ export default function TodoComponent({
             <SelectTrigger
               className={`h-7 min-w-0 text-xs border-0 ${statusConfig.color} hover:opacity-80 transition-opacity`}
             >
-              <div className="flex min-w-0 items-center gap-1.5">
+              <div className="flex flex-1 min-w-0 items-center gap-1.5 overflow-hidden">
                 <StatusIcon className="h-3 w-3 shrink-0" />
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder="Status" className="truncate" />
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="TODO">
-                <div className="flex items-center gap-2">
-                  <Circle className="h-3 w-3" />
-                  Todo
-                </div>
-              </SelectItem>
-              <SelectItem value="In Progress">
-                <div className="flex items-center gap-2">
-                  <Zap className="h-3 w-3" />
-                  In Progress
-                </div>
-              </SelectItem>
-              <SelectItem value="Done">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3" />
-                  Done
-                </div>
-              </SelectItem>
-              <SelectItem value="Kill">
-                <div className="flex items-center gap-2">
-                  <Circle className="h-3 w-3" />
-                  Kill
-                </div>
-              </SelectItem>
+              <SelectItem value="TODO">Todo</SelectItem>
+              <SelectItem value="In Progress">In Progress</SelectItem>
+              <SelectItem value="Done">Done</SelectItem>
+              <SelectItem value="Kill">Kill</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        <Popover>
+        {/* Action buttons row */}
+        <div className="flex items-center gap-2">
+          <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="ghost"
@@ -229,7 +208,10 @@ export default function TodoComponent({
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-72 p-2" align="end">
+          <PopoverContent
+            className="w-72 p-2 bg-neutral-900 border-white/10 text-white"
+            align="end"
+          >
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <span className="text-xs font-semibold uppercase tracking-wide text-white/60">
@@ -290,7 +272,7 @@ export default function TodoComponent({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 shrink-0 p-0 text-white/40 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all duration-200"
+              className="ml-auto h-7 w-7 shrink-0 p-0 text-white/40 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all duration-200"
             >
               <Trash className="h-3 w-3" />
             </Button>
@@ -315,6 +297,7 @@ export default function TodoComponent({
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        </div>
       </div>
 
       {reminderFormOpen && (

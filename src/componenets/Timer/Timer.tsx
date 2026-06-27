@@ -33,6 +33,7 @@ export function Timer({ initialTime }: Props) {
   >("focus");
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isRunningRef = useRef(false);
 
   const isInFocusSession = currentSessionType === "focus";
 
@@ -88,8 +89,7 @@ export function Timer({ initialTime }: Props) {
 
   // Update timer when currentMode changes or session type changes
   useEffect(() => {
-    if (!isRunning) {
-      // Only update if timer is not running
+    if (!isRunningRef.current) {
       if (currentSessionType === "focus") {
         setTimeLeft(focusTime);
       } else if (currentSessionType === "shortBreak") {
@@ -98,7 +98,7 @@ export function Timer({ initialTime }: Props) {
         setTimeLeft(longBreak);
       }
     }
-  }, [focusTime, shortBreak, longBreak, currentSessionType, isRunning]);
+  }, [focusTime, shortBreak, longBreak, currentSessionType]);
   //Keep the number of focus sessions
   useEffect(() => {
     const updateSessionCount = async () => {
@@ -133,14 +133,18 @@ export function Timer({ initialTime }: Props) {
     /* Handlers and Helper functions */
   }
   const toggleTimerState = () => {
-    setIsRunning((prev) => !prev);
+    const next = !isRunningRef.current;
+    isRunningRef.current = next;
+    setIsRunning(next);
   };
   const start = () => {
-    if (!isRunning) {
+    if (!isRunningRef.current) {
+      isRunningRef.current = true;
       setIsRunning(true);
     }
   };
   const pause = () => {
+    isRunningRef.current = false;
     setIsRunning(false);
   };
   const reset = () => {

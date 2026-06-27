@@ -8,11 +8,7 @@ import { useTodoStore } from "@/zustand/todoStore";
 import { useReminderStore } from "@/zustand/reminderStore";
 import { useHabitStore } from "@/zustand/habbitStore";
 import { useModeStore } from "@/zustand/modeStore";
-import {
-  getTodoStats,
-  getHabitStats,
-  getUpcomingItems,
-} from "@/lib/dashboardStats";
+import { getTodoStats, getHabitStats } from "@/lib/dashboardStats";
 import { StatCard } from "@/componenets/Dashboard/StatCard";
 import { TodoStatusChart } from "@/componenets/Dashboard/TodoStatusChart";
 import { HabitProgressChart } from "@/componenets/Dashboard/HabitProgressChart";
@@ -79,10 +75,6 @@ function RouteComponent() {
 
   const todoStats = useMemo(() => getTodoStats(todos), [todos]);
   const habitStats = useMemo(() => getHabitStats(habits), [habits]);
-  const upcoming = useMemo(
-    () => getUpcomingItems(todos, reminders),
-    [todos, reminders],
-  );
 
   const todayReminders = getTodayReminders();
   const overdueReminders = getOverdueReminders();
@@ -148,7 +140,7 @@ function RouteComponent() {
       {/* Upcoming & overdue */}
       <section>
         <Panel title="Upcoming & Overdue">
-          <UpcomingAgenda items={upcoming} />
+          <UpcomingAgenda todos={todos} />
         </Panel>
       </section>
     </div>
