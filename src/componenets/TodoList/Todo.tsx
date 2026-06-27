@@ -114,7 +114,7 @@ export default function TodoComponent({
   const StatusIcon = statusConfig.icon;
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-sm hover:bg-white/10 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] p-3">
+    <div className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-sm hover:bg-white/10 hover:shadow-lg hover:z-10 transition-all duration-300 p-3">
       <div
         className={`absolute top-3 right-3 w-2 h-2 rounded-full ${statusConfig.dot} opacity-60`}
       />
@@ -152,7 +152,7 @@ export default function TodoComponent({
             <SelectTrigger
               className={`h-7 min-w-0 text-xs border-0 ${statusConfig.color} hover:opacity-80 transition-opacity`}
             >
-              <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+              <div className="flex flex-1 min-w-0 items-center gap-1.5 overflow-hidden">
                 <StatusIcon className="h-3 w-3 shrink-0" />
                 <SelectValue placeholder="Status" className="truncate" />
               </div>
