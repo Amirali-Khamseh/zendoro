@@ -155,9 +155,9 @@ export default function TodoComponent({
             <SelectTrigger
               className={`h-7 min-w-0 text-xs border-0 ${statusConfig.color} hover:opacity-80 transition-opacity`}
             >
-              <div className="flex min-w-0 items-center gap-1.5">
+              <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
                 <StatusIcon className="h-3 w-3 shrink-0" />
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder="Status" className="truncate" />
               </div>
             </SelectTrigger>
             <SelectContent>
