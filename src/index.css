@@ -235,6 +235,11 @@
       var(--color-4) var(--stop-4),
       var(--color-5) var(--stop-5)
     );
+    /* Solid dark fallback + explicit white label so the button text stays
+       readable even if the @property-driven gradient fails to paint
+       (e.g. older browsers without @property support). */
+    background-color: #0c0a14;
+    color: #fff;
     transition:
       --pos-x 0.5s,
       --pos-y 0.5s,

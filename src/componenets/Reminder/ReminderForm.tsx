@@ -279,7 +279,7 @@ export function ReminderForm({
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="text-white">
+              <SelectContent className="bg-neutral-900 border-white/10 text-white">
                 <SelectItem value="low" className="text-white focus:text-white">
                   <div className="flex items-center gap-2">
                     <div
