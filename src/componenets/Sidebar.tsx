@@ -61,7 +61,11 @@ export function Sidebar() {
             <p className="text-sm text-muted-foreground">
               Focus & Productivity
             </p> */}
-            <img src="/logo.svg" alt="Zendoro Logo" />
+            <img
+              src="/logo.svg"
+              alt="Zendoro Logo"
+              className="brightness-0 invert"
+            />
           </div>
         )}
 
