@@ -13,6 +13,7 @@ import { StatCard } from "@/componenets/Dashboard/StatCard";
 import { TodoStatusChart } from "@/componenets/Dashboard/TodoStatusChart";
 import { HabitProgressChart } from "@/componenets/Dashboard/HabitProgressChart";
 import { UpcomingAgenda } from "@/componenets/Dashboard/UpcomingAgenda";
+import { MiniReminderCalendar } from "@/componenets/Dashboard/MiniReminderCalendar";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -137,8 +138,11 @@ function RouteComponent() {
         </Panel>
       </section>
 
-      {/* Upcoming & overdue */}
-      <section>
+      {/* Reminders calendar + upcoming todos, side by side */}
+      <section className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
+        <Panel title="Reminders Calendar">
+          <MiniReminderCalendar reminders={reminders} />
+        </Panel>
         <Panel title="Upcoming & Overdue">
           <UpcomingAgenda todos={todos} />
         </Panel>
