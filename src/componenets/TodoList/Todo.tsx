@@ -138,9 +138,9 @@ export default function TodoComponent({
         />
       </div>
 
-      <div className="flex items-center gap-2 mt-3">
+      <div className="mt-3 flex flex-col gap-2">
         {/* Status with icon */}
-        <div className="min-w-0 flex-1">
+        <div className="w-full">
           <Select
             value={status}
             onValueChange={(val) => {
@@ -166,7 +166,9 @@ export default function TodoComponent({
           </Select>
         </div>
 
-        <Popover>
+        {/* Action buttons row */}
+        <div className="flex items-center gap-2">
+          <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="ghost"
@@ -267,7 +269,7 @@ export default function TodoComponent({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 shrink-0 p-0 text-white/40 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all duration-200"
+              className="ml-auto h-7 w-7 shrink-0 p-0 text-white/40 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all duration-200"
             >
               <Trash className="h-3 w-3" />
             </Button>
@@ -292,6 +294,7 @@ export default function TodoComponent({
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        </div>
       </div>
 
       {reminderFormOpen && (
