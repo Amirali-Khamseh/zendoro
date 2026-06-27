@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { format, isToday, isTomorrow, addDays, startOfDay } from "date-fns";
-import { CheckSquare, Bell } from "lucide-react";
+import { format, startOfDay } from "date-fns";
+import { CheckSquare, GripVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   DndContext,
@@ -15,67 +15,111 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import type { UpcomingItem } from "@/lib/dashboardStats";
-import { useTodoStore } from "@/zustand/todoStore";
+import { useTodoStore, type Todo } from "@/zustand/todoStore";
+
+type TodoStatus = Todo["status"];
 
 interface UpcomingAgendaProps {
-  items: UpcomingItem[];
+  todos: Todo[];
 }
 
-// Maps a column key to the new due date when a todo is dropped there
-function targetDate(columnKey: string): Date | null {
-  const today = startOfDay(new Date());
-  if (columnKey === "today") return today;
-  if (columnKey === "tomorrow") return addDays(today, 1);
-  if (columnKey === "later") return addDays(today, 7);
-  return null; // "overdue" is not a valid drop target
-}
+const COLUMNS: {
+  status: TodoStatus;
+  label: string;
+  accent: string;
+  headerBg: string;
+  borderColor: string;
+  ringColor: string;
+}[] = [
+  {
+    status: "TODO",
+    label: "TODO",
+    accent: "text-slate-400",
+    headerBg: "bg-slate-500/10",
+    borderColor: "border-slate-500/20",
+    ringColor: "ring-slate-400/40",
+  },
+  {
+    status: "In Progress",
+    label: "In Progress",
+    accent: "text-amber-400",
+    headerBg: "bg-amber-500/10",
+    borderColor: "border-amber-500/20",
+    ringColor: "ring-amber-400/40",
+  },
+  {
+    status: "Done",
+    label: "Done",
+    accent: "text-emerald-400",
+    headerBg: "bg-emerald-500/10",
+    borderColor: "border-emerald-500/20",
+    ringColor: "ring-emerald-400/40",
+  },
+  {
+    status: "Kill",
+    label: "Kill",
+    accent: "text-red-400",
+    headerBg: "bg-red-500/10",
+    borderColor: "border-red-500/20",
+    ringColor: "ring-red-400/40",
+  },
+];
 
-const formatTime = (item: UpcomingItem): string => {
-  if (item.meta) return item.meta;
-  return format(item.date, "HH:mm");
-};
+// ── Card ──────────────────────────────────────────────────────────────────────
 
-// ── Card ─────────────────────────────────────────────────────────────────────
-
-function KanbanCard({
-  item,
+function TodoCard({
+  todo,
   dragging = false,
 }: {
-  item: UpcomingItem;
+  todo: Todo;
   dragging?: boolean;
 }) {
-  const Icon = item.type === "todo" ? CheckSquare : Bell;
+  const overdue =
+    todo.dueDate &&
+    todo.status !== "Done" &&
+    todo.status !== "Kill" &&
+    startOfDay(new Date(todo.dueDate)) < startOfDay(new Date());
+
   return (
     <div
-      className={`flex flex-col gap-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 ${
-        item.type === "todo" ? "cursor-grab active:cursor-grabbing" : ""
-      } ${dragging ? "shadow-2xl shadow-black/60 ring-1 ring-white/20" : ""}`}
+      className={`flex items-start gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 cursor-grab active:cursor-grabbing ${
+        dragging ? "shadow-2xl shadow-black/60 ring-1 ring-white/20" : ""
+      }`}
     >
-      <div className="flex items-start gap-2">
-        <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-white/40" />
-        <p className="text-xs font-medium leading-snug text-white">
-          {item.title}
+      <GripVertical className="mt-0.5 h-3.5 w-3.5 shrink-0 text-white/20" />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium leading-snug text-white truncate">
+          {todo.title}
         </p>
+        {todo.dueDate && (
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <CheckSquare className="h-2.5 w-2.5 shrink-0 text-white/30" />
+            <span
+              className={`text-[10px] ${overdue ? "text-red-400" : "text-white/40"}`}
+            >
+              {overdue ? "Overdue · " : ""}
+              {format(new Date(todo.dueDate), "MMM d")}
+            </span>
+          </div>
+        )}
       </div>
-      <div className="flex items-center justify-between pl-5">
-        <span className="text-[11px] text-white/40">{formatTime(item)}</span>
+      {overdue && (
         <Badge
-          variant={item.overdue ? "destructive" : "secondary"}
-          className="h-4 px-1.5 text-[10px] capitalize"
+          variant="destructive"
+          className="h-4 px-1.5 text-[10px] shrink-0"
         >
-          {item.type === "todo" ? "todo" : "reminder"}
+          late
         </Badge>
-      </div>
+      )}
     </div>
   );
 }
 
-// ── Draggable wrapper (todos only) ────────────────────────────────────────────
+// ── Draggable wrapper ─────────────────────────────────────────────────────────
 
-function DraggableTodoCard({ item }: { item: UpcomingItem }) {
+function DraggableTodoCard({ todo }: { todo: Todo }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: item.id });
+    useDraggable({ id: String(todo.id) });
 
   return (
     <div
@@ -88,35 +132,27 @@ function DraggableTodoCard({ item }: { item: UpcomingItem }) {
       {...attributes}
       {...listeners}
     >
-      <KanbanCard item={item} />
+      <TodoCard todo={todo} />
     </div>
   );
 }
 
 // ── Droppable column ──────────────────────────────────────────────────────────
 
-interface ColDef {
-  key: string;
-  label: string;
-  accent: string;
-  headerBg: string;
-  borderColor: string;
-  ringColor: string;
-  items: UpcomingItem[];
-}
-
-function DroppableKanbanColumn({ col }: { col: ColDef }) {
-  const droppable = col.key !== "overdue";
-  const { setNodeRef, isOver } = useDroppable({
-    id: col.key,
-    disabled: !droppable,
-  });
+function DroppableColumn({
+  col,
+  todos,
+}: {
+  col: (typeof COLUMNS)[number];
+  todos: Todo[];
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: col.status });
 
   return (
     <div
       ref={setNodeRef}
-      className={`flex min-w-[160px] flex-1 flex-col rounded-xl border ${col.borderColor} bg-white/3 overflow-hidden transition-shadow duration-150 ${
-        isOver && droppable ? `ring-2 ring-inset ${col.ringColor}` : ""
+      className={`flex min-w-[160px] flex-1 flex-col rounded-xl border ${col.borderColor} bg-white/[0.03] overflow-hidden transition-shadow duration-150 ${
+        isOver ? `ring-2 ring-inset ${col.ringColor}` : ""
       }`}
     >
       <div
@@ -130,23 +166,15 @@ function DroppableKanbanColumn({ col }: { col: ColDef }) {
         <span
           className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold ${col.accent} bg-white/10`}
         >
-          {col.items.length}
+          {todos.length}
         </span>
       </div>
 
-      <div className="flex flex-col gap-2 p-2 min-h-[60px]">
-        {col.items.length === 0 ? (
-          <p className="py-4 text-center text-[11px] text-white/30">
-            All clear
-          </p>
+      <div className="flex flex-col gap-2 p-2 min-h-[80px]">
+        {todos.length === 0 ? (
+          <p className="py-4 text-center text-[11px] text-white/30">Empty</p>
         ) : (
-          col.items.map((item) =>
-            item.type === "todo" ? (
-              <DraggableTodoCard key={item.id} item={item} />
-            ) : (
-              <KanbanCard key={item.id} item={item} />
-            ),
-          )
+          todos.map((todo) => <DraggableTodoCard key={todo.id} todo={todo} />)
         )}
       </div>
     </div>
@@ -155,7 +183,7 @@ function DroppableKanbanColumn({ col }: { col: ColDef }) {
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 
-export function UpcomingAgenda({ items }: UpcomingAgendaProps) {
+export function UpcomingAgenda({ todos }: UpcomingAgendaProps) {
   const { updateTodo } = useTodoStore();
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -166,7 +194,9 @@ export function UpcomingAgenda({ items }: UpcomingAgendaProps) {
     }),
   );
 
-  const activeItem = activeId ? items.find((i) => i.id === activeId) : null;
+  const activeTodo = activeId
+    ? todos.find((t) => String(t.id) === activeId)
+    : null;
 
   function handleDragStart({ active }: DragStartEvent) {
     setActiveId(String(active.id));
@@ -175,59 +205,17 @@ export function UpcomingAgenda({ items }: UpcomingAgendaProps) {
   function handleDragEnd({ active, over }: DragEndEvent) {
     setActiveId(null);
     if (!over) return;
-    const item = items.find((i) => i.id === String(active.id));
-    if (!item || item.type !== "todo") return;
-    const newDate = targetDate(String(over.id));
-    if (!newDate) return;
-    const todoId = Number(String(active.id).replace("todo-", ""));
-    updateTodo(todoId, { dueDate: newDate });
+    const newStatus = over.id as TodoStatus;
+    const todoId = Number(active.id);
+    const todo = todos.find((t) => t.id === todoId);
+    if (!todo || todo.status === newStatus) return;
+    updateTodo(todoId, { status: newStatus });
   }
 
-  const columns: ColDef[] = [
-    {
-      key: "overdue",
-      label: "Overdue",
-      accent: "text-red-400",
-      headerBg: "bg-red-500/10",
-      borderColor: "border-red-500/20",
-      ringColor: "ring-red-400/40",
-      items: items.filter((i) => i.overdue),
-    },
-    {
-      key: "today",
-      label: "Today",
-      accent: "text-amber-400",
-      headerBg: "bg-amber-500/10",
-      borderColor: "border-amber-500/20",
-      ringColor: "ring-amber-400/40",
-      items: items.filter((i) => !i.overdue && isToday(i.date)),
-    },
-    {
-      key: "tomorrow",
-      label: "Tomorrow",
-      accent: "text-sky-400",
-      headerBg: "bg-sky-500/10",
-      borderColor: "border-sky-500/20",
-      ringColor: "ring-sky-400/40",
-      items: items.filter((i) => !i.overdue && isTomorrow(i.date)),
-    },
-    {
-      key: "later",
-      label: "Upcoming",
-      accent: "text-white/60",
-      headerBg: "bg-white/5",
-      borderColor: "border-white/10",
-      ringColor: "ring-white/30",
-      items: items.filter(
-        (i) => !i.overdue && !isToday(i.date) && !isTomorrow(i.date),
-      ),
-    },
-  ];
-
-  if (items.length === 0) {
+  if (todos.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-white/50">
-        Nothing upcoming — you're all caught up. 🎉
+        No tasks yet — add some on the TODOs page.
       </p>
     );
   }
@@ -239,15 +227,19 @@ export function UpcomingAgenda({ items }: UpcomingAgendaProps) {
       onDragEnd={handleDragEnd}
     >
       <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
-        {columns.map((col) => (
-          <DroppableKanbanColumn key={col.key} col={col} />
+        {COLUMNS.map((col) => (
+          <DroppableColumn
+            key={col.status}
+            col={col}
+            todos={todos.filter((t) => t.status === col.status)}
+          />
         ))}
       </div>
 
       <DragOverlay dropAnimation={{ duration: 150, easing: "ease" }}>
-        {activeItem && (
-          <div className="rotate-1 scale-105 pointer-events-none w-48">
-            <KanbanCard item={activeItem} dragging />
+        {activeTodo && (
+          <div className="rotate-1 scale-105 pointer-events-none w-52">
+            <TodoCard todo={activeTodo} dragging />
           </div>
         )}
       </DragOverlay>
