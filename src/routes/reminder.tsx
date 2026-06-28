@@ -10,6 +10,7 @@ import { ReminderList } from "@/componenets/Reminder/ReminderList";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { isAuthenticated } from "@/lib/authVerification";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/reminder")({
   component: RouteComponent,
@@ -22,11 +23,52 @@ export const Route = createFileRoute("/reminder")({
   },
 });
 
+function ReminderSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
+      {/* Header */}
+      <header className="mb-6 md:mb-8 space-y-3">
+        <Skeleton className="h-8 w-48 md:h-10" />
+        <Skeleton className="h-4 w-72" />
+        {/* Badge row */}
+        <div className="flex flex-wrap gap-2 md:gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-7 w-24 rounded-full" />
+          ))}
+        </div>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        {/* Calendar skeleton */}
+        <div className="lg:col-span-2 rounded-lg p-3 md:p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-6 w-24 md:h-7" />
+            <Skeleton className="h-9 w-32 rounded-lg" />
+          </div>
+          <Skeleton className="h-72 w-full rounded-xl" />
+        </div>
+
+        {/* Reminder list skeleton */}
+        <div className="lg:col-span-1 rounded-lg p-3 md:p-6 space-y-4">
+          <Skeleton className="h-5 w-48" />
+          <div className="space-y-3">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RouteComponent() {
   useDocumentTitle("Reminders");
 
   const {
     reminders,
+    isLoading,
+    hasInitialized,
     selectedDate,
     showForm,
     editingReminder,
@@ -52,6 +94,8 @@ function RouteComponent() {
   React.useEffect(() => {
     fetchReminders();
   }, [fetchReminders]);
+
+  if (!hasInitialized && isLoading) return <ReminderSkeleton />;
 
   const handleAddReminder = (reminder: Omit<Reminder, "id" | "userId">) => {
     void addReminder(reminder);

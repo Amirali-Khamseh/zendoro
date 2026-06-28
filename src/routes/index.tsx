@@ -14,6 +14,7 @@ import { TodoStatusChart } from "@/componenets/Dashboard/TodoStatusChart";
 import { HabitProgressChart } from "@/componenets/Dashboard/HabitProgressChart";
 import { UpcomingAgenda } from "@/componenets/Dashboard/UpcomingAgenda";
 import { MiniReminderCalendar } from "@/componenets/Dashboard/MiniReminderCalendar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -43,6 +44,61 @@ function Panel({
   );
 }
 
+function DashboardSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
+      {/* Header */}
+      <header className="mb-6 md:mb-8 space-y-2">
+        <Skeleton className="h-8 w-40 md:h-10" />
+        <Skeleton className="h-4 w-64" />
+      </header>
+
+      {/* KPI cards */}
+      <section className="mb-6 grid grid-cols-2 gap-3 md:mb-8 md:gap-4 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-8 w-8 rounded-lg" />
+            </div>
+            <Skeleton className="h-7 w-16" />
+            <Skeleton className="h-3 w-28" />
+          </div>
+        ))}
+      </section>
+
+      {/* Chart panels */}
+      <section className="mb-6 grid grid-cols-1 gap-4 md:mb-8 md:gap-6 lg:grid-cols-2">
+        {[...Array(2)].map((_, i) => (
+          <div
+            key={i}
+            className="rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 space-y-4"
+          >
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-40 w-full rounded-lg" />
+          </div>
+        ))}
+      </section>
+
+      {/* Bottom panels */}
+      <section className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
+        {[...Array(2)].map((_, i) => (
+          <div
+            key={i}
+            className="rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 space-y-4"
+          >
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-48 w-full rounded-lg" />
+          </div>
+        ))}
+      </section>
+    </div>
+  );
+}
+
 const greeting = (): string => {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
@@ -53,14 +109,16 @@ const greeting = (): string => {
 function RouteComponent() {
   useDocumentTitle("Dashboard");
 
-  const { todos, fetchTodos } = useTodoStore();
+  const { todos, fetchTodos, isLoading: todosLoading, hasInitialized: todosReady } = useTodoStore();
   const {
     reminders,
     fetchReminders,
     getTodayReminders,
     getOverdueReminders,
+    isLoading: remindersLoading,
+    hasInitialized: remindersReady,
   } = useReminderStore();
-  const { habits, fetchHabits } = useHabitStore();
+  const { habits, fetchHabits, isLoading: habitsLoading, hasInitialized: habitsReady } = useHabitStore();
   const { currentFocusSessionCount, fetchFocusSessionCount } =
     useModeStore() as {
       currentFocusSessionCount: number;
@@ -74,11 +132,18 @@ function RouteComponent() {
     fetchFocusSessionCount();
   }, [fetchTodos, fetchReminders, fetchHabits, fetchFocusSessionCount]);
 
+  const isLoading =
+    (!todosReady && todosLoading) ||
+    (!remindersReady && remindersLoading) ||
+    (!habitsReady && habitsLoading);
+
   const todoStats = useMemo(() => getTodoStats(todos), [todos]);
   const habitStats = useMemo(() => getHabitStats(habits), [habits]);
 
   const todayReminders = getTodayReminders();
   const overdueReminders = getOverdueReminders();
+
+  if (isLoading) return <DashboardSkeleton />;
 
   return (
     <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">

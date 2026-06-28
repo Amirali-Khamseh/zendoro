@@ -38,6 +38,7 @@ import TodoComponent from "@/componenets/TodoList/Todo";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { isAuthenticated } from "@/lib/authVerification";
 import { containsDangerousInput } from "@/lib/inputSanitization";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/todo")({
   component: RouteComponent,
@@ -156,6 +157,49 @@ function DroppableColumn({
   );
 }
 
+function TodoSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
+      {/* Form skeleton */}
+      <div className="max-w-2xl mx-auto mb-6 md:mb-8 space-y-3 px-2 md:px-0">
+        <div className="space-y-1">
+          <Skeleton className="h-3 w-10" />
+          <Skeleton className="h-8 md:h-9 w-full" />
+        </div>
+        <div className="space-y-1">
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-8 md:h-9 w-full" />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
+          <Skeleton className="h-8 md:h-9 flex-1" />
+          <Skeleton className="h-8 md:h-9 flex-1" />
+          <Skeleton className="h-8 md:h-9 w-full sm:w-10" />
+        </div>
+      </div>
+
+      {/* Kanban columns skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {COLUMNS.map((col) => (
+          <div
+            key={col.status}
+            className={`rounded-xl border ${col.borderColor} bg-white/3 overflow-hidden`}
+          >
+            <div className={`flex items-center justify-between px-3 py-2.5 ${col.headerBg}`}>
+              <Skeleton className="h-3 w-16" />
+              <Skeleton className="h-5 w-5 rounded-full" />
+            </div>
+            <div className="flex flex-col gap-2 p-2 min-h-[80px]">
+              {[...Array(2)].map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-md" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function RouteComponent() {
   useDocumentTitle("Todo List");
 
@@ -163,7 +207,7 @@ function RouteComponent() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [status, setStatus] = useState<string>("");
   const [activeId, setActiveId] = useState<string | null>(null);
-  const { addTodo, updateTodo, todos, fetchTodos } = useTodoStore();
+  const { addTodo, updateTodo, todos, fetchTodos, isLoading, hasInitialized } = useTodoStore();
   const fetchReminders = useReminderStore((s) => s.fetchReminders);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -171,6 +215,8 @@ function RouteComponent() {
     fetchTodos();
     fetchReminders();
   }, [fetchTodos, fetchReminders]);
+
+  if (!hasInitialized && isLoading) return <TodoSkeleton />;
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),

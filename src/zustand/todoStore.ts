@@ -14,6 +14,8 @@ export type Todo = {
 
 type TodoStore = {
   todos: Todo[];
+  isLoading: boolean;
+  hasInitialized: boolean;
   fetchTodos: () => Promise<void>;
   addTodo: (todo: Omit<Todo, "id" | "userId">) => Promise<void>;
   updateTodo: (
@@ -131,9 +133,12 @@ const deleteTodo = async (id: number) => {
 };
 export const useTodoStore = create<TodoStore>()((set) => ({
   todos: [],
+  isLoading: false,
+  hasInitialized: false,
   fetchTodos: async () => {
+    set({ isLoading: true });
     const todos = await getTodos();
-    set({ todos });
+    set({ todos, isLoading: false, hasInitialized: true });
   },
   addTodo: async (todo) => {
     try {
@@ -178,5 +183,5 @@ export const useTodoStore = create<TodoStore>()((set) => ({
     }
   },
 
-  clearTodos: () => set({ todos: [] }),
+  clearTodos: () => set({ todos: [], hasInitialized: false }),
 }));
