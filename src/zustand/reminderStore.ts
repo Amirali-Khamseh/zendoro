@@ -47,6 +47,8 @@ const parseDateFromApi = (value: string | null): Date => {
 
 interface ReminderStore {
   reminders: Reminder[];
+  isLoading: boolean;
+  hasInitialized: boolean;
   selectedDate: Date;
   showForm: boolean;
   editingReminder: Reminder | null;
@@ -78,12 +80,15 @@ interface ReminderStore {
 
 export const useReminderStore = create<ReminderStore>()((set, get) => ({
   reminders: [],
+  isLoading: false,
+  hasInitialized: false,
   selectedDate: new Date(),
   showForm: false,
   editingReminder: null,
   deletingReminder: null,
 
   fetchReminders: async () => {
+    set({ isLoading: true });
     try {
       const authToken = getAuthToken();
       const headers: HeadersInit = {
@@ -107,10 +112,10 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         todoId: r.todoId ?? null,
         userId: r.userId,
       }));
-      set({ reminders });
+      set({ reminders, isLoading: false, hasInitialized: true });
     } catch (e) {
       console.error("Error fetching reminders", e);
-      set({ reminders: [] });
+      set({ reminders: [], isLoading: false, hasInitialized: true });
     }
   },
 
