@@ -146,9 +146,24 @@ app.post("/auth/signup", async (req, res) => {
 
 app.get("/todo", auth, async (req, res) => {
   try {
+    // Optional date-range filter on due_date (?from=YYYY-MM-DD&to=YYYY-MM-DD).
+    // `to` is treated as inclusive of the whole day.
+    const { from, to } = req.query;
+    const clauses = ["user_id = $1"];
+    const params = [req.userId];
+    if (from) {
+      params.push(from);
+      clauses.push(`due_date >= $${params.length}::date`);
+    }
+    if (to) {
+      params.push(to);
+      clauses.push(`due_date < ($${params.length}::date + interval '1 day')`);
+    }
     const { rows } = await pool.query(
-      "SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC",
-      [req.userId]
+      `SELECT * FROM todos WHERE ${clauses.join(
+        " AND "
+      )} ORDER BY created_at DESC`,
+      params
     );
     res.json(rows.map(todoRow));
   } catch (err) {
@@ -272,9 +287,23 @@ app.delete("/hobby/:id", auth, async (req, res) => {
 
 app.get("/reminder", auth, async (req, res) => {
   try {
+    // Optional date-range filter on date (?from=YYYY-MM-DD&to=YYYY-MM-DD), inclusive.
+    const { from, to } = req.query;
+    const clauses = ["user_id = $1"];
+    const params = [req.userId];
+    if (from) {
+      params.push(from);
+      clauses.push(`date >= $${params.length}::date`);
+    }
+    if (to) {
+      params.push(to);
+      clauses.push(`date <= $${params.length}::date`);
+    }
     const { rows } = await pool.query(
-      "SELECT * FROM reminders WHERE user_id = $1 ORDER BY created_at DESC",
-      [req.userId]
+      `SELECT * FROM reminders WHERE ${clauses.join(
+        " AND "
+      )} ORDER BY created_at DESC`,
+      params
     );
     res.json(rows.map(reminderRow));
   } catch (err) {
@@ -401,6 +430,28 @@ app.post("/timer", auth, async (req, res) => {
 
 app.get("/timer/session-count", auth, async (req, res) => {
   try {
+    // With a date range (?from=YYYY-MM-DD&to=YYYY-MM-DD), sum sessions across
+    // the range; without it, fall back to today's count.
+    const { from, to } = req.query;
+    if (from || to) {
+      const clauses = ["user_id = $1"];
+      const params = [req.userId];
+      if (from) {
+        params.push(from);
+        clauses.push(`date >= $${params.length}::date`);
+      }
+      if (to) {
+        params.push(to);
+        clauses.push(`date <= $${params.length}::date`);
+      }
+      const { rows } = await pool.query(
+        `SELECT COALESCE(SUM(session_count), 0) AS total FROM session_counts WHERE ${clauses.join(
+          " AND "
+        )}`,
+        params
+      );
+      return res.json({ data: { sessionCount: Number(rows[0].total) } });
+    }
     const today = new Date().toISOString().split("T")[0];
     const { rows } = await pool.query(
       "SELECT session_count FROM session_counts WHERE user_id = $1 AND date = $2",

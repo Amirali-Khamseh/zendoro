@@ -1,20 +1,28 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
-import { format } from "date-fns";
+import { format, startOfDay } from "date-fns";
 import { Timer, CheckSquare, Bell, Target } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { isAuthenticated } from "@/lib/authVerification";
-import { useTodoStore } from "@/zustand/todoStore";
-import { useReminderStore } from "@/zustand/reminderStore";
 import { useHabitStore } from "@/zustand/habbitStore";
-import { useModeStore } from "@/zustand/modeStore";
+import { useDashboardStore } from "@/zustand/dashboardStore";
+import type { DashboardPreset } from "@/zustand/dashboardStore";
 import { getTodoStats, getHabitStats } from "@/lib/dashboardStats";
 import { StatCard } from "@/componenets/Dashboard/StatCard";
 import { TodoStatusChart } from "@/componenets/Dashboard/TodoStatusChart";
 import { HabitProgressChart } from "@/componenets/Dashboard/HabitProgressChart";
 import { UpcomingAgenda } from "@/componenets/Dashboard/UpcomingAgenda";
 import { MiniReminderCalendar } from "@/componenets/Dashboard/MiniReminderCalendar";
+import { DateRangeFilter } from "@/componenets/Dashboard/DateRangeFilter";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const RANGE_SUB_LABEL: Record<DashboardPreset, string> = {
+  all: "all time",
+  today: "today",
+  "7d": "last 7 days",
+  month: "this month",
+  custom: "in range",
+};
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -109,52 +117,65 @@ const greeting = (): string => {
 function RouteComponent() {
   useDocumentTitle("Dashboard");
 
-  const { todos, fetchTodos, isLoading: todosLoading, hasInitialized: todosReady } = useTodoStore();
   const {
+    todos,
     reminders,
-    fetchReminders,
-    getTodayReminders,
-    getOverdueReminders,
-    isLoading: remindersLoading,
-    hasInitialized: remindersReady,
-  } = useReminderStore();
-  const { habits, fetchHabits, isLoading: habitsLoading, hasInitialized: habitsReady } = useHabitStore();
-  const { currentFocusSessionCount, fetchFocusSessionCount } =
-    useModeStore() as {
-      currentFocusSessionCount: number;
-      fetchFocusSessionCount: () => void;
-    };
+    focusSessionCount,
+    preset,
+    range,
+    setRange,
+    fetchDashboard,
+    isLoading: dashLoading,
+    hasInitialized: dashReady,
+  } = useDashboardStore();
+  const {
+    habits,
+    fetchHabits,
+    isLoading: habitsLoading,
+    hasInitialized: habitsReady,
+  } = useHabitStore();
 
   useEffect(() => {
-    fetchTodos();
-    fetchReminders();
+    fetchDashboard();
     fetchHabits();
-    fetchFocusSessionCount();
-  }, [fetchTodos, fetchReminders, fetchHabits, fetchFocusSessionCount]);
+  }, [fetchDashboard, fetchHabits]);
 
-  const isLoading =
-    (!todosReady && todosLoading) ||
-    (!remindersReady && remindersLoading) ||
-    (!habitsReady && habitsLoading);
+  const isInitialLoading =
+    (!dashReady && dashLoading) || (!habitsReady && habitsLoading);
 
   const todoStats = useMemo(() => getTodoStats(todos), [todos]);
   const habitStats = useMemo(() => getHabitStats(habits), [habits]);
 
-  const todayReminders = getTodayReminders();
-  const overdueReminders = getOverdueReminders();
+  const { reminderCount, overdueReminders, completedReminders } = useMemo(() => {
+    const today = startOfDay(new Date());
+    let overdue = 0;
+    let completed = 0;
+    for (const r of reminders) {
+      if (r.completed) completed += 1;
+      else if (r.date < today) overdue += 1;
+    }
+    return {
+      reminderCount: reminders.length,
+      overdueReminders: overdue,
+      completedReminders: completed,
+    };
+  }, [reminders]);
 
-  if (isLoading) return <DashboardSkeleton />;
+  if (isInitialLoading) return <DashboardSkeleton />;
 
   return (
     <div className="max-w-7xl mx-auto p-2 md:p-4 overflow-x-hidden">
-      <header className="mb-6 md:mb-8">
-        <h1 className="mb-1 text-2xl font-bold text-white md:text-4xl">
-          Dashboard
-        </h1>
-        <p className="text-sm text-white/70 md:text-base">
-          {greeting()}, here's your overview for{" "}
-          {format(new Date(), "EEEE, MMMM d")}
-        </p>
+      <header className="mb-6 md:mb-8 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h1 className="mb-1 text-2xl font-bold text-white md:text-4xl">
+            Dashboard
+          </h1>
+          <p className="text-sm text-white/70 md:text-base">
+            {greeting()}, here's your overview for{" "}
+            {format(new Date(), "EEEE, MMMM d")}
+          </p>
+        </div>
+        <DateRangeFilter preset={preset} range={range} onChange={setRange} />
       </header>
 
       {/* KPI summary */}
@@ -162,8 +183,8 @@ function RouteComponent() {
         <StatCard
           icon={Timer}
           label="Focus Sessions"
-          value={currentFocusSessionCount}
-          sub="completed today"
+          value={focusSessionCount}
+          sub={`completed ${RANGE_SUB_LABEL[preset]}`}
           accent="text-sky-400"
         />
         <StatCard
@@ -177,10 +198,12 @@ function RouteComponent() {
         />
         <StatCard
           icon={Bell}
-          label="Reminders Today"
-          value={todayReminders}
+          label="Reminders"
+          value={reminderCount}
           sub={
-            overdueReminders > 0 ? `${overdueReminders} overdue` : "none overdue"
+            overdueReminders > 0
+              ? `${overdueReminders} overdue`
+              : `${completedReminders} completed`
           }
           accent="text-amber-400"
         />
