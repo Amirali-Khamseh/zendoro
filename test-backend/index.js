@@ -354,6 +354,145 @@ app.delete("/reminder/:id", auth, async (req, res) => {
   }
 });
 
+// ── Goals ─────────────────────────────────────────────────────────────────────
+
+// Format a pg DATE (returned as a local-midnight Date) as YYYY-MM-DD using
+// local calendar parts. Using toISOString here would shift the day in
+// timezones ahead of UTC, mirroring the bug the reminder code avoids.
+function formatDateLocal(d) {
+  if (!d) return null;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+// Enrich goal rows with the ids of their linked todos / habits / reminders so
+// the frontend can compute progress from items it already has loaded.
+async function attachGoalLinks(goalRows) {
+  if (goalRows.length === 0) return [];
+  const ids = goalRows.map((g) => g.id);
+  const [td, hb, rm] = await Promise.all([
+    pool.query("SELECT goal_id, todo_id FROM goal_todos WHERE goal_id = ANY($1)", [ids]),
+    pool.query("SELECT goal_id, habit_id FROM goal_habits WHERE goal_id = ANY($1)", [ids]),
+    pool.query("SELECT goal_id, reminder_id FROM goal_reminders WHERE goal_id = ANY($1)", [ids]),
+  ]);
+  return goalRows.map((g) => ({
+    id: g.id,
+    title: g.title,
+    description: g.description ?? null,
+    targetDate: formatDateLocal(g.target_date),
+    status: g.status,
+    todoIds: td.rows.filter((r) => r.goal_id === g.id).map((r) => r.todo_id),
+    habitIds: hb.rows.filter((r) => r.goal_id === g.id).map((r) => r.habit_id),
+    reminderIds: rm.rows.filter((r) => r.goal_id === g.id).map((r) => r.reminder_id),
+    userId: g.user_id,
+  }));
+}
+
+// Replace the link rows for a goal. `undefined` arrays are left untouched; an
+// empty array clears that link type.
+async function setGoalLinks(goalId, { todoIds, habitIds, reminderIds }) {
+  if (todoIds !== undefined) {
+    await pool.query("DELETE FROM goal_todos WHERE goal_id = $1", [goalId]);
+    for (const todoId of todoIds) {
+      await pool.query(
+        "INSERT INTO goal_todos (goal_id, todo_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+        [goalId, todoId]
+      );
+    }
+  }
+  if (habitIds !== undefined) {
+    await pool.query("DELETE FROM goal_habits WHERE goal_id = $1", [goalId]);
+    for (const habitId of habitIds) {
+      await pool.query(
+        "INSERT INTO goal_habits (goal_id, habit_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+        [goalId, habitId]
+      );
+    }
+  }
+  if (reminderIds !== undefined) {
+    await pool.query("DELETE FROM goal_reminders WHERE goal_id = $1", [goalId]);
+    for (const reminderId of reminderIds) {
+      await pool.query(
+        "INSERT INTO goal_reminders (goal_id, reminder_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+        [goalId, reminderId]
+      );
+    }
+  }
+}
+
+app.get("/goal", auth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM goals WHERE user_id = $1 ORDER BY created_at DESC",
+      [req.userId]
+    );
+    res.json(await attachGoalLinks(rows));
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post("/goal", auth, async (req, res) => {
+  try {
+    const { title, description, targetDate, status, todoIds, habitIds, reminderIds } =
+      req.body;
+    const { rows } = await pool.query(
+      "INSERT INTO goals (title, description, target_date, status, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [title, description ?? null, targetDate || null, status || "active", req.userId]
+    );
+    const goal = rows[0];
+    await setGoalLinks(goal.id, { todoIds, habitIds, reminderIds });
+    const [withLinks] = await attachGoalLinks([goal]);
+    res.json(withLinks);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.put("/goal/:id", auth, async (req, res) => {
+  try {
+    const { title, description, targetDate, status, todoIds, habitIds, reminderIds } =
+      req.body;
+    const { rows } = await pool.query(
+      `UPDATE goals SET
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        target_date = COALESCE($3, target_date),
+        status = COALESCE($4, status)
+       WHERE id = $5 AND user_id = $6 RETURNING *`,
+      [
+        title ?? null,
+        description ?? null,
+        targetDate || null,
+        status ?? null,
+        req.params.id,
+        req.userId,
+      ]
+    );
+    if (!rows[0]) return res.status(404).json({ message: "Not found" });
+    await setGoalLinks(rows[0].id, { todoIds, habitIds, reminderIds });
+    const [withLinks] = await attachGoalLinks([rows[0]]);
+    res.json(withLinks);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.delete("/goal/:id", auth, async (req, res) => {
+  try {
+    // Link rows are removed by the ON DELETE CASCADE on the join tables.
+    await pool.query("DELETE FROM goals WHERE id = $1 AND user_id = $2", [
+      req.params.id,
+      req.userId,
+    ]);
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // ── Timer modes ───────────────────────────────────────────────────────────────
 
 app.get("/timer", auth, async (req, res) => {

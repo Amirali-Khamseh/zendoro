@@ -7,6 +7,7 @@ import { isAuthenticated } from "@/lib/authVerification";
 import { useTodoStore } from "@/zustand/todoStore";
 import { useReminderStore } from "@/zustand/reminderStore";
 import { useHabitStore } from "@/zustand/habbitStore";
+import { useGoalStore } from "@/zustand/goalStore";
 import { useModeStore } from "@/zustand/modeStore";
 import { getTodoStats, getHabitStats } from "@/lib/dashboardStats";
 import { StatCard } from "@/componenets/Dashboard/StatCard";
@@ -14,6 +15,7 @@ import { TodoStatusChart } from "@/componenets/Dashboard/TodoStatusChart";
 import { HabitProgressChart } from "@/componenets/Dashboard/HabitProgressChart";
 import { UpcomingAgenda } from "@/componenets/Dashboard/UpcomingAgenda";
 import { MiniReminderCalendar } from "@/componenets/Dashboard/MiniReminderCalendar";
+import { GoalHero } from "@/componenets/Goals/GoalHero";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/")({
@@ -119,6 +121,7 @@ function RouteComponent() {
     hasInitialized: remindersReady,
   } = useReminderStore();
   const { habits, fetchHabits, isLoading: habitsLoading, hasInitialized: habitsReady } = useHabitStore();
+  const { goals, fetchGoals, isLoading: goalsLoading, hasInitialized: goalsReady } = useGoalStore();
   const { currentFocusSessionCount, fetchFocusSessionCount } =
     useModeStore() as {
       currentFocusSessionCount: number;
@@ -129,13 +132,15 @@ function RouteComponent() {
     fetchTodos();
     fetchReminders();
     fetchHabits();
+    fetchGoals();
     fetchFocusSessionCount();
-  }, [fetchTodos, fetchReminders, fetchHabits, fetchFocusSessionCount]);
+  }, [fetchTodos, fetchReminders, fetchHabits, fetchGoals, fetchFocusSessionCount]);
 
   const isLoading =
     (!todosReady && todosLoading) ||
     (!remindersReady && remindersLoading) ||
-    (!habitsReady && habitsLoading);
+    (!habitsReady && habitsLoading) ||
+    (!goalsReady && goalsLoading);
 
   const todoStats = useMemo(() => getTodoStats(todos), [todos]);
   const habitStats = useMemo(() => getHabitStats(habits), [habits]);
@@ -190,6 +195,16 @@ function RouteComponent() {
           value={`${habitStats.averageCompletion}%`}
           sub={`${habitStats.todayCompleted}/${habitStats.count} done today`}
           accent="text-fuchsia-400"
+        />
+      </section>
+
+      {/* Goal in focus */}
+      <section className="mb-6 md:mb-8">
+        <GoalHero
+          goals={goals}
+          todos={todos}
+          habits={habits}
+          reminders={reminders}
         />
       </section>
 
