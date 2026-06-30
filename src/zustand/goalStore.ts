@@ -47,11 +47,21 @@ const serializeDate = (date: Date): string => {
   return `${y}-${m}-${d}`;
 };
 
+// Parse a YYYY-MM-DD (or ISO) date as a *local* date. `new Date("2026-07-31")`
+// is parsed as UTC midnight, which renders as the previous day for users
+// behind UTC — so build the date from its parts instead.
+const parseDate = (value: string): Date => {
+  if (value.includes("T")) return new Date(value);
+  const [y, m, d] = value.split("-").map(Number);
+  if ([y, m, d].every(Number.isFinite)) return new Date(y, m - 1, d);
+  return new Date(value);
+};
+
 const fromApi = (g: ApiGoal): Goal => ({
   id: Number(g.id),
   title: g.title,
   description: g.description ?? null,
-  targetDate: g.targetDate ? new Date(g.targetDate) : null,
+  targetDate: g.targetDate ? parseDate(g.targetDate) : null,
   status: g.status,
   todoIds: g.todoIds ?? [],
   habitIds: g.habitIds ?? [],
