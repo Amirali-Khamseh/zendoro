@@ -82,6 +82,37 @@ async function seed() {
       date DATE DEFAULT CURRENT_DATE,
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS goals (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      description TEXT,
+      target_date DATE,
+      status VARCHAR(20) DEFAULT 'active',
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+
+    -- Join tables (many goals ↔ many items). Both FKs cascade so deleting a
+    -- goal or an item only removes the link rows. Note habit_id is UUID here
+    -- because the mock's hobbies table uses UUID primary keys.
+    CREATE TABLE IF NOT EXISTS goal_todos (
+      goal_id INTEGER REFERENCES goals(id) ON DELETE CASCADE,
+      todo_id INTEGER REFERENCES todos(id) ON DELETE CASCADE,
+      PRIMARY KEY (goal_id, todo_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS goal_habits (
+      goal_id INTEGER REFERENCES goals(id) ON DELETE CASCADE,
+      habit_id UUID REFERENCES hobbies(id) ON DELETE CASCADE,
+      PRIMARY KEY (goal_id, habit_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS goal_reminders (
+      goal_id INTEGER REFERENCES goals(id) ON DELETE CASCADE,
+      reminder_id INTEGER REFERENCES reminders(id) ON DELETE CASCADE,
+      PRIMARY KEY (goal_id, reminder_id)
+    );
   `);
 
   // Skip seeding if user already exists

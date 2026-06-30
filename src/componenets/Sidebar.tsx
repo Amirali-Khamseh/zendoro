@@ -10,6 +10,7 @@ import {
   Target,
   CheckSquare,
   Bell,
+  Trophy,
   Bot,
   ChevronLeft,
   ChevronRight,
@@ -138,6 +139,18 @@ export function Sidebar() {
                 variant="ghost"
                 size="icon"
                 className="h-10 w-10"
+                title="Goals"
+                asChild
+              >
+                <Link to="/goals">
+                  <Trophy className="h-5 w-5" />
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
                 title="AI Assistant"
                 asChild
               >
@@ -206,6 +219,18 @@ export function Sidebar() {
                 <Link to="/reminder">
                   <Bell className="h-4 w-4 mr-2" />
                   Reminder
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/goals">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  Goals
                 </Link>
               </Button>
 
