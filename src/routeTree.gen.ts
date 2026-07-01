@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodoRouteImport } from './routes/todo'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ReminderRouteImport } from './routes/reminder'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HabitTrackerRouteImport } from './routes/habit-tracker'
 import { Route as GoalsRouteImport } from './routes/goals'
@@ -32,6 +33,11 @@ const SignupRoute = SignupRouteImport.update({
 const ReminderRoute = ReminderRouteImport.update({
   id: '/reminder',
   path: '/reminder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/goals': typeof GoalsRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/reminder': typeof ReminderRoute
   '/signup': typeof SignupRoute
   '/todo': typeof TodoRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/goals': typeof GoalsRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/reminder': typeof ReminderRoute
   '/signup': typeof SignupRoute
   '/todo': typeof TodoRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/goals': typeof GoalsRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/reminder': typeof ReminderRoute
   '/signup': typeof SignupRoute
   '/todo': typeof TodoRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/goals'
     | '/habit-tracker'
     | '/login'
+    | '/profile'
     | '/reminder'
     | '/signup'
     | '/todo'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/goals'
     | '/habit-tracker'
     | '/login'
+    | '/profile'
     | '/reminder'
     | '/signup'
     | '/todo'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/goals'
     | '/habit-tracker'
     | '/login'
+    | '/profile'
     | '/reminder'
     | '/signup'
     | '/todo'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   GoalsRoute: typeof GoalsRoute
   HabitTrackerRoute: typeof HabitTrackerRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   ReminderRoute: typeof ReminderRoute
   SignupRoute: typeof SignupRoute
   TodoRoute: typeof TodoRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/reminder'
       fullPath: '/reminder'
       preLoaderRoute: typeof ReminderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   GoalsRoute: GoalsRoute,
   HabitTrackerRoute: HabitTrackerRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   ReminderRoute: ReminderRoute,
   SignupRoute: SignupRoute,
   TodoRoute: TodoRoute,

@@ -12,6 +12,7 @@ import {
   Bell,
   Trophy,
   Bot,
+  UserCircle,
   ChevronLeft,
   ChevronRight,
   LogIn,
@@ -158,6 +159,20 @@ export function Sidebar() {
                   <Bot className="h-5 w-5" />
                 </Link>
               </Button>
+
+              {isLoggedIn && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10"
+                  title="Profile"
+                  asChild
+                >
+                  <Link to="/profile">
+                    <UserCircle className="h-5 w-5" />
+                  </Link>
+                </Button>
+              )}
             </div>
           ) : (
             // Expanded view - full content
@@ -245,6 +260,20 @@ export function Sidebar() {
                   AI Assistant
                 </Link>
               </Button>
+
+              {isLoggedIn && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start px-0"
+                  asChild
+                >
+                  <Link to="/profile">
+                    <UserCircle className="h-4 w-4 mr-2" />
+                    Profile
+                  </Link>
+                </Button>
+              )}
             </>
           )}
         </nav>
