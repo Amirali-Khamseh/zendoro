@@ -91,6 +91,9 @@ function SignupComponent() {
 
     const formData = new FormData(e.currentTarget);
 
+    // Honeypot: real users never see or fill this field — bots do
+    if (formData.get("website")) return;
+
     if (!validateFormData(formData)) return;
 
     setIsLoading(true);
@@ -257,6 +260,21 @@ function SignupComponent() {
                     {errors.confirmPassword}
                   </p>
                 )}
+              </div>
+
+              {/* Honeypot — hidden from real users, bots fill it and get silently rejected */}
+              <div
+                aria-hidden="true"
+                className="absolute -left-[9999px] h-px w-px overflow-hidden opacity-0"
+              >
+                <label htmlFor="website">Website</label>
+                <input
+                  id="website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
               </div>
 
               <GradientButton
