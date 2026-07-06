@@ -15,7 +15,6 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
-import { setAuthToken } from "@/lib/authHelpers";
 import { validateNoInjection } from "@/lib/inputSanitization";
 
 export const Route = createFileRoute("/signup")({
@@ -23,12 +22,7 @@ export const Route = createFileRoute("/signup")({
 });
 type signUpResponseType = {
   message: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  token: string;
+  email: string;
 };
 function SignupComponent() {
   useDocumentTitle("Sign Up - Zendoro");
@@ -115,15 +109,17 @@ function SignupComponent() {
       });
       if (result.status === 201) {
         const response: signUpResponseType = await result.json();
-        setAuthToken(response.token);
         formRef.current?.reset();
-        router.navigate({ to: "/" });
         setErrors({});
+        router.navigate({
+          to: "/verify-email",
+          search: { email: response.email },
+        });
       } else {
         const errorData = await result.json().catch(() => ({}));
         setErrors({
           general:
-            errorData.message || "Registration failed. Please try again.",
+            errorData.error || errorData.message || "Registration failed. Please try again.",
         });
       }
     } catch {

@@ -96,14 +96,16 @@ function LoginComponent() {
         setErrors({});
         router.navigate({ to: "/" });
       } else {
-        console.log("Login failed with status:", result.status);
-        const errorData = await result.json().catch((e) => {
-          console.log("Failed to parse error response:", e);
-          return {};
-        });
-        console.log("Error data:", errorData);
+        const errorData = await result.json().catch(() => ({}));
+        if (errorData.needsVerification) {
+          router.navigate({
+            to: "/verify-email",
+            search: { email: errorData.email || email },
+          });
+          return;
+        }
         setErrors({
-          general: errorData.message || "Login failed. Please try again.",
+          general: errorData.error || errorData.message || "Login failed. Please try again.",
         });
       }
     } catch {
