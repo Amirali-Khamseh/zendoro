@@ -22,6 +22,21 @@ export const REMINDER_PRIORITY_COLORS = {
   high: "bg-red-400",
 };
 
+export const REMINDER_LEAD_TIME_OPTIONS: {
+  value: number | null;
+  label: string;
+}[] = [
+  { value: null, label: "No email reminder" },
+  { value: 0, label: "At time of reminder" },
+  { value: 5, label: "5 minutes before" },
+  { value: 15, label: "15 minutes before" },
+  { value: 30, label: "30 minutes before" },
+  { value: 60, label: "1 hour before" },
+  { value: 120, label: "2 hours before" },
+  { value: 1440, label: "1 day before" },
+  { value: 2880, label: "2 days before" },
+];
+
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL ?? "https://zendoro-backend.onrender.com";
 export const LS_ZENDORO_AUTH = "zendoro-auth-token";

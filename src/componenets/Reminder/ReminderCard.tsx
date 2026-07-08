@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Clock, AlertCircle } from "lucide-react";
+import { Edit, Trash2, Clock, AlertCircle, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Reminder } from "@/zustand/reminderStore";
 
@@ -130,6 +130,9 @@ export function ReminderCard({
             <div className="flex items-center gap-1 text-xs text-white/60">
               <Clock className="w-3 h-3" />
               <span>{reminder.time}</span>
+              {reminder.remindBeforeMinutes != null && (
+                <Mail className="w-3 h-3 ml-1" />
+              )}
             </div>
 
             <div className="flex items-center gap-1">

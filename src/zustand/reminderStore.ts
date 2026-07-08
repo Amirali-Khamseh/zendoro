@@ -13,6 +13,7 @@ export interface Reminder {
   completed: boolean;
   todoId?: number | null;
   userId?: number;
+  remindBeforeMinutes?: number | null;
 }
 
 type ApiReminder = {
@@ -25,6 +26,7 @@ type ApiReminder = {
   completed: boolean;
   todoId?: number | null;
   userId?: number;
+  remindBeforeMinutes?: number | null;
 };
 
 // Helpers to avoid timezone-related off-by-one date issues
@@ -111,6 +113,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         completed: r.completed,
         todoId: r.todoId ?? null,
         userId: r.userId,
+        remindBeforeMinutes: r.remindBeforeMinutes ?? null,
       }));
       set({ reminders, isLoading: false, hasInitialized: true });
     } catch (e) {
@@ -146,6 +149,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         completed: data.completed,
         todoId: data.todoId ?? null,
         userId: data.userId,
+        remindBeforeMinutes: data.remindBeforeMinutes ?? null,
       };
       set((state) => ({
         reminders: [...state.reminders, created],
@@ -184,6 +188,7 @@ export const useReminderStore = create<ReminderStore>()((set, get) => ({
         completed: data.completed,
         todoId: data.todoId ?? null,
         userId: data.userId,
+        remindBeforeMinutes: data.remindBeforeMinutes ?? null,
       };
       set((state) => ({
         reminders: state.reminders.map((r) => (r.id === id ? updated : r)),

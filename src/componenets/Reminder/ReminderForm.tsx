@@ -23,13 +23,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Clock } from "lucide-react";
+import { CalendarIcon, Clock, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import type { Reminder } from "@/zustand/reminderStore";
 import { GradientButton } from "../customUIComponenets/CustomButton";
-import { REMINDER_PRIORITY_COLORS } from "@/constants/data";
+import { REMINDER_PRIORITY_COLORS, REMINDER_LEAD_TIME_OPTIONS } from "@/constants/data";
 import { containsDangerousInput } from "@/lib/inputSanitization";
+
+// Select can't hold a null value, so "none" stands in for "no email reminder"
+const NO_EMAIL_REMINDER = "none";
+const leadTimeToSelectValue = (v: number | null | undefined) =>
+  v == null ? NO_EMAIL_REMINDER : String(v);
+const selectValueToLeadTime = (v: string): number | null =>
+  v === NO_EMAIL_REMINDER ? null : Number(v);
 
 interface ReminderFormProps {
   reminder?: Reminder | null;
@@ -52,6 +59,7 @@ export function ReminderForm({
     date: selectedDate || new Date(),
     time: "09:00",
     priority: "medium" as Reminder["priority"],
+    remindBeforeMinutes: null as number | null,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -64,6 +72,7 @@ export function ReminderForm({
         date: reminder.date,
         time: reminder.time,
         priority: reminder.priority,
+        remindBeforeMinutes: reminder.remindBeforeMinutes ?? null,
       });
     } else if (selectedDate) {
       // Reset form but keep the selected date when adding a new reminder
@@ -73,6 +82,7 @@ export function ReminderForm({
         date: selectedDate,
         time: "09:00",
         priority: "medium",
+        remindBeforeMinutes: null,
       });
     }
   }, [reminder, selectedDate, defaultTitle]);
@@ -116,6 +126,7 @@ export function ReminderForm({
       time: formData.time,
       priority: formData.priority,
       completed: reminder?.completed || false,
+      remindBeforeMinutes: formData.remindBeforeMinutes,
     };
 
     onSave(reminderData);
@@ -316,6 +327,38 @@ export function ReminderForm({
                     </span>
                   </div>
                 </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Email reminder */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Email reminder</Label>
+            <Select
+              value={leadTimeToSelectValue(formData.remindBeforeMinutes)}
+              onValueChange={(value) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  remindBeforeMinutes: selectValueToLeadTime(value),
+                }))
+              }
+            >
+              <SelectTrigger>
+                <div className="flex items-center">
+                  <Mail className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="text-white">
+                {REMINDER_LEAD_TIME_OPTIONS.map((option) => (
+                  <SelectItem
+                    key={leadTimeToSelectValue(option.value)}
+                    value={leadTimeToSelectValue(option.value)}
+                    className="text-white focus:text-white"
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
