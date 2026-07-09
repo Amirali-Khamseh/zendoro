@@ -16,6 +16,7 @@ import { MailCheck } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
 import { setAuthToken } from "@/lib/authHelpers";
+import { isValidSixDigitCode } from "@/lib/authValidation";
 
 type VerifyEmailSearch = {
   email?: string;
@@ -51,7 +52,7 @@ function VerifyEmailComponent() {
       setError("Missing email address. Please sign up again.");
       return;
     }
-    if (!/^\d{6}$/.test(code)) {
+    if (!isValidSixDigitCode(code)) {
       setError("Enter the 6-digit code from your email.");
       return;
     }

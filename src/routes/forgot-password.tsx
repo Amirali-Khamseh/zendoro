@@ -15,6 +15,7 @@ import { Mail } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
 import { validateNoInjection } from "@/lib/inputSanitization";
+import { isValidEmail } from "@/lib/authValidation";
 
 export const Route = createFileRoute("/forgot-password")({
   component: ForgotPasswordComponent,
@@ -35,7 +36,7 @@ function ForgotPasswordComponent() {
 
     if (!email?.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!isValidEmail(email)) {
       newErrors.email = "Please enter a valid email address";
     }
 

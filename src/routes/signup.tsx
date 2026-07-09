@@ -16,6 +16,7 @@ import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
 import { validateNoInjection } from "@/lib/inputSanitization";
+import { isValidEmail, isStrongPassword } from "@/lib/authValidation";
 
 export const Route = createFileRoute("/signup")({
   component: SignupComponent,
@@ -50,22 +51,15 @@ function SignupComponent() {
 
     if (!email?.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!isValidEmail(email)) {
       newErrors.email = "Please enter a valid email address";
     }
 
     if (!password?.trim()) {
       newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-    if (
-      !password.match(
-        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+_!@#$%^&*.,?]).+$",
-      )
-    ) {
+    } else if (!isStrongPassword(password)) {
       newErrors.password =
-        "Password must include uppercase, lowercase, number, and special character";
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
     }
     if (!confirmPassword?.trim()) {
       newErrors.confirmPassword = "Please confirm your password";
