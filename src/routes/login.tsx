@@ -17,6 +17,7 @@ import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
 import { setAuthToken } from "@/lib/authHelpers";
 import { validateNoInjection } from "@/lib/inputSanitization";
+import { isValidEmail, isValidLoginPassword } from "@/lib/authValidation";
 
 export const Route = createFileRoute("/login")({
   component: LoginComponent,
@@ -47,13 +48,13 @@ function LoginComponent() {
 
     if (!email?.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!isValidEmail(email)) {
       newErrors.email = "Please enter a valid email address";
     }
 
     if (!password?.trim()) {
       newErrors.password = "Password is required";
-    } else if (password.length < 6) {
+    } else if (!isValidLoginPassword(password)) {
       newErrors.password = "Password must be at least 6 characters";
     }
 

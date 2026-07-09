@@ -16,6 +16,7 @@ import { MailCheck, Lock, Eye, EyeOff } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
 import { setAuthToken } from "@/lib/authHelpers";
+import { isValidSixDigitCode, isStrongPassword } from "@/lib/authValidation";
 
 type ResetPasswordSearch = {
   email?: string;
@@ -55,16 +56,12 @@ function ResetPasswordComponent() {
     if (!email) {
       newErrors.general = "Missing email address. Please start over.";
     }
-    if (!/^\d{6}$/.test(code)) {
+    if (!isValidSixDigitCode(code)) {
       newErrors.code = "Enter the 6-digit code from your email.";
     }
     if (!newPassword) {
       newErrors.newPassword = "Password is required";
-    } else if (
-      !newPassword.match(
-        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+_!@#$%^&*.,?]).{8,}$",
-      )
-    ) {
+    } else if (!isStrongPassword(newPassword)) {
       newErrors.newPassword =
         "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
     }
