@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as TodoRouteImport } from './routes/todo'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReminderRouteImport } from './routes/reminder'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HabitTrackerRouteImport } from './routes/habit-tracker'
 import { Route as GoalsRouteImport } from './routes/goals'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FocusRouteImport } from './routes/focus'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as IndexRouteImport } from './routes/index'
@@ -34,6 +36,11 @@ const TodoRoute = TodoRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReminderRoute = ReminderRouteImport.update({
@@ -61,6 +68,11 @@ const GoalsRoute = GoalsRouteImport.update({
   path: '/goals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FocusRoute = FocusRouteImport.update({
   id: '/focus',
   path: '/focus',
@@ -81,11 +93,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/focus': typeof FocusRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/goals': typeof GoalsRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/reminder': typeof ReminderRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/todo': typeof TodoRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -94,11 +108,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/focus': typeof FocusRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/goals': typeof GoalsRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/reminder': typeof ReminderRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/todo': typeof TodoRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -108,11 +124,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/focus': typeof FocusRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/goals': typeof GoalsRoute
   '/habit-tracker': typeof HabitTrackerRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/reminder': typeof ReminderRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/todo': typeof TodoRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -123,11 +141,13 @@ export interface FileRouteTypes {
     | '/'
     | '/agent'
     | '/focus'
+    | '/forgot-password'
     | '/goals'
     | '/habit-tracker'
     | '/login'
     | '/profile'
     | '/reminder'
+    | '/reset-password'
     | '/signup'
     | '/todo'
     | '/verify-email'
@@ -136,11 +156,13 @@ export interface FileRouteTypes {
     | '/'
     | '/agent'
     | '/focus'
+    | '/forgot-password'
     | '/goals'
     | '/habit-tracker'
     | '/login'
     | '/profile'
     | '/reminder'
+    | '/reset-password'
     | '/signup'
     | '/todo'
     | '/verify-email'
@@ -149,11 +171,13 @@ export interface FileRouteTypes {
     | '/'
     | '/agent'
     | '/focus'
+    | '/forgot-password'
     | '/goals'
     | '/habit-tracker'
     | '/login'
     | '/profile'
     | '/reminder'
+    | '/reset-password'
     | '/signup'
     | '/todo'
     | '/verify-email'
@@ -163,11 +187,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentRoute: typeof AgentRoute
   FocusRoute: typeof FocusRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   GoalsRoute: typeof GoalsRoute
   HabitTrackerRoute: typeof HabitTrackerRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   ReminderRoute: typeof ReminderRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   TodoRoute: typeof TodoRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
@@ -194,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reminder': {
@@ -231,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GoalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/focus': {
       id: '/focus'
       path: '/focus'
@@ -259,11 +299,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentRoute: AgentRoute,
   FocusRoute: FocusRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   GoalsRoute: GoalsRoute,
   HabitTrackerRoute: HabitTrackerRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   ReminderRoute: ReminderRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   TodoRoute: TodoRoute,
   VerifyEmailRoute: VerifyEmailRoute,

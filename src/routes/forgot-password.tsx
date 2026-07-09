@@ -10,32 +10,21 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { API_BASE_URL } from "@/constants/data";
-import { setAuthToken } from "@/lib/authHelpers";
 import { validateNoInjection } from "@/lib/inputSanitization";
 
-export const Route = createFileRoute("/login")({
-  component: LoginComponent,
+export const Route = createFileRoute("/forgot-password")({
+  component: ForgotPasswordComponent,
 });
-type logInResponseType = {
-  message: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  token: string;
-};
-function LoginComponent() {
-  useDocumentTitle("Login - Zendoro");
+
+function ForgotPasswordComponent() {
+  useDocumentTitle("Forgot Password - Zendoro");
   const router = useRouter();
 
   const formRef = useRef<HTMLFormElement>(null);
-  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,7 +32,6 @@ function LoginComponent() {
     const newErrors: Record<string, string> = {};
 
     const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
 
     if (!email?.trim()) {
       newErrors.email = "Email is required";
@@ -51,13 +39,7 @@ function LoginComponent() {
       newErrors.email = "Please enter a valid email address";
     }
 
-    if (!password?.trim()) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    const injectionErrors = validateNoInjection({ email, password });
+    const injectionErrors = validateNoInjection({ email });
     Object.assign(newErrors, injectionErrors);
 
     setErrors(newErrors);
@@ -77,39 +59,24 @@ function LoginComponent() {
     setIsLoading(true);
     try {
       const email = formData.get("email") as string;
-      const password = formData.get("password") as string;
-      const result = await fetch(`${API_BASE_URL}/auth/login`, {
+      const result = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
-      if (result.ok || result.status === 200) {
-        const response: logInResponseType = await result.json();
-        setAuthToken(response.token);
+      if (result.ok) {
         formRef.current?.reset();
         setErrors({});
-        router.navigate({ to: "/" });
+        router.navigate({ to: "/reset-password", search: { email } });
       } else {
         const errorData = await result.json().catch(() => ({}));
-        if (errorData.needsVerification) {
-          router.navigate({
-            to: "/verify-email",
-            search: { email: errorData.email || email },
-          });
-          return;
-        }
         setErrors({
-          general: errorData.error || errorData.message || "Login failed. Please try again.",
+          general: errorData.error || "Failed to send reset code. Please try again.",
         });
       }
     } catch {
-      setErrors({ general: "Login failed. Please try again." });
+      setErrors({ general: "Failed to send reset code. Please try again." });
     } finally {
       setIsLoading(false);
     }
@@ -120,10 +87,9 @@ function LoginComponent() {
       <div className="w-full max-w-md">
         <Card className="border-border/50 shadow-lg">
           <CardHeader className="text-center space-y-2">
-            <CardTitle className="text-2xl font-beba">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl font-beba">Forgot Password</CardTitle>
             <CardDescription>
-              Sign in to your Zendoro account to continue your productivity
-              journey
+              Enter your email and we'll send you a code to reset your password
             </CardDescription>
           </CardHeader>
 
@@ -153,49 +119,6 @@ function LoginComponent() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">
-                    <Lock className="h-4 w-4" />
-                    Password
-                  </Label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-xs font-medium text-white/60 hover:text-white hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    aria-invalid={!!errors.password}
-                    className={
-                      errors.password ? "border-destructive pr-10" : "pr-10"
-                    }
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-9 w-9 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
-                </div>
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password}</p>
-                )}
-              </div>
-
               {/* Honeypot — hidden from real users, bots fill it and get silently rejected */}
               <div
                 aria-hidden="true"
@@ -216,19 +139,19 @@ function LoginComponent() {
                 className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Sending..." : "Send Reset Code"}
               </GradientButton>
             </form>
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 pt-0">
             <div className="text-center text-sm text-white/60">
-              Don't have an account?{" "}
+              Remembered your password?{" "}
               <Link
-                to="/signup"
+                to="/login"
                 className="font-medium text-white hover:underline"
               >
-                Sign up here
+                Sign in here
               </Link>
             </div>
           </CardFooter>
