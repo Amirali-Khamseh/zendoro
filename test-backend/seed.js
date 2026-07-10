@@ -31,6 +31,16 @@ async function seed() {
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
+      is_admin BOOLEAN DEFAULT false,
+      is_blocked BOOLEAN DEFAULT false,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS password_reset_codes (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      code VARCHAR(6) NOT NULL,
+      expires_at TIMESTAMP NOT NULL,
       created_at TIMESTAMP DEFAULT NOW()
     );
 
@@ -115,7 +125,39 @@ async function seed() {
     );
   `);
 
-  // Skip seeding if user already exists
+  // Migrate existing databases (persisted volumes) that predate the admin columns.
+  await pool.query(`
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS is_blocked BOOLEAN DEFAULT false;
+  `);
+
+  // Ensure the admin and secondary demo users exist even on a database that
+  // was already seeded before these accounts were introduced.
+  const { rows: existingAdmin } = await pool.query(
+    "SELECT id FROM users WHERE email = $1",
+    ["admin@zendoro.dev"]
+  );
+  if (existingAdmin.length === 0) {
+    const adminPasswordHash = bcrypt.hashSync("admin123", 10);
+    await pool.query(
+      "INSERT INTO users (name, email, password, is_admin) VALUES ($1, $2, $3, true)",
+      ["Zendoro Admin", "admin@zendoro.dev", adminPasswordHash]
+    );
+    console.log(`Seeded admin user: admin@zendoro.dev / admin123`);
+  }
+  const { rows: existingBob } = await pool.query(
+    "SELECT id FROM users WHERE email = $1",
+    ["bob@zendoro.dev"]
+  );
+  if (existingBob.length === 0) {
+    const bobPasswordHash = bcrypt.hashSync("password123", 10);
+    await pool.query(
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
+      ["Bob Demo", "bob@zendoro.dev", bobPasswordHash]
+    );
+  }
+
+  // Skip the larger demo-data seed if the primary test user already exists
   const { rows: existing } = await pool.query(
     "SELECT id FROM users WHERE email = $1",
     ["test@zendoro.dev"]

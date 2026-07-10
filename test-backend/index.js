@@ -16,16 +16,71 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || "zendoro-test-secret";
 
-function auth(req, res, next) {
+// Verifies the JWT and also rejects blocked users on every request (not just
+// at login), so an admin blocking a user takes effect immediately even if
+// that user still holds a valid, unexpired token.
+async function auth(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ message: "No token" });
   try {
     const decoded = jwt.verify(header.split(" ")[1], JWT_SECRET);
+    const { rows } = await pool.query(
+      "SELECT is_blocked FROM users WHERE id = $1",
+      [decoded.userId]
+    );
+    if (!rows[0]) return res.status(401).json({ message: "User not found" });
+    if (rows[0].is_blocked) {
+      return res.status(403).json({ message: "Your account has been blocked." });
+    }
     req.userId = decoded.userId;
     next();
   } catch {
     res.status(401).json({ message: "Invalid token" });
   }
+}
+
+async function requireAdmin(req, res, next) {
+  try {
+    const { rows } = await pool.query(
+      "SELECT is_admin FROM users WHERE id = $1",
+      [req.userId]
+    );
+    if (!rows[0]?.is_admin) {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    next();
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+function userRow(r) {
+  return {
+    id: r.id,
+    name: r.name,
+    email: r.email,
+    isAdmin: r.is_admin,
+    isBlocked: r.is_blocked,
+    createdAt: r.created_at,
+  };
+}
+
+function generateResetCode() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+// Creates a fresh 6-digit reset code for a user, replacing any prior codes.
+async function issuePasswordResetCode(userId) {
+  const code = generateResetCode();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+  await pool.query("DELETE FROM password_reset_codes WHERE user_id = $1", [
+    userId,
+  ]);
+  await pool.query(
+    "INSERT INTO password_reset_codes (user_id, code, expires_at) VALUES ($1, $2, $3)",
+    [userId, code, expiresAt]
+  );
+  return code;
 }
 
 function todoRow(r) {
@@ -111,11 +166,78 @@ app.post("/auth/login", async (req, res) => {
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    if (user.is_blocked) {
+      return res
+        .status(403)
+        .json({ message: "Your account has been blocked. Contact support." });
+    }
+    const token = jwt.sign(
+      { userId: user.id, isAdmin: user.is_admin },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
     res.json({
       message: "Login successful",
+      user: { id: user.id, name: user.name, email: user.email },
+      token,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Always responds 200 regardless of whether the email exists, to avoid
+// leaking which addresses are registered.
+app.post("/auth/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const { rows } = await pool.query("SELECT id, is_blocked FROM users WHERE email = $1", [
+      email,
+    ]);
+    const user = rows[0];
+    if (user && !user.is_blocked) {
+      const code = await issuePasswordResetCode(user.id);
+      console.log(`[test-backend] Password reset code for ${email}: ${code}`);
+    }
+    res.json({ message: "If that email exists, a reset code has been sent." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post("/auth/reset-password", async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+    const { rows: userRows } = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+    const user = userRows[0];
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired code" });
+    }
+    const { rows: codeRows } = await pool.query(
+      "SELECT * FROM password_reset_codes WHERE user_id = $1 AND code = $2 AND expires_at > NOW()",
+      [user.id, code]
+    );
+    if (codeRows.length === 0) {
+      return res.status(400).json({ error: "Invalid or expired code" });
+    }
+    const hashed = bcrypt.hashSync(newPassword, 10);
+    await pool.query("UPDATE users SET password = $1 WHERE id = $2", [
+      hashed,
+      user.id,
+    ]);
+    await pool.query("DELETE FROM password_reset_codes WHERE user_id = $1", [
+      user.id,
+    ]);
+    const token = jwt.sign(
+      { userId: user.id, isAdmin: user.is_admin },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+    res.json({
+      message: "Password reset successful",
       user: { id: user.id, name: user.name, email: user.email },
       token,
     });
@@ -133,7 +255,7 @@ app.post("/auth/signup", async (req, res) => {
       [name, email, hashed]
     );
     const user = rows[0];
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id, isAdmin: false }, JWT_SECRET, {
       expiresIn: "7d",
     });
     res.json({ message: "User created", user, token });
@@ -573,6 +695,156 @@ app.post("/timer/session-count", auth, async (req, res) => {
       );
     }
     res.json({ message: "Session count updated" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
+
+app.get("/admin/stats", auth, requireAdmin, async (req, res) => {
+  try {
+    const [
+      users,
+      todosByStatus,
+      reminders,
+      habits,
+      goalsByStatus,
+    ] = await Promise.all([
+      pool.query(
+        `SELECT
+          COUNT(*)::int AS total,
+          COUNT(*) FILTER (WHERE is_admin)::int AS admins,
+          COUNT(*) FILTER (WHERE is_blocked)::int AS blocked,
+          COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '7 days')::int AS new_last_7_days
+        FROM users`
+      ),
+      pool.query(`SELECT status, COUNT(*)::int AS count FROM todos GROUP BY status`),
+      pool.query(
+        `SELECT COUNT(*)::int AS total, COUNT(*) FILTER (WHERE completed)::int AS completed
+         FROM reminders`
+      ),
+      pool.query(`SELECT COUNT(*)::int AS total FROM hobbies`),
+      pool.query(`SELECT status, COUNT(*)::int AS count FROM goals GROUP BY status`),
+    ]);
+
+    res.json({
+      users: {
+        total: users.rows[0].total,
+        admins: users.rows[0].admins,
+        blocked: users.rows[0].blocked,
+        newLast7Days: users.rows[0].new_last_7_days,
+      },
+      todos: {
+        total: todosByStatus.rows.reduce((sum, r) => sum + r.count, 0),
+        byStatus: Object.fromEntries(
+          todosByStatus.rows.map((r) => [r.status, r.count])
+        ),
+      },
+      reminders: {
+        total: reminders.rows[0].total,
+        completed: reminders.rows[0].completed,
+      },
+      habits: { total: habits.rows[0].total },
+      goals: {
+        total: goalsByStatus.rows.reduce((sum, r) => sum + r.count, 0),
+        byStatus: Object.fromEntries(
+          goalsByStatus.rows.map((r) => [r.status, r.count])
+        ),
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.get("/admin/users", auth, requireAdmin, async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT u.*, COALESCE(t.todo_count, 0)::int AS todo_count
+      FROM users u
+      LEFT JOIN (
+        SELECT user_id, COUNT(*) AS todo_count FROM todos GROUP BY user_id
+      ) t ON t.user_id = u.id
+      ORDER BY u.created_at DESC
+    `);
+    res.json(rows.map((r) => ({ ...userRow(r), todoCount: r.todo_count })));
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post("/admin/users", auth, requireAdmin, async (req, res) => {
+  try {
+    const { name, email, password, isAdmin } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "name, email, and password are required" });
+    }
+    const hashed = bcrypt.hashSync(password, 10);
+    const { rows } = await pool.query(
+      "INSERT INTO users (name, email, password, is_admin) VALUES ($1, $2, $3, $4) RETURNING *",
+      [name, email, hashed, !!isAdmin]
+    );
+    res.json(userRow(rows[0]));
+  } catch (err) {
+    if (err.code === "23505") {
+      return res.status(409).json({ message: "A user with that email already exists" });
+    }
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.delete("/admin/users/:id", auth, requireAdmin, async (req, res) => {
+  try {
+    const targetId = Number(req.params.id);
+    if (targetId === req.userId) {
+      return res.status(400).json({ message: "You cannot delete your own account" });
+    }
+    await pool.query("DELETE FROM users WHERE id = $1", [targetId]);
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.patch("/admin/users/:id/block", auth, requireAdmin, async (req, res) => {
+  try {
+    const targetId = Number(req.params.id);
+    const { blocked } = req.body;
+    if (targetId === req.userId) {
+      return res.status(400).json({ message: "You cannot block your own account" });
+    }
+    const { rows } = await pool.query(
+      "UPDATE users SET is_blocked = $1 WHERE id = $2 RETURNING *",
+      [!!blocked, targetId]
+    );
+    if (!rows[0]) return res.status(404).json({ message: "Not found" });
+    res.json(userRow(rows[0]));
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Generates a password reset code for the target user. This test backend has
+// no email transport, so the code is logged to the console (simulating the
+// email) and also returned in the response for local development purposes.
+app.post("/admin/users/:id/reset-password", auth, requireAdmin, async (req, res) => {
+  try {
+    const targetId = Number(req.params.id);
+    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
+      targetId,
+    ]);
+    const user = rows[0];
+    if (!user) return res.status(404).json({ message: "Not found" });
+    const code = await issuePasswordResetCode(user.id);
+    console.log(
+      `[test-backend] Admin-triggered password reset for ${user.email}: ${code}`
+    );
+    res.json({
+      message: `Reset code generated for ${user.email}`,
+      email: user.email,
+      code,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

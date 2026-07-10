@@ -8,3 +8,14 @@ export function isAuthenticated() {
     : true;
   return !!token && !isExpired;
 }
+
+export function isAdminUser() {
+  const token = getAuthToken();
+  const payload = token?.split(".")[1];
+  if (!payload) return false;
+  try {
+    return !!JSON.parse(atob(payload)).isAdmin;
+  } catch {
+    return false;
+  }
+}
