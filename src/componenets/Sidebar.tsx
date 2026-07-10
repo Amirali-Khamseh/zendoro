@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { useSidebarStore } from "@/zustand/sidebarStore";
-import { isAuthenticated } from "@/lib/authVerification";
+import { isAuthenticated, isAdminUser } from "@/lib/authVerification";
 import { logout } from "@/lib/authHelpers";
 import {
   LayoutDashboard,
@@ -13,6 +13,7 @@ import {
   Trophy,
   Bot,
   UserCircle,
+  ShieldCheck,
   ChevronLeft,
   ChevronRight,
   LogIn,
@@ -22,10 +23,12 @@ import {
 export function Sidebar() {
   const { isCollapsed, toggleSidebar } = useSidebarStore();
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
+  const [isAdmin, setIsAdmin] = useState(isAdminUser());
 
   useEffect(() => {
     const handleAuthChange = () => {
       setIsLoggedIn(isAuthenticated());
+      setIsAdmin(isAdminUser());
     };
     window.addEventListener("auth-change", handleAuthChange);
     return () => {
@@ -173,6 +176,20 @@ export function Sidebar() {
                   </Link>
                 </Button>
               )}
+
+              {isLoggedIn && isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10"
+                  title="Admin"
+                  asChild
+                >
+                  <Link to="/admin">
+                    <ShieldCheck className="h-5 w-5" />
+                  </Link>
+                </Button>
+              )}
             </div>
           ) : (
             // Expanded view - full content
@@ -271,6 +288,20 @@ export function Sidebar() {
                   <Link to="/profile">
                     <UserCircle className="h-4 w-4 mr-2" />
                     Profile
+                  </Link>
+                </Button>
+              )}
+
+              {isLoggedIn && isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start px-0"
+                  asChild
+                >
+                  <Link to="/admin">
+                    <ShieldCheck className="h-4 w-4 mr-2" />
+                    Admin
                   </Link>
                 </Button>
               )}
