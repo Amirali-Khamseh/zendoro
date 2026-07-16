@@ -7,6 +7,7 @@ import { logout } from "@/lib/authHelpers";
 import {
   LayoutDashboard,
   Timer,
+  Activity,
   Target,
   CheckSquare,
   Bell,
@@ -104,6 +105,18 @@ export function Sidebar() {
                 variant="ghost"
                 size="icon"
                 className="h-10 w-10"
+                title="Daily Activity"
+                asChild
+              >
+                <Link to="/daily-activity">
+                  <Activity className="h-5 w-5" />
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
                 title="Habit Tracker"
                 asChild
               >
@@ -186,6 +199,18 @@ export function Sidebar() {
                 <Link to="/">
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Dashboard
+                </Link>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start px-0"
+                asChild
+              >
+                <Link to="/daily-activity">
+                  <Activity className="h-4 w-4 mr-2" />
+                  Daily Activity
                 </Link>
               </Button>
 
