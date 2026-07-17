@@ -1,10 +1,20 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Plus, Trash2, Activity, CalendarDays, Footprints, HeartPulse, Dumbbell } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Activity,
+  CalendarDays,
+  Footprints,
+  HeartPulse,
+  Dumbbell,
+  MapPin,
+  Flame,
+  Moon,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardHeader,
@@ -14,10 +24,14 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
+import { StatCard } from "@/componenets/Dashboard/StatCard";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { isAuthenticated } from "@/lib/authVerification";
 import { containsDangerousInput } from "@/lib/inputSanitization";
-import { useDailyActivityStore } from "@/zustand/dailyActivityStore";
+import {
+  useDailyActivityStore,
+  type DailyActivityRecord,
+} from "@/zustand/dailyActivityStore";
 
 export const Route = createFileRoute("/daily-activity")({
   component: RouteComponent,
@@ -458,36 +472,90 @@ function RouteComponent() {
       </Card>
 
       {lastSavedActivity && (
-        <Card className="mt-4">
-          <CardContent>
-            <h2 className="mb-2 text-sm font-semibold text-white">Last saved</h2>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="border-white/15 bg-white/5 text-white">
-                <CalendarDays className="h-3 w-3" />
-                date: {lastSavedActivity.date}
-              </Badge>
-              {lastSavedActivity.steps !== undefined && (
-                <Badge variant="outline" className="border-white/15 bg-white/5 text-white">
-                  <Footprints className="h-3 w-3" />
-                  steps: {lastSavedActivity.steps}
-                </Badge>
-              )}
-              {lastSavedActivity.heartRateAvg !== undefined && (
-                <Badge variant="outline" className="border-white/15 bg-white/5 text-white">
-                  <HeartPulse className="h-3 w-3" />
-                  heartRateAvg: {lastSavedActivity.heartRateAvg}
-                </Badge>
-              )}
-              {lastSavedActivity.workoutMinutes !== undefined && (
-                <Badge variant="outline" className="border-white/15 bg-white/5 text-white">
-                  <Dumbbell className="h-3 w-3" />
-                  workoutMinutes: {lastSavedActivity.workoutMinutes}
-                </Badge>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <section className="mt-6">
+          <h2 className="mb-3 text-base font-semibold text-white md:text-lg">
+            Last Saved
+          </h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+            {buildActivityStats(lastSavedActivity).map((stat) => (
+              <StatCard
+                key={stat.label}
+                icon={stat.icon}
+                label={stat.label}
+                value={stat.value}
+                sub={stat.sub}
+                accent={stat.accent}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );
+}
+
+function buildActivityStats(activity: DailyActivityRecord) {
+  const stats: {
+    label: string;
+    value: React.ReactNode;
+    sub?: string;
+    icon: typeof Activity;
+    accent: string;
+  }[] = [
+    { label: "Date", value: activity.date, icon: CalendarDays, accent: "text-sky-400" },
+  ];
+
+  if (activity.steps !== undefined) {
+    stats.push({ label: "Steps", value: activity.steps, icon: Footprints, accent: "text-emerald-400" });
+  }
+  if (activity.heartRateAvg !== undefined) {
+    stats.push({
+      label: "Heart Rate",
+      value: activity.heartRateAvg,
+      sub: "bpm avg",
+      icon: HeartPulse,
+      accent: "text-rose-400",
+    });
+  }
+  if (activity.workoutMinutes !== undefined) {
+    stats.push({
+      label: "Workout",
+      value: activity.workoutMinutes,
+      sub: "minutes",
+      icon: Dumbbell,
+      accent: "text-amber-400",
+    });
+  }
+  if (activity.distanceKm !== undefined) {
+    stats.push({
+      label: "Distance",
+      value: activity.distanceKm,
+      sub: "km",
+      icon: MapPin,
+      accent: "text-cyan-400",
+    });
+  }
+  if (activity.caloriesBurned !== undefined) {
+    stats.push({
+      label: "Calories",
+      value: activity.caloriesBurned,
+      sub: "kcal",
+      icon: Flame,
+      accent: "text-orange-400",
+    });
+  }
+  if (activity.sleepMinutes !== undefined) {
+    stats.push({
+      label: "Sleep",
+      value: activity.sleepMinutes,
+      sub: "minutes",
+      icon: Moon,
+      accent: "text-fuchsia-400",
+    });
+  }
+  for (const [key, value] of Object.entries(activity.metrics ?? {})) {
+    stats.push({ label: key, value, icon: Activity, accent: "text-white/60" });
+  }
+
+  return stats;
 }
