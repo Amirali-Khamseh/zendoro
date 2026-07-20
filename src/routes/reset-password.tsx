@@ -91,7 +91,7 @@ function ResetPasswordComponent() {
       if (result.ok) {
         const response: resetResponseType = await result.json();
         setAuthToken(response.token);
-        router.navigate({ to: "/" });
+        router.navigate({ to: "/dashboard" });
       } else {
         const errorData = await result.json().catch(() => ({}));
         setErrors({
