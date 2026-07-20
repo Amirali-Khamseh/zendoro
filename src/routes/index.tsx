@@ -264,7 +264,7 @@ function Hero() {
         </div>
       </div>
 
-      <div className="mx-auto mt-14 max-w-5xl">
+      <div className="mx-auto mt-14 max-w-6xl">
         <div className="relative rounded-2xl border border-white/10 bg-white/5 p-2 shadow-2xl backdrop-blur-sm md:p-3">
           <div
             className="pointer-events-none absolute -inset-1 -z-10 rounded-2xl bg-gradient-to-r from-sky-500/20 via-fuchsia-500/20 to-amber-500/20 blur-xl"
