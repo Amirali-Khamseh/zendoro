@@ -112,6 +112,7 @@ const spotlights = [
       "Pick Standard, Extended, or Long run mode, fine-tune your focus, short break, and long break durations, then start the timer. Every completed session is counted and rolled up into your dashboard.",
     image: "/images/landing/focus.png",
     alt: "Zendoro Focus Time page with a Long run timer and session counter",
+    portrait: true,
   },
   {
     title: "Ask your own data a question",
@@ -308,6 +309,7 @@ function Spotlight({
   alt,
   reverse,
   anchorId,
+  portrait,
 }: {
   title: string;
   description: string;
@@ -315,6 +317,7 @@ function Spotlight({
   alt: string;
   reverse?: boolean;
   anchorId?: string;
+  portrait?: boolean;
 }) {
   return (
     <section id={anchorId} className="px-4 py-14 md:px-6 md:py-20">
@@ -324,7 +327,11 @@ function Spotlight({
         }`}
       >
         <div className="flex-1">
-          <div className="relative rounded-2xl border border-white/10 bg-white/5 p-2 shadow-xl">
+          <div
+            className={`relative rounded-2xl border border-white/10 bg-white/5 p-2 shadow-xl ${
+              portrait ? "mx-auto max-w-[280px] sm:max-w-xs" : ""
+            }`}
+          >
             <img
               src={image}
               alt={alt}
@@ -452,6 +459,7 @@ function LandingPage() {
           alt={s.alt}
           reverse={i % 2 === 1}
           anchorId={i === 2 ? "ai-assistant" : undefined}
+          portrait={s.portrait}
         />
       ))}
       <FAQSection />
