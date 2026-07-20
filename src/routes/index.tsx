@@ -102,7 +102,7 @@ const spotlights = [
   {
     title: "See everything at a glance",
     description:
-      "The dashboard pulls together focus sessions completed today, tasks done versus total with an overdue count, reminders due today, and your average habit completion rate — plus a goal-in-focus card, a task status chart, a weekly habit chart, and an upcoming agenda.",
+      "The dashboard pulls together focus sessions completed today, tasks done versus total with an overdue count, reminders due today, and your average habit completion rate, plus a goal-in-focus card, a task status chart, a weekly habit chart, and an upcoming agenda.",
     image: "/images/7.png",
     alt: "Zendoro dashboard showing stat cards, a goal card, charts, and an upcoming task list",
   },
@@ -110,14 +110,14 @@ const spotlights = [
     title: "Work in focused bursts",
     description:
       "Pick Standard, Extended, or Long run mode, fine-tune your focus, short break, and long break durations, then start the timer. Every completed session is counted and rolled up into your dashboard.",
-    image: "/images/1.png",
+    image: "/images/landing/focus.png",
     alt: "Zendoro Focus Time page with a Long run timer and session counter",
   },
   {
     title: "Ask your own data a question",
     description:
-      "The AI assistant is built on Gemini function calling: it decides which of your real tasks, habits, or reminders to query, then writes an answer grounded in that data — formatted as Markdown, not a guess.",
-    image: "/images/6.png",
+      "The AI assistant is built on Gemini function calling: it decides which of your real tasks, habits, or reminders to query, then writes an answer grounded in that data, formatted as Markdown instead of a guess.",
+    image: "/images/landing/ai-assistant.png",
     alt: "Zendoro AI Assistant chat answering a question about the user's tasks",
   },
 ];
@@ -125,7 +125,7 @@ const spotlights = [
 const faqs = [
   {
     q: "What is Zendoro?",
-    a: "Zendoro (Zen + Pomodoro) is a productivity app that combines a Pomodoro-style focus timer with a habit tracker, a calendar and reminder system, a goal tracker, and an AI assistant — all under one dashboard.",
+    a: "Zendoro (Zen + Pomodoro) is a productivity app that combines a Pomodoro-style focus timer with a habit tracker, a calendar and reminder system, a goal tracker, and an AI assistant, all under one dashboard.",
   },
   {
     q: "How does the AI assistant know about my tasks and habits?",
@@ -137,11 +137,11 @@ const faqs = [
   },
   {
     q: "What happens if I complete all the reminders linked to a task?",
-    a: "The task is automatically marked as done — reminders and tasks stay in sync without extra clicks.",
+    a: "The task is automatically marked as done, so reminders and tasks stay in sync without extra clicks.",
   },
   {
     q: "Is creating an account free?",
-    a: "Yes, signing up just requires a name, email, and password — verified with a 6-digit emailed code before your account goes live.",
+    a: "Yes, signing up just requires a name, email, and password, verified with a 6-digit emailed code before your account goes live.",
   },
 ];
 
@@ -188,7 +188,7 @@ function Hero() {
 
       <div className="mx-auto max-w-4xl text-center">
         <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-white/70 uppercase">
-          Focus · Habits · Goals · AI — one workspace
+          Focus · Habits · Goals · AI in one workspace
         </span>
 
         <h1 className="mt-6 font-beba text-5xl leading-none text-white sm:text-6xl md:text-7xl">
@@ -199,8 +199,8 @@ function Hero() {
 
         <p className="mx-auto mt-6 max-w-2xl text-base text-white/70 md:text-lg">
           Zendoro combines a Pomodoro focus timer, habit tracker, task board,
-          reminders, goals, and an AI assistant that actually knows your data
-          — into a single calm dashboard.
+          reminders, goals, and an AI assistant that actually knows your data,
+          all in a single calm dashboard.
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -271,8 +271,8 @@ function FeatureGrid() {
             Everything you need to stay in the zone
           </h2>
           <p className="mt-4 text-white/70">
-            Every tool a focused, goal-driven day actually needs — nothing you
-            have to bolt on separately.
+            Every tool a focused, goal-driven day actually needs, with nothing
+            you have to bolt on separately.
           </p>
         </div>
 
@@ -435,7 +435,7 @@ function Footer() {
 }
 
 function LandingPage() {
-  useDocumentTitle("Zendoro — Focus, Habits, Goals & AI in one place");
+  useDocumentTitle("Zendoro: Focus, Habits, Goals & AI in one place");
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px] font-roboto text-white">
