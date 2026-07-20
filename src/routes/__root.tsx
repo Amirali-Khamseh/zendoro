@@ -1,4 +1,4 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Outlet, useRouterState } from "@tanstack/react-router";
 // import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Sidebar } from "@/componenets/Sidebar";
 import { useSidebarStore } from "@/zustand/sidebarStore";
@@ -7,10 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import "../index.css";
 
+// The marketing landing page owns the root path and renders its own
+// full-bleed header/background — it isn't wrapped in the app sidebar shell.
+const BARE_ROUTES = new Set(["/"]);
+
 const RootLayout = () => {
   const { isCollapsed } = useSidebarStore();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useDocumentTitle("Zendoro");
+
+  if (BARE_ROUTES.has(pathname)) {
+    return <Outlet />;
+  }
 
   return (
     <main className="w-full h-screen relative overflow-hidden">

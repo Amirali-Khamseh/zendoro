@@ -84,7 +84,7 @@ export function Sidebar() {
                 title="Dashboard"
                 asChild
               >
-                <Link to="/">
+                <Link to="/dashboard">
                   <LayoutDashboard className="h-5 w-5" />
                 </Link>
               </Button>
@@ -196,7 +196,7 @@ export function Sidebar() {
                 className="w-full justify-start px-0"
                 asChild
               >
-                <Link to="/">
+                <Link to="/dashboard">
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Dashboard
                 </Link>

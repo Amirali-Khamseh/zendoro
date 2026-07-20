@@ -95,7 +95,7 @@ function LoginComponent() {
         setAuthToken(response.token);
         formRef.current?.reset();
         setErrors({});
-        router.navigate({ to: "/" });
+        router.navigate({ to: "/dashboard" });
       } else {
         const errorData = await result.json().catch(() => ({}));
         if (errorData.needsVerification) {

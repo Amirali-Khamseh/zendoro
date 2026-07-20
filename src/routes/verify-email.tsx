@@ -69,7 +69,7 @@ function VerifyEmailComponent() {
       if (result.ok) {
         const response: verifyResponseType = await result.json();
         setAuthToken(response.token);
-        router.navigate({ to: "/" });
+        router.navigate({ to: "/dashboard" });
       } else {
         const errorData = await result.json().catch(() => ({}));
         setError(errorData.error || "Verification failed. Please try again.");
