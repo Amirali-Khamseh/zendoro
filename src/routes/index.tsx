@@ -88,7 +88,7 @@ const features = [
     title: "AI Assistant",
     accent: "text-violet-400",
     description:
-      "Ask questions about your own tasks, habits, and reminders and get answers grounded in your real data.",
+      "An agentic assistant that can look up your real tasks, habits, and reminders, and take action on them for you.",
   },
   {
     icon: UserCircle,
@@ -152,7 +152,7 @@ const showcaseItems = [
     icon: Bot,
     title: "AI Assistant",
     description:
-      "Built on Gemini function calling: it queries your real tasks, habits, or reminders, then writes an answer grounded in that data.",
+      "An agentic assistant: it can query your real tasks, habits, and reminders, and it can act on them for you, like creating a reminder or rescheduling a task, not just answer questions about them.",
     image: "/images/landing/ai-assistant.png",
     alt: "Zendoro AI Assistant chat answering a question about the user's tasks",
   },
@@ -173,7 +173,7 @@ const faqs = [
   },
   {
     q: "How does the AI assistant know about my tasks and habits?",
-    a: "It uses Gemini's function calling: the model can call functions like \"get my tasks due this week\" or \"get my habit completion this month\", get the real result back from your account, and use that to write its answer.",
+    a: "It's agentic. It can call functions like \"get my tasks due this week\" or \"get my habit completion this month\" to read your real data, and it can also take action on your behalf, like creating a reminder or updating a task, instead of just answering questions.",
   },
   {
     q: "Can I link my tasks, habits, and reminders together?",
@@ -243,8 +243,8 @@ function Hero() {
 
         <p className="mx-auto mt-6 max-w-2xl text-base text-white/70 md:text-lg">
           Zendoro combines a Pomodoro focus timer, habit tracker, task board,
-          reminders, goals, and an AI assistant that actually knows your data,
-          all in a single calm dashboard.
+          reminders, goals, and an agentic AI assistant that can act on your
+          data, all in a single calm dashboard.
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
