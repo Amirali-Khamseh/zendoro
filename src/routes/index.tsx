@@ -103,7 +103,7 @@ const spotlights = [
     title: "See everything at a glance",
     description:
       "The dashboard pulls together focus sessions completed today, tasks done versus total with an overdue count, reminders due today, and your average habit completion rate, plus a goal-in-focus card, a task status chart, a weekly habit chart, and an upcoming agenda.",
-    image: "/images/7.png",
+    image: "/images/landing/dashboard.png",
     alt: "Zendoro dashboard showing stat cards, a goal card, charts, and an upcoming task list",
   },
   {
@@ -227,7 +227,7 @@ function Hero() {
             aria-hidden="true"
           />
           <img
-            src="/images/7.png"
+            src="/images/landing/dashboard.png"
             alt="Zendoro dashboard showing focus sessions, tasks, reminders, and habit stats"
             className="w-full rounded-xl border border-white/10"
           />
