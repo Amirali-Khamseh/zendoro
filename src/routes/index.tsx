@@ -1,4 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   Timer,
   Activity,
@@ -98,28 +99,70 @@ const features = [
   },
 ];
 
-const spotlights = [
+const showcaseItems = [
   {
-    title: "See everything at a glance",
+    icon: LayoutDashboard,
+    title: "Dashboard",
     description:
-      "The dashboard pulls together focus sessions completed today, tasks done versus total with an overdue count, reminders due today, and your average habit completion rate, plus a goal-in-focus card, a task status chart, a weekly habit chart, and an upcoming agenda.",
+      "Focus sessions, tasks, reminders, and habit completion, plus a goal-in-focus card and charts, all on one screen.",
     image: "/images/landing/dashboard.png",
     alt: "Zendoro dashboard showing stat cards, a goal card, charts, and an upcoming task list",
   },
   {
-    title: "Work in focused bursts",
+    icon: Timer,
+    title: "Focus Timer",
     description:
-      "Pick Standard, Extended, or Long run mode, fine-tune your focus, short break, and long break durations, then start the timer. Every completed session is counted and rolled up into your dashboard.",
+      "Standard, Extended, or Long run mode, with fully adjustable focus and break durations. Every session rolls up into your dashboard.",
     image: "/images/landing/focus.png",
     alt: "Zendoro Focus Time page with a Long run timer and session counter",
-    portrait: true,
   },
   {
-    title: "Ask your own data a question",
+    icon: Target,
+    title: "Habit Tracker",
     description:
-      "The AI assistant is built on Gemini function calling: it decides which of your real tasks, habits, or reminders to query, then writes an answer grounded in that data, formatted as Markdown instead of a guess.",
+      "Check habits off across a Monday-to-Sunday grid, with a completion rate calculated automatically for each one.",
+    image: "/images/landing/habits.png",
+    alt: "Zendoro Habit Tracker page with a weekly completion grid for five habits",
+  },
+  {
+    icon: CheckSquare,
+    title: "Task Board",
+    description:
+      "A drag-and-drop Kanban board with TODO, In Progress, Done, and Kill columns for every task.",
+    image: "/images/landing/todo.png",
+    alt: "Zendoro TODOs page with a four column Kanban board",
+  },
+  {
+    icon: Bell,
+    title: "Reminders",
+    description:
+      "A calendar of upcoming, completed, and overdue reminders, with priorities and due dates that can link to a task.",
+    image: "/images/landing/reminders.png",
+    alt: "Zendoro Reminder page with a monthly calendar and a reminder list",
+  },
+  {
+    icon: Trophy,
+    title: "Goals",
+    description:
+      "Tie tasks, habits, and reminders to a single goal and watch overall progress calculate itself.",
+    image: "/images/landing/goals.png",
+    alt: "Zendoro Goals page listing goals with progress bars",
+  },
+  {
+    icon: Bot,
+    title: "AI Assistant",
+    description:
+      "Built on Gemini function calling: it queries your real tasks, habits, or reminders, then writes an answer grounded in that data.",
     image: "/images/landing/ai-assistant.png",
     alt: "Zendoro AI Assistant chat answering a question about the user's tasks",
+  },
+  {
+    icon: UserCircle,
+    title: "Profile & Account",
+    description:
+      "Manage your profile picture and account details, with full control to delete your data at any time.",
+    image: "/images/landing/profile.png",
+    alt: "Zendoro Profile page with account information and a danger zone",
   },
 ];
 
@@ -302,50 +345,60 @@ function FeatureGrid() {
   );
 }
 
-function Spotlight({
-  title,
-  description,
-  image,
-  alt,
-  reverse,
-  anchorId,
-  portrait,
-}: {
-  title: string;
-  description: string;
-  image: string;
-  alt: string;
-  reverse?: boolean;
-  anchorId?: string;
-  portrait?: boolean;
-}) {
+function FeatureShowcase() {
+  const [active, setActive] = useState(0);
+  const current = showcaseItems[active];
+
   return (
-    <section id={anchorId} className="px-4 py-14 md:px-6 md:py-20">
-      <div
-        className={`mx-auto flex max-w-6xl flex-col items-center gap-10 md:gap-16 lg:flex-row ${
-          reverse ? "lg:flex-row-reverse" : ""
-        }`}
-      >
-        <div className="flex-1">
-          <div
-            className={`relative rounded-2xl border border-white/10 bg-white/5 p-2 shadow-xl ${
-              portrait ? "mx-auto max-w-[280px] sm:max-w-xs" : ""
-            }`}
-          >
+    <section id="ai-assistant" className="px-4 py-20 md:px-6 md:py-28">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="font-beba text-4xl text-white md:text-5xl">
+            Every feature, one workspace
+          </h2>
+          <p className="mt-4 text-white/70">
+            Pick a screen to see what it actually looks like.
+          </p>
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr] lg:gap-10">
+          <div className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+            {showcaseItems.map((item, i) => (
+              <button
+                key={item.title}
+                type="button"
+                onClick={() => setActive(i)}
+                className={`flex shrink-0 items-start gap-3 rounded-xl border px-4 py-3 text-left transition-colors lg:shrink lg:w-full ${
+                  i === active
+                    ? "border-white/20 bg-white/10"
+                    : "border-white/10 bg-white/5 hover:bg-white/[0.07]"
+                }`}
+              >
+                <item.icon
+                  className={`mt-0.5 h-5 w-5 shrink-0 ${i === active ? "text-white" : "text-white/50"}`}
+                />
+                <span className="min-w-[10rem] lg:min-w-0">
+                  <span
+                    className={`block text-sm font-semibold whitespace-nowrap lg:whitespace-normal ${i === active ? "text-white" : "text-white/80"}`}
+                  >
+                    {item.title}
+                  </span>
+                  <span className="hidden text-xs text-white/50 lg:mt-0.5 lg:block">
+                    {item.description}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex h-[380px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 sm:h-[440px] md:p-6 lg:h-[520px]">
             <img
-              src={image}
-              alt={alt}
-              className="w-full rounded-xl border border-white/10"
+              key={current.image}
+              src={current.image}
+              alt={current.alt}
+              className="animate-fade-in-up max-h-full max-w-full rounded-xl border border-white/10 object-contain"
             />
           </div>
-        </div>
-        <div className="flex-1">
-          <h3 className="font-beba text-3xl text-white md:text-4xl">
-            {title}
-          </h3>
-          <p className="mt-4 text-base leading-relaxed text-white/70">
-            {description}
-          </p>
         </div>
       </div>
     </section>
@@ -450,18 +503,7 @@ function LandingPage() {
       <Hero />
       <StatsStrip />
       <FeatureGrid />
-      {spotlights.map((s, i) => (
-        <Spotlight
-          key={s.title}
-          title={s.title}
-          description={s.description}
-          image={s.image}
-          alt={s.alt}
-          reverse={i % 2 === 1}
-          anchorId={i === 2 ? "ai-assistant" : undefined}
-          portrait={s.portrait}
-        />
-      ))}
+      <FeatureShowcase />
       <FAQSection />
       <CTASection />
       <Footer />
