@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Timer,
   Activity,
@@ -345,9 +345,24 @@ function FeatureGrid() {
   );
 }
 
+const AI_ASSISTANT_INDEX = showcaseItems.findIndex(
+  (item) => item.title === "AI Assistant",
+);
+
 function FeatureShowcase() {
   const [active, setActive] = useState(0);
   const current = showcaseItems[active];
+
+  useEffect(() => {
+    const syncFromHash = () => {
+      if (window.location.hash === "#ai-assistant" && AI_ASSISTANT_INDEX !== -1) {
+        setActive(AI_ASSISTANT_INDEX);
+      }
+    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
 
   return (
     <section id="ai-assistant" className="px-4 py-20 md:px-6 md:py-28">
