@@ -1,5 +1,13 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  type Variants,
+} from "motion/react";
 import {
   Timer,
   Activity,
@@ -189,6 +197,33 @@ const faqs = [
   },
 ];
 
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const staggerContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+function Counter({ value }: { value: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const motionValue = useMotionValue(0);
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => motionValue.on("change", (v) => setDisplay(Math.round(v))), [motionValue]);
+
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(motionValue, value, { duration: 1, ease: "easeOut" });
+    return controls.stop;
+  }, [inView, value, motionValue]);
+
+  return <span ref={ref}>{display}</span>;
+}
+
 function NavBar() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-black/60 backdrop-blur-md">
@@ -197,25 +232,15 @@ function NavBar() {
           <img src="/logo.svg" alt="Zendoro" className="h-6 brightness-0 invert" />
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm text-white/70 md:flex">
-          <a href="#features" className="transition-colors hover:text-white">
-            Features
-          </a>
-          <a href="#ai-assistant" className="transition-colors hover:text-white">
-            AI Assistant
-          </a>
-          <a href="#faq" className="transition-colors hover:text-white">
-            FAQ
-          </a>
-        </nav>
-
         <div className="flex items-center gap-2 md:gap-3">
           <Button variant="ghost" className="text-white hover:bg-white/10 hover:text-white" asChild>
             <Link to="/login">Log In</Link>
           </Button>
-          <GradientButton size="default" className="hidden md:inline-flex" asChild>
-            <Link to="/signup">Get Started</Link>
-          </GradientButton>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden md:inline-block">
+            <GradientButton size="default" asChild>
+              <Link to="/signup">Get Started</Link>
+            </GradientButton>
+          </motion.div>
         </div>
       </div>
     </header>
@@ -230,41 +255,77 @@ function Hero() {
         aria-hidden="true"
       />
 
-      <div className="mx-auto max-w-4xl text-center">
-        <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-white/70 uppercase">
+      <motion.div
+        className="mx-auto max-w-4xl text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={staggerContainer}
+      >
+        <motion.span
+          variants={fadeUp}
+          className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-white/70 uppercase"
+        >
           Focus · Habits · Goals · AI in one workspace
-        </span>
+        </motion.span>
 
-        <h1 className="mt-6 font-beba text-5xl leading-none text-white sm:text-6xl md:text-7xl">
+        <motion.h1
+          variants={fadeUp}
+          className="mt-6 font-beba text-5xl leading-none text-white sm:text-6xl md:text-7xl"
+        >
           Stay focused. Build habits.
           <br />
           Hit your goals.
-        </h1>
+        </motion.h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-base text-white/70 md:text-lg">
+        <motion.p
+          variants={fadeUp}
+          className="mx-auto mt-6 max-w-2xl text-base text-white/70 md:text-lg"
+        >
           Zendoro combines a Pomodoro focus timer, habit tracker, task board,
           reminders, goals, and an agentic AI assistant that can act on your
           data, all in a single calm dashboard.
-        </p>
+        </motion.p>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <GradientButton size="default" className="w-full sm:w-auto" asChild>
-            <Link to="/signup">
-              Get Started Free
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </GradientButton>
-          <Button
-            variant="outline"
-            className="w-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white sm:w-auto"
-            asChild
+        <motion.div
+          variants={fadeUp}
+          className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
+        >
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="w-full sm:w-auto"
           >
-            <Link to="/login">Log In</Link>
-          </Button>
-        </div>
-      </div>
+            <GradientButton size="default" className="w-full sm:w-auto" asChild>
+              <Link to="/signup">
+                Get Started Free
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </GradientButton>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="w-full sm:w-auto"
+          >
+            <Button
+              variant="outline"
+              className="w-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white sm:w-auto"
+              asChild
+            >
+              <Link to="/login">Log In</Link>
+            </Button>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-      <div className="mx-auto mt-14 max-w-6xl">
+      <motion.div
+        className="mx-auto mt-14 max-w-6xl"
+        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+      >
         <div className="relative rounded-2xl border border-white/10 bg-white/5 p-2 shadow-2xl backdrop-blur-sm md:p-3">
           <div
             className="pointer-events-none absolute -inset-1 -z-10 rounded-2xl bg-gradient-to-r from-sky-500/20 via-fuchsia-500/20 to-amber-500/20 blur-xl"
@@ -276,32 +337,38 @@ function Hero() {
             className="w-full rounded-xl border border-white/10"
           />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
 
 function StatsStrip() {
   const stats = [
-    { label: "Core modules", value: "6" },
-    { label: "Timer modes", value: "3" },
-    { label: "Task columns", value: "4" },
-    { label: "Dashboard for everything", value: "1" },
+    { label: "Core modules", value: 6 },
+    { label: "Timer modes", value: 3 },
+    { label: "Task columns", value: 4 },
+    { label: "Dashboard for everything", value: 1 },
   ];
   return (
     <section className="border-y border-white/10 bg-white/[0.02] px-4 py-10 md:px-6">
-      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 text-center md:grid-cols-4">
+      <motion.div
+        className="mx-auto grid max-w-5xl grid-cols-2 gap-6 text-center md:grid-cols-4"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={staggerContainer}
+      >
         {stats.map((s) => (
-          <div key={s.label}>
+          <motion.div key={s.label} variants={fadeUp}>
             <div className="font-beba text-4xl text-white md:text-5xl">
-              {s.value}
+              <Counter value={s.value} />
             </div>
             <div className="mt-1 text-xs text-white/60 md:text-sm">
               {s.label}
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -310,20 +377,34 @@ function FeatureGrid() {
   return (
     <section id="features" className="px-4 py-20 md:px-6 md:py-28">
       <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-beba text-4xl text-white md:text-5xl">
+        <motion.div
+          className="mx-auto max-w-2xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={staggerContainer}
+        >
+          <motion.h2 variants={fadeUp} className="font-beba text-4xl text-white md:text-5xl">
             Everything you need to stay in the zone
-          </h2>
-          <p className="mt-4 text-white/70">
+          </motion.h2>
+          <motion.p variants={fadeUp} className="mt-4 text-white/70">
             Every tool a focused, goal-driven day actually needs, with nothing
             you have to bolt on separately.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={staggerContainer}
+        >
           {features.map((f) => (
-            <div
+            <motion.div
               key={f.title}
+              variants={fadeUp}
+              whileHover={{ y: -4 }}
               className="group rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:bg-white/[0.07]"
             >
               <div
@@ -337,9 +418,9 @@ function FeatureGrid() {
               <p className="mt-2 text-sm leading-relaxed text-white/60">
                 {f.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -367,22 +448,39 @@ function FeatureShowcase() {
   return (
     <section id="ai-assistant" className="px-4 py-20 md:px-6 md:py-28">
       <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-beba text-4xl text-white md:text-5xl">
+        <motion.div
+          className="mx-auto max-w-2xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={staggerContainer}
+        >
+          <motion.h2 variants={fadeUp} className="font-beba text-4xl text-white md:text-5xl">
             Every feature, one workspace
-          </h2>
-          <p className="mt-4 text-white/70">
+          </motion.h2>
+          <motion.p variants={fadeUp} className="mt-4 text-white/70">
             Pick a screen to see what it actually looks like.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr] lg:gap-10">
-          <div className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+        <motion.div
+          className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr] lg:gap-10"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={staggerContainer}
+        >
+          <motion.div
+            variants={fadeUp}
+            className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0"
+          >
             {showcaseItems.map((item, i) => (
-              <button
+              <motion.button
                 key={item.title}
                 type="button"
                 onClick={() => setActive(i)}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
                 className={`flex shrink-0 items-start gap-3 rounded-xl border px-4 py-3 text-left transition-colors lg:shrink lg:w-full ${
                   i === active
                     ? "border-white/20 bg-white/10"
@@ -402,19 +500,28 @@ function FeatureShowcase() {
                     {item.description}
                   </span>
                 </span>
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="flex h-[380px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 sm:h-[440px] md:p-6 lg:h-[520px]">
-            <img
-              key={current.image}
-              src={current.image}
-              alt={current.alt}
-              className="animate-fade-in-up max-h-full max-w-full rounded-xl border border-white/10 object-contain"
-            />
-          </div>
-        </div>
+          <motion.div
+            variants={fadeUp}
+            className="flex h-[380px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 sm:h-[440px] md:p-6 lg:h-[520px]"
+          >
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={current.image}
+                src={current.image}
+                alt={current.alt}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="max-h-full max-w-full rounded-xl border border-white/10 object-contain"
+              />
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
@@ -423,27 +530,38 @@ function FeatureShowcase() {
 function FAQSection() {
   return (
     <section id="faq" className="px-4 py-20 md:px-6 md:py-28">
-      <div className="mx-auto max-w-3xl">
-        <h2 className="text-center font-beba text-4xl text-white md:text-5xl">
+      <motion.div
+        className="mx-auto max-w-3xl"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={staggerContainer}
+      >
+        <motion.h2
+          variants={fadeUp}
+          className="text-center font-beba text-4xl text-white md:text-5xl"
+        >
           Frequently asked questions
-        </h2>
-        <Accordion type="single" collapsible className="mt-10">
-          {faqs.map((item, i) => (
-            <AccordionItem
-              key={item.q}
-              value={`item-${i}`}
-              className="border-white/10"
-            >
-              <AccordionTrigger className="text-left text-white hover:no-underline">
-                {item.q}
-              </AccordionTrigger>
-              <AccordionContent className="text-white/60">
-                {item.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+        </motion.h2>
+        <motion.div variants={fadeUp}>
+          <Accordion type="single" collapsible className="mt-10">
+            {faqs.map((item, i) => (
+              <AccordionItem
+                key={item.q}
+                value={`item-${i}`}
+                className="border-white/10"
+              >
+                <AccordionTrigger className="text-left text-white hover:no-underline">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-white/60">
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
@@ -451,27 +569,38 @@ function FAQSection() {
 function CTASection() {
   return (
     <section className="px-4 py-20 md:px-6 md:py-28">
-      <div className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-10 text-center md:p-16">
+      <motion.div
+        className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-10 text-center md:p-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={staggerContainer}
+      >
         <div
           className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_60%_at_50%_100%,rgba(120,60,180,0.25),rgba(0,0,0,0))]"
           aria-hidden="true"
         />
-        <h2 className="font-beba text-4xl text-white md:text-5xl">
+        <motion.h2 variants={fadeUp} className="font-beba text-4xl text-white md:text-5xl">
           Ready to get in the zone?
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-white/70">
+        </motion.h2>
+        <motion.p variants={fadeUp} className="mx-auto mt-4 max-w-xl text-white/70">
           Create your free account and bring your focus timer, habits, tasks,
           reminders, and goals into one place.
-        </p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <GradientButton size="default" className="w-full sm:w-auto" asChild>
-            <Link to="/signup">
-              Create your free account
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </GradientButton>
-        </div>
-      </div>
+        </motion.p>
+        <motion.div
+          variants={fadeUp}
+          className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
+        >
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+            <GradientButton size="default" className="w-full sm:w-auto" asChild>
+              <Link to="/signup">
+                Create your free account
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </GradientButton>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
