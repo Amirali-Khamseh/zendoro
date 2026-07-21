@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { GradientButton } from "@/componenets/customUIComponenets/CustomButton";
 import { Button } from "@/components/ui/button";
+import { DottedSurface } from "@/components/ui/dotted-surface";
 import {
   Accordion,
   AccordionContent,
@@ -264,7 +265,7 @@ function Hero() {
       >
         <motion.span
           variants={fadeUp}
-          className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-white/70 uppercase"
+          className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-white/70 uppercase backdrop-blur-sm"
         >
           Focus · Habits · Goals · AI in one workspace
         </motion.span>
@@ -350,7 +351,7 @@ function StatsStrip() {
     { label: "Dashboard for everything", value: 1 },
   ];
   return (
-    <section className="border-y border-white/10 bg-white/[0.02] px-4 py-10 md:px-6">
+    <section className="border-y border-white/10 bg-white/[0.02] px-4 py-10 backdrop-blur-sm md:px-6">
       <motion.div
         className="mx-auto grid max-w-5xl grid-cols-2 gap-6 text-center md:grid-cols-4"
         initial="hidden"
@@ -405,7 +406,7 @@ function FeatureGrid() {
               key={f.title}
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className="group rounded-xl border border-white/10 bg-white/5 p-6 transition-colors hover:bg-white/[0.07]"
+              className="group rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:bg-white/[0.07]"
             >
               <div
                 className={`inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white/5 ${f.accent}`}
@@ -481,7 +482,7 @@ function FeatureShowcase() {
                 onClick={() => setActive(i)}
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
-                className={`flex shrink-0 items-start gap-3 rounded-xl border px-4 py-3 text-left transition-colors lg:shrink lg:w-full ${
+                className={`flex shrink-0 items-start gap-3 rounded-xl border px-4 py-3 text-left backdrop-blur-sm transition-colors lg:shrink lg:w-full ${
                   i === active
                     ? "border-white/20 bg-white/10"
                     : "border-white/10 bg-white/5 hover:bg-white/[0.07]"
@@ -506,7 +507,7 @@ function FeatureShowcase() {
 
           <motion.div
             variants={fadeUp}
-            className="flex h-[380px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 sm:h-[440px] md:p-6 lg:h-[520px]"
+            className="flex h-[380px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm sm:h-[440px] md:p-6 lg:h-[520px]"
           >
             <AnimatePresence mode="wait">
               <motion.img
@@ -570,7 +571,7 @@ function CTASection() {
   return (
     <section className="px-4 py-20 md:px-6 md:py-28">
       <motion.div
-        className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-10 text-center md:p-16"
+        className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-10 text-center backdrop-blur-sm md:p-16"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-80px" }}
@@ -613,8 +614,16 @@ function Footer() {
           <img src="/logo.svg" alt="Zendoro" className="h-5 brightness-0 invert opacity-80" />
         </div>
         <p className="text-sm text-white/50">
-          &copy; {new Date().getFullYear()} Zendoro. Built with the Pomodoro
-          technique in mind.
+          &copy; {new Date().getFullYear()} Zendoro. Made with love by{" "}
+          <a
+            href="https://www.amir-khamseh.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-white/70 hover:text-white hover:underline"
+          >
+            Amir
+          </a>
+          .
         </p>
         <div className="flex items-center gap-4 text-sm text-white/60">
           <Link to="/login" className="hover:text-white">
@@ -642,7 +651,8 @@ function LandingPage() {
   useDocumentTitle("Zendoro: Focus, Habits, Goals & AI in one place");
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px] font-roboto text-white">
+    <div className="relative isolate min-h-screen w-full overflow-x-hidden bg-[#00091d] font-roboto text-white">
+      <DottedSurface className="fixed inset-0 -z-10" />
       <NavBar />
       <Hero />
       <StatsStrip />
