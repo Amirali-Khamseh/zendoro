@@ -250,12 +250,11 @@ function NavBar() {
 
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden bg-[#00091d] px-4 pt-16 pb-20 md:px-6 md:pt-24 md:pb-28">
+    <section className="relative overflow-hidden px-4 pt-16 pb-20 md:px-6 md:pt-24 md:pb-28">
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-[600px] bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(120,60,180,0.25),rgba(0,0,0,0))]"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[600px] bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(120,60,180,0.25),rgba(0,0,0,0))]"
         aria-hidden="true"
       />
-      <DottedSurface className="absolute inset-0 -z-10" />
 
       <motion.div
         className="mx-auto max-w-4xl text-center"
@@ -644,7 +643,8 @@ function LandingPage() {
   useDocumentTitle("Zendoro: Focus, Habits, Goals & AI in one place");
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px] font-roboto text-white">
+    <div className="relative isolate min-h-screen w-full overflow-x-hidden bg-[#00091d] font-roboto text-white">
+      <DottedSurface className="fixed inset-0 -z-10" />
       <NavBar />
       <Hero />
       <StatsStrip />

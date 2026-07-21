@@ -1,20 +1,22 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
-type DottedSurfaceProps = Omit<React.ComponentProps<"canvas">, "ref">;
+type DottedSurfaceProps = Omit<React.ComponentProps<"div">, "ref">;
 
-const SPACING = 24;
-const DOT_RADIUS = 2.4;
-const WAVE_AMPLITUDE = 18;
+const SPACING = 22;
+const DOT_RADIUS = 1.2;
+const WAVE_AMPLITUDE = 16;
 const WAVE_SPEED = 0.02;
 
 export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    const container = containerRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
+    if (!container || !canvas || !ctx) return;
 
     let width = 0;
     let height = 0;
@@ -22,7 +24,10 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
     let animationId = 0;
 
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
+      // Measure the wrapper div (a plain block box, sized correctly by
+      // inset-0 against Hero's real dimensions), not the canvas itself -
+      // canvas is a replaced element and sizes unreliably on its own.
+      const rect = container.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       width = rect.width;
       height = rect.height;
@@ -57,19 +62,26 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 
     resize();
     draw();
-    window.addEventListener("resize", resize);
+
+    // Window resize alone misses layout-driven size changes, like the
+    // hero image below loading in and growing the section's height -
+    // ResizeObserver catches any actual size change to the container.
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(container);
 
     return () => {
-      window.removeEventListener("resize", resize);
+      resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={cn("pointer-events-none absolute inset-0 h-full w-full", className)}
+    <div
+      ref={containerRef}
+      className={cn("pointer-events-none absolute inset-0", className)}
       {...props}
-    />
+    >
+      <canvas ref={canvasRef} className="h-full w-full" />
+    </div>
   );
 }
