@@ -644,7 +644,7 @@ function LandingPage() {
 
   return (
     <div className="relative isolate min-h-screen w-full overflow-x-hidden bg-[#00091d] font-roboto text-white">
-      <DottedSurface className="fixed inset-0 -z-10" />
+      <DottedSurface className="fixed inset-0 -z-10 blur-[3px]" />
       <NavBar />
       <Hero />
       <StatsStrip />
