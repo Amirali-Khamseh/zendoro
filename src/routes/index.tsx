@@ -614,8 +614,16 @@ function Footer() {
           <img src="/logo.svg" alt="Zendoro" className="h-5 brightness-0 invert opacity-80" />
         </div>
         <p className="text-sm text-white/50">
-          &copy; {new Date().getFullYear()} Zendoro. Built with the Pomodoro
-          technique in mind.
+          &copy; {new Date().getFullYear()} Zendoro. Made with love by{" "}
+          <a
+            href="https://www.amir-khamseh.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-white/70 hover:text-white hover:underline"
+          >
+            Amir
+          </a>
+          .
         </p>
         <div className="flex items-center gap-4 text-sm text-white/60">
           <Link to="/login" className="hover:text-white">
