@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 type DottedSurfaceProps = Omit<React.ComponentProps<"div">, "ref">;
 
 const SPACING = 22;
-const DOT_RADIUS = 1.2;
+const DOT_RADIUS = 0.7;
 const WAVE_AMPLITUDE = 16;
 const WAVE_SPEED = 0.02;
 
