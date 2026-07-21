@@ -250,7 +250,7 @@ function NavBar() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden px-4 pt-16 pb-20 md:px-6 md:pt-24 md:pb-28">
+    <section className="relative isolate overflow-hidden px-4 pt-16 pb-20 md:px-6 md:pt-24 md:pb-28">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-[600px] bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(120,60,180,0.25),rgba(0,0,0,0))]"
         aria-hidden="true"

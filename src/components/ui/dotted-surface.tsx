@@ -1,156 +1,74 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
-import * as THREE from "three";
 
-type DottedSurfaceProps = Omit<React.ComponentProps<"div">, "ref">;
+type DottedSurfaceProps = Omit<React.ComponentProps<"canvas">, "ref">;
+
+const SPACING = 24;
+const DOT_RADIUS = 2.4;
+const WAVE_AMPLITUDE = 18;
+const WAVE_SPEED = 0.02;
 
 export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<{
-    scene: THREE.Scene;
-    camera: THREE.PerspectiveCamera;
-    renderer: THREE.WebGLRenderer;
-    particles: THREE.Points[];
-    animationId: number;
-    count: number;
-  } | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
 
-    // Guard against leftover canvases from a prior effect run (e.g. React
-    // StrictMode's dev-only mount/cleanup/mount cycle failing to clean up
-    // before this one starts).
-    while (containerRef.current.firstChild) {
-      containerRef.current.removeChild(containerRef.current.firstChild);
-    }
+    let width = 0;
+    let height = 0;
+    let time = 0;
+    let animationId = 0;
 
-    const SEPARATION = 150;
-    const AMOUNTX = 40;
-    const AMOUNTY = 60;
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      width = rect.width;
+      height = rect.height;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
 
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x00091d, 2000, 10000);
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
 
-    const width = containerRef.current.clientWidth || window.innerWidth;
-    const height = containerRef.current.clientHeight || window.innerHeight;
+      const cols = Math.ceil(width / SPACING) + 1;
+      const rows = Math.ceil(height / SPACING) + 1;
 
-    const camera = new THREE.PerspectiveCamera(60, width / height, 1, 10000);
-    camera.position.set(0, 355, 1220);
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = col * SPACING;
+          const phase = col * 0.4 + row * 0.3 + time;
+          const y = row * SPACING + Math.sin(phase) * WAVE_AMPLITUDE;
+          const alpha = 0.35 + 0.45 * ((Math.sin(phase) + 1) / 2);
 
-    const renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
-    });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(width, height);
-    renderer.setClearColor(scene.fog.color, 0);
-
-    containerRef.current.appendChild(renderer.domElement);
-
-    const positions: number[] = [];
-    const colors: number[] = [];
-    const geometry = new THREE.BufferGeometry();
-
-    for (let ix = 0; ix < AMOUNTX; ix++) {
-      for (let iy = 0; iy < AMOUNTY; iy++) {
-        const x = ix * SEPARATION - (AMOUNTX * SEPARATION) / 2;
-        const y = 0;
-        const z = iy * SEPARATION - (AMOUNTY * SEPARATION) / 2;
-
-        positions.push(x, y, z);
-        colors.push(180, 190, 255);
-      }
-    }
-
-    geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(positions, 3),
-    );
-    geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-
-    const material = new THREE.PointsMaterial({
-      size: 9,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.9,
-      sizeAttenuation: true,
-    });
-
-    const points = new THREE.Points(geometry, material);
-    points.frustumCulled = false;
-    scene.add(points);
-
-    let count = 0;
-    let animationId: number;
-
-    const animate = () => {
-      animationId = requestAnimationFrame(animate);
-
-      const positionAttribute = geometry.attributes.position;
-      const positionsArr = positionAttribute.array as Float32Array;
-
-      let i = 0;
-      for (let ix = 0; ix < AMOUNTX; ix++) {
-        for (let iy = 0; iy < AMOUNTY; iy++) {
-          const index = i * 3;
-          positionsArr[index + 1] =
-            Math.sin((ix + count) * 0.3) * 80 +
-            Math.sin((iy + count) * 0.5) * 80;
-          i++;
+          ctx.beginPath();
+          ctx.arc(x, y, DOT_RADIUS, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(180, 190, 255, ${alpha.toFixed(3)})`;
+          ctx.fill();
         }
       }
 
-      positionAttribute.needsUpdate = true;
-      renderer.render(scene, camera);
-      count += 0.1;
+      time += WAVE_SPEED;
+      animationId = requestAnimationFrame(draw);
     };
 
-    const handleResize = () => {
-      if (!containerRef.current) return;
-      const w = containerRef.current.clientWidth || window.innerWidth;
-      const h = containerRef.current.clientHeight || window.innerHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-
-    window.addEventListener("resize", handleResize);
-    animate();
-
-    sceneRef.current = {
-      scene,
-      camera,
-      renderer,
-      particles: [points],
-      animationId: 0,
-      count,
-    };
+    resize();
+    draw();
+    window.addEventListener("resize", resize);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationId);
-
-      scene.traverse((object) => {
-        if (object instanceof THREE.Points) {
-          object.geometry.dispose();
-          if (Array.isArray(object.material)) {
-            object.material.forEach((m) => m.dispose());
-          } else {
-            object.material.dispose();
-          }
-        }
-      });
-
-      renderer.dispose();
-      renderer.domElement.remove();
     };
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn("pointer-events-none fixed inset-0 -z-1", className)}
+    <canvas
+      ref={canvasRef}
+      className={cn("pointer-events-none absolute inset-0", className)}
       {...props}
     />
   );
