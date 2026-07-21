@@ -68,7 +68,7 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
   return (
     <canvas
       ref={canvasRef}
-      className={cn("pointer-events-none absolute inset-0", className)}
+      className={cn("pointer-events-none absolute inset-0 h-full w-full", className)}
       {...props}
     />
   );
