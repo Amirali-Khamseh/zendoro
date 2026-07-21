@@ -18,6 +18,13 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Guard against leftover canvases from a prior effect run (e.g. React
+    // StrictMode's dev-only mount/cleanup/mount cycle failing to clean up
+    // before this one starts).
+    while (containerRef.current.firstChild) {
+      containerRef.current.removeChild(containerRef.current.firstChild);
+    }
+
     const SEPARATION = 150;
     const AMOUNTX = 40;
     const AMOUNTY = 60;
@@ -63,14 +70,15 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
     geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 6,
+      size: 9,
       vertexColors: true,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.9,
       sizeAttenuation: true,
     });
 
     const points = new THREE.Points(geometry, material);
+    points.frustumCulled = false;
     scene.add(points);
 
     let count = 0;
@@ -87,8 +95,8 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
         for (let iy = 0; iy < AMOUNTY; iy++) {
           const index = i * 3;
           positionsArr[index + 1] =
-            Math.sin((ix + count) * 0.3) * 50 +
-            Math.sin((iy + count) * 0.5) * 50;
+            Math.sin((ix + count) * 0.3) * 80 +
+            Math.sin((iy + count) * 0.5) * 80;
           i++;
         }
       }
@@ -135,10 +143,7 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
       });
 
       renderer.dispose();
-
-      if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
-      }
+      renderer.domElement.remove();
     };
   }, []);
 
